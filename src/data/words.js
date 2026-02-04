@@ -3,8 +3,8 @@ const db = require('../db/db.js');
 function addWord(word) {
   return new Promise((resolve, reject) => {
     const sql = `
-      INSERT INTO words (text, meaning, example, created_at, last_review, review_count)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO words (text, meaning, example)
+      VALUES (?, ?, ?)
     `;
 
     db.run(
@@ -13,9 +13,6 @@ function addWord(word) {
         word.text,
         word.meaning,
         word.example,
-        word.createdAt,
-        word.lastReview,
-        word.reviewCount
       ],
       function (error) {
         if (error) {

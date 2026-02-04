@@ -10,7 +10,7 @@ db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS words (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      word TEXT NOT NULL,
+      text TEXT NOT NULL,
       meaning TEXT NOT NULL,
       example TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
