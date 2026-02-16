@@ -1,6 +1,14 @@
 const db = require('../db/db.js');
 
 function addWord(word) {
+  if (!word.text || word.text.trim() === '') {
+    throw new Error('Поле "Текст" обязательное!')
+  }
+
+  if (!word.meaning || word.meaning.trim() === '') {
+    throw new Error('Поле "Значение" обязательное!')
+  }
+
   return new Promise((resolve, reject) => {
     const sql = `
       INSERT INTO words (text, meaning, example)
