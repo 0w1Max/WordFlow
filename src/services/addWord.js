@@ -1,5 +1,5 @@
 const { createWord } = require('../models/word');
-const words = require('../data/words');
+const wordRepository = require('../data/wordRepository');
 
 async function addWord(text, meaning, example) {
   if (!text || !meaning) {
@@ -7,7 +7,7 @@ async function addWord(text, meaning, example) {
   }
 
   const word = createWord(text, meaning, example);
-  const savedWord = await words.addWord(word);
+  const savedWord = await wordRepository.addWord(word);
 
   return savedWord;
 }

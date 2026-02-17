@@ -1,7 +1,7 @@
-const words = require('../data/words');
+const wordRepository = require('../data/wordRepository');
 
 async function getWordsForReview() {
-  const allWords = await words.getAllWords();
+  const allWords = await wordRepository.getAllWords();
   return allWords;
 }
 
