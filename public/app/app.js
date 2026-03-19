@@ -1,5 +1,6 @@
-import { router } from "./core/router.js";
+import { router, initRouter } from "./core/router.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+  initRouter();
   router();
 });
