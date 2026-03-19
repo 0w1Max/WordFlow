@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  wordflow:
+    build: .
+    container_name: wordflow_app
+    volumes:
+      - ./src/db:/app/src/db
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
