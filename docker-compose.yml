@@ -5,7 +5,7 @@ services:
     build: .
     container_name: wordflow_app
     volumes:
-      - ./src/db:/app/src/db
+      - ./db:/app/db
     ports:
       - "3000:3000"
     environment:
