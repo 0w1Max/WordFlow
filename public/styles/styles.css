@@ -1,0 +1,119 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: #f7f7f8;
+  color: #1a1a1a;
+}
+
+.page {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+
+h1 {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+h2 {
+  font-size: 22px;
+  margin-bottom: 16px;
+}
+
+button {
+  font-size: 15px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+}
+
+button:first-child {
+  background: #2d6cdf;
+  border-color: #2d6cdf;
+  color: #fff;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  filter: brightness(0.95);
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  color: #444;
+}
+
+.form input,
+.form select {
+  font-size: 15px;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.error {
+  color: #c0392b;
+  background: #fdecea;
+  padding: 10px 12px;
+  border-radius: 6px;
+}
+
+.progress {
+  color: #666;
+  font-size: 14px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 24px;
+  min-height: 120px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.card-word {
+  font-size: 26px;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+.card-meaning {
+  font-size: 17px;
+  margin: 0 0 8px;
+}
+
+.card-example {
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+  margin: 0;
+}

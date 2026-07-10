@@ -1,20 +1,27 @@
 const { addWord } = require('../services/addWord');
-const { getWordsForReview } = require('../services/reviewWords');
+const { getWordsForReview, markWordReviewed } = require('../services/reviewWords');
 
 async function addWordController(req, res) {
-  const { text, meaning, example } = req.body;
-  const word = await addWord(text, meaning, example);
+  const { text, meaning, example, categoryId } = req.body;
+  const word = await addWord({ text, meaning, example, categoryId });
 
-  res.json(word);
+  res.status(201).json(word);
 }
 
 async function getWordsController(req, res) {
   const words = await getWordsForReview();
-
   res.json(words);
+}
+
+async function reviewWordController(req, res) {
+  const { id } = req.params;
+  const word = await markWordReviewed(Number(id));
+
+  res.json(word);
 }
 
 module.exports = {
   addWordController,
-  getWordsController
+  getWordsController,
+  reviewWordController
 };
