@@ -1,22 +1,4 @@
-const db = require('../db/db.js');
-
-function runQuery(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.run(sql, params, function (error) {
-      if (error) reject(error);
-      else resolve(this);
-    });
-  });
-}
-
-function getAllQuery(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.all(sql, params, (error, rows) => {
-      if (error) reject(error);
-      else resolve(rows);
-    });
-  });
-}
+const { client, ensureReady } = require('../db/db.js');
 
 function mapCategoryRow(row) {
   if (!row) return null;
@@ -30,20 +12,29 @@ function mapCategoryRow(row) {
 }
 
 async function addCategory(category) {
-  const sql = 'INSERT INTO categories (user_id, name) VALUES (?, ?)';
-  const result = await runQuery(sql, [category.userId, category.name]);
+  await ensureReady();
+
+  const result = await client.execute({
+    sql: 'INSERT INTO categories (user_id, name) VALUES (?, ?)',
+    args: [category.userId, category.name]
+  });
 
   return {
-    id: result.lastID,
+    id: Number(result.lastInsertRowid),
     userId: category.userId,
     name: category.name
   };
 }
 
 async function getAllCategories(userId) {
-  const sql = 'SELECT * FROM categories WHERE user_id = ? ORDER BY name';
-  const rows = await getAllQuery(sql, [userId]);
-  return rows.map(mapCategoryRow);
+  await ensureReady();
+
+  const result = await client.execute({
+    sql: 'SELECT * FROM categories WHERE user_id = ? ORDER BY name',
+    args: [userId]
+  });
+
+  return result.rows.map(mapCategoryRow);
 }
 
 module.exports = { addCategory, getAllCategories };

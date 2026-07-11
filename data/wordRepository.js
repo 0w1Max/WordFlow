@@ -1,31 +1,4 @@
-const db = require('../db/db.js');
-
-function runQuery(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.run(sql, params, function (error) {
-      if (error) reject(error);
-      else resolve(this);
-    });
-  });
-}
-
-function getQuery(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.get(sql, params, (error, row) => {
-      if (error) reject(error);
-      else resolve(row);
-    });
-  });
-}
-
-function getAllQuery(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.all(sql, params, (error, rows) => {
-      if (error) reject(error);
-      else resolve(rows);
-    });
-  });
-}
+const { client, ensureReady } = require('../db/db.js');
 
 // Раньше POST /words возвращал camelCase (из JS-объекта), а GET /words —
 // сырые строки БД в snake_case. Теперь это единственное место, где строка
@@ -48,48 +21,60 @@ function mapWordRow(row) {
 }
 
 async function addWord(word) {
-  const sql = `
-    INSERT INTO words (user_id, category_id, text, meaning, example)
-    VALUES (?, ?, ?, ?, ?)
-  `;
+  await ensureReady();
 
-  const result = await runQuery(sql, [
-    word.userId,
-    word.categoryId,
-    word.text,
-    word.meaning,
-    word.example
-  ]);
+  const result = await client.execute({
+    sql: `
+      INSERT INTO words (user_id, category_id, text, meaning, example)
+      VALUES (?, ?, ?, ?, ?)
+    `,
+    args: [word.userId, word.categoryId, word.text, word.meaning, word.example]
+  });
 
-  return getWordById(result.lastID, word.userId);
+  // lastInsertRowid приходит как BigInt — приводим к Number, id в этом
+  // проекте не приближается к пределу безопасного целого JS.
+  return getWordById(Number(result.lastInsertRowid), word.userId);
 }
 
 async function getWordById(id, userId) {
-  const sql = 'SELECT * FROM words WHERE id = ? AND user_id = ?';
-  const row = await getQuery(sql, [id, userId]);
-  return mapWordRow(row);
+  await ensureReady();
+
+  const result = await client.execute({
+    sql: 'SELECT * FROM words WHERE id = ? AND user_id = ?',
+    args: [id, userId]
+  });
+
+  return mapWordRow(result.rows[0]);
 }
 
 async function getAllWords(userId) {
-  const sql = 'SELECT * FROM words WHERE user_id = ? ORDER BY created_at DESC';
-  const rows = await getAllQuery(sql, [userId]);
-  return rows.map(mapWordRow);
+  await ensureReady();
+
+  const result = await client.execute({
+    sql: 'SELECT * FROM words WHERE user_id = ? ORDER BY created_at DESC',
+    args: [userId]
+  });
+
+  return result.rows.map(mapWordRow);
 }
 
 // Отмечает слово как повторённое: +1 к reviewCount и обновление last_review.
 // Возвращает null, если слово с таким id не найдено (или принадлежит другому
 // пользователю) — вызывающая сторона решает, бросать ли NotFoundError.
 async function markReviewed(id, userId) {
-  const sql = `
-    UPDATE words
-    SET review_count = review_count + 1,
-        last_review = CURRENT_TIMESTAMP
-    WHERE id = ? AND user_id = ?
-  `;
+  await ensureReady();
 
-  const result = await runQuery(sql, [id, userId]);
+  const result = await client.execute({
+    sql: `
+      UPDATE words
+      SET review_count = review_count + 1,
+          last_review = CURRENT_TIMESTAMP
+      WHERE id = ? AND user_id = ?
+    `,
+    args: [id, userId]
+  });
 
-  if (result.changes === 0) {
+  if (result.rowsAffected === 0) {
     return null;
   }
 
