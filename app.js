@@ -43,17 +43,20 @@ app.use(`${API_PREFIX}/health`, healthRoutes);
 app.use(`${API_PREFIX}/words`, requireAuth, wordsRoutes);
 app.use(`${API_PREFIX}/categories`, requireAuth, categoriesRoutes);
 
-// Любой не-API GET-запрос (например, прямой переход на /review) отдаёт
-// index.html — дальше клиентский роутер сам решает, что рендерить.
 // ВРЕМЕННЫЙ маршрут для проверки, что Sentry действительно ловит ошибки.
+// Обязательно под API_PREFIX: любой путь вне /api/v1/... в vercel.json
+// сразу переписывается в index.html на уровне CDN, даже не доходя до
+// этой Express-функции — снаружи /api/v1 роут просто недостижим на Vercel.
 // Специально бросает исключение — оно долетит до errorHandler.js и уйдёт
 // в Sentry. Уберите этот роут после того, как убедитесь, что всё работает
 // (см. wordflow.sentry.io/issues/) — оставлять на проде эндпоинт, который
 // по запросу роняет ошибку, не стоит.
-app.get('/debug-sentry', () => {
+app.get(`${API_PREFIX}/debug-sentry`, () => {
   throw new Error('Проверка интеграции с Sentry');
 });
 
+// Любой не-API GET-запрос (например, прямой переход на /review) отдаёт
+// index.html — дальше клиентский роутер сам решает, что рендерить.
 app.use(spaFallback(publicDir));
 
 // Если запрос дошёл сюда — это /api/v1/... запрос, не попавший ни в один роут
