@@ -1,24 +1,31 @@
 const wordRepository = require('../data/wordRepository');
 const { NotFoundError } = require('../errors/AppError');
 const appEvents = require('../events/emitter');
-const { DEFAULT_USER_ID } = require('../config/constants');
+const { computeNextReview } = require('./spacedRepetition');
 
-async function getWordsForReview() {
-  return wordRepository.getAllWords(DEFAULT_USER_ID);
+// Страница "Повторение" показывает только слова, которые пора повторить
+// сегодня — раньше здесь возвращались вообще все слова без учёта
+// расписания. Управление всей базой слов теперь отдельная функция,
+// см. services/wordsService.js -> getAllWords.
+async function getWordsForReview(userId) {
+  return wordRepository.getDueWords(userId);
 }
 
-// Полноценного алгоритма интервального повторения (SM-2 и т.п.) здесь пока
-// нет — это осознанно оставлено на следующий этап по роадмапу. Но базовая
-// механика "отметить слово повторённым" нужна уже сейчас, чтобы review_count
-// и last_review вообще начали накапливать данные для будущего алгоритма.
-async function markWordReviewed(id) {
-  const updated = await wordRepository.markReviewed(id, DEFAULT_USER_ID);
+async function markWordReviewed(id, userId, remembered) {
+  const word = await wordRepository.getWordById(id, userId);
 
-  if (!updated) {
+  if (!word) {
     throw new NotFoundError(`Слово с id=${id} не найдено`);
   }
 
-  appEvents.emit('word.reviewed', updated);
+  const next = computeNextReview(
+    { intervalDays: word.intervalDays, easeFactor: word.easeFactor },
+    remembered
+  );
+
+  const updated = await wordRepository.markReviewed(id, userId, next);
+
+  appEvents.emit('word.reviewed', { ...updated, remembered });
 
   return updated;
 }

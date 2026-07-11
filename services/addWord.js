@@ -2,9 +2,8 @@ const { createWord } = require('../models/word');
 const wordRepository = require('../data/wordRepository');
 const { validateWordInput } = require('../validators/wordValidator');
 const appEvents = require('../events/emitter');
-const { DEFAULT_USER_ID } = require('../config/constants');
 
-async function addWord({ text, meaning, example, categoryId } = {}) {
+async function addWord({ text, meaning, example, categoryId } = {}, userId) {
   // Валидация — только здесь. Репозиторий больше не дублирует эти проверки.
   validateWordInput({ text, meaning });
 
@@ -13,7 +12,7 @@ async function addWord({ text, meaning, example, categoryId } = {}) {
     meaning,
     example,
     categoryId: categoryId || null,
-    userId: DEFAULT_USER_ID
+    userId
   });
 
   const savedWord = await wordRepository.addWord(word);

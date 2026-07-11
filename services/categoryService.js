@@ -1,17 +1,16 @@
 const categoryRepository = require('../data/categoryRepository');
 const { ValidationError } = require('../errors/AppError');
-const { DEFAULT_USER_ID } = require('../config/constants');
 
-async function addCategory(name) {
+async function addCategory(name, userId) {
   if (!name || typeof name !== 'string' || name.trim() === '') {
     throw new ValidationError('Поле "Название категории" обязательно');
   }
 
-  return categoryRepository.addCategory({ name: name.trim(), userId: DEFAULT_USER_ID });
+  return categoryRepository.addCategory({ name: name.trim(), userId });
 }
 
-async function getCategories() {
-  return categoryRepository.getAllCategories(DEFAULT_USER_ID);
+async function getCategories(userId) {
+  return categoryRepository.getAllCategories(userId);
 }
 
 module.exports = { addCategory, getCategories };

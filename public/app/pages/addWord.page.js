@@ -24,9 +24,9 @@ export async function renderAddWord() {
   renderForm(app, categories);
 }
 
-function renderForm(app, categories, errorMessage = "") {
+function renderForm(app, categories, errorMessage = "", selectedCategoryId = "") {
   const categoryOptions = categories
-    .map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`)
+    .map(c => `<option value="${c.id}" ${String(c.id) === String(selectedCategoryId) ? "selected" : ""}>${escapeHtml(c.name)}</option>`)
     .join("");
 
   app.innerHTML = `
@@ -64,11 +64,36 @@ function renderForm(app, categories, errorMessage = "") {
           <button type="button" id="back">Назад</button>
         </div>
       </form>
+
+      <details class="new-category">
+        <summary>+ Новая категория</summary>
+        <div class="form-actions">
+          <input type="text" id="newCategoryName" placeholder="Название категории" />
+          <button type="button" id="createCategoryBtn">Создать</button>
+        </div>
+        <p id="categoryError" class="error" hidden></p>
+      </details>
     </div>
   `;
 
   document.getElementById("back").onclick = () => {
     navigate("/");
+  };
+
+  document.getElementById("createCategoryBtn").onclick = async () => {
+    const name = document.getElementById("newCategoryName").value.trim();
+    const categoryError = document.getElementById("categoryError");
+
+    if (!name) return;
+
+    try {
+      const category = await post("/categories", { name });
+      categories = [...categories, category];
+      renderForm(app, categories, errorMessage, category.id);
+    } catch (err) {
+      categoryError.textContent = err.message;
+      categoryError.hidden = false;
+    }
   };
 
   document.getElementById("addWordForm").onsubmit = async (e) => {
@@ -96,8 +121,7 @@ function renderForm(app, categories, errorMessage = "") {
       // Сюда попадёт как сетевая ошибка, так и ошибка валидации от
       // сервера (например, "Поле "Слово" обязательно") — api.js уже
       // достаёт текст из { error: "..." }, так что показываем его как есть.
-      renderForm(app, categories, err.message);
+      renderForm(app, categories, err.message, categoryId);
     }
   };
 }
-

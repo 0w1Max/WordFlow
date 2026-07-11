@@ -23,4 +23,16 @@ class NotFoundError extends AppError {
   }
 }
 
-module.exports = { AppError, ValidationError, NotFoundError };
+class UnauthorizedError extends AppError {
+  constructor(message = 'Требуется авторизация') {
+    super(message, 401);
+  }
+}
+
+class ConflictError extends AppError {
+  constructor(message = 'Конфликт данных') {
+    super(message, 409);
+  }
+}
+
+module.exports = { AppError, ValidationError, NotFoundError, UnauthorizedError, ConflictError };

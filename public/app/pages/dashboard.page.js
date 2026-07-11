@@ -1,5 +1,5 @@
 import { navigate } from "../core/router.js";
-import { get } from "../core/api.js";
+import { get, post } from "../core/api.js";
 import { escapeHtml } from "../core/dom.js";
 
 export async function renderDashboard() {
@@ -13,31 +13,41 @@ export async function renderDashboard() {
   `;
 
   try {
+    // Если сессии нет — get("/auth/me") сам уведёт на /login (см. api.js),
+    // дальше этот код не выполнится.
+    const { user } = await get("/auth/me");
     const words = await get("/words");
 
     app.innerHTML = `
       <div class="page">
-        <h1>WordFlow</h1>
+        <div class="topbar">
+          <h1>WordFlow</h1>
+          <button id="logoutBtn" class="link-btn">Выйти (${escapeHtml(user.email)})</button>
+        </div>
 
         <p>Слов в базе: ${words.length}</p>
 
         <div class="form-actions">
           <button id="reviewBtn" ${words.length === 0 ? "disabled" : ""}>Повторить слова</button>
           <button id="addBtn">Добавить слово</button>
+          <button id="wordsBtn">Мои слова</button>
         </div>
       </div>
     `;
 
-    document.getElementById("reviewBtn").onclick = () => {
-      navigate("/review");
-    };
+    document.getElementById("reviewBtn").onclick = () => navigate("/review");
+    document.getElementById("addBtn").onclick = () => navigate("/add");
+    document.getElementById("wordsBtn").onclick = () => navigate("/words");
 
-    document.getElementById("addBtn").onclick = () => {
-      navigate("/add");
+    document.getElementById("logoutBtn").onclick = async () => {
+      try {
+        await post("/auth/logout");
+      } finally {
+        window.location.href = "/login";
+      }
     };
 
   } catch (e) {
-
     app.innerHTML = `
       <div class="page">
         <h1>WordFlow</h1>

@@ -117,3 +117,67 @@ button:hover:not(:disabled) {
   font-style: italic;
   margin: 0;
 }
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: #2d6cdf;
+  padding: 4px;
+  font-size: 14px;
+  text-decoration: underline;
+}
+
+.word-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.word-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.badge {
+  display: inline-block;
+  background: #eef2ff;
+  color: #2d6cdf;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin: 4px 0;
+}
+
+.new-category {
+  margin-top: 20px;
+}
+
+.new-category summary {
+  cursor: pointer;
+  color: #2d6cdf;
+  font-size: 14px;
+}
+
+.new-category .form-actions {
+  margin-top: 10px;
+}
+
+.new-category input {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}

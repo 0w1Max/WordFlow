@@ -1,5 +1,7 @@
 const path = require('path');
 const express = require('express');
+const helmet = require('helmet');
+const cookieParser = require('cookie-parser');
 
 // Подключаем обработчики событий (задел на будущую интеграцию с KeyStep)
 require('./events/listeners');
@@ -7,19 +9,32 @@ require('./events/listeners');
 const wordsRoutes = require('./routes/wordsRoutes');
 const categoriesRoutes = require('./routes/categoriesRoutes');
 const healthRoutes = require('./routes/healthRoutes');
+const authRoutes = require('./routes/authRoutes');
 const spaFallback = require('./middleware/spaFallback');
+const { requireAuth } = require('./middleware/auth');
+const { apiRateLimiter } = require('./middleware/rateLimiters');
 const { errorHandler, apiNotFoundHandler } = require('./middleware/errorHandler');
 const { API_PREFIX } = require('./config/constants');
 
 const app = express();
 const publicDir = path.join(__dirname, 'public');
 
+// helmet выставляет набор стандартных security-заголовков (X-Content-Type-
+// -Options, отключение X-Powered-By и т.д.) — раньше их не было вообще.
+app.use(helmet());
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.static(publicDir));
 
-app.use(`${API_PREFIX}/words`, wordsRoutes);
-app.use(`${API_PREFIX}/categories`, categoriesRoutes);
+app.use(API_PREFIX, apiRateLimiter);
+
+app.use(`${API_PREFIX}/auth`, authRoutes);
 app.use(`${API_PREFIX}/health`, healthRoutes);
+
+// Всё, что ниже, требует авторизации — requireAuth кладёт req.user.id,
+// которым пользуются контроллеры вместо старого DEFAULT_USER_ID.
+app.use(`${API_PREFIX}/words`, requireAuth, wordsRoutes);
+app.use(`${API_PREFIX}/categories`, requireAuth, categoriesRoutes);
 
 // Любой не-API GET-запрос (например, прямой переход на /review) отдаёт
 // index.html — дальше клиентский роутер сам решает, что рендерить.

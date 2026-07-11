@@ -2,7 +2,18 @@
 const BASE_URL = "/api/v1";
 
 export async function request(url, options = {}) {
-  const res = await fetch(BASE_URL + url, options);
+  const res = await fetch(BASE_URL + url, { ...options, credentials: "same-origin" });
+
+  // Сессия истекла/отсутствует — уводим на логин. Исключение: сама попытка
+  // логина/регистрации тоже может вернуть 401/400 (неверный пароль) — это
+  // должно остаться на месте и показаться в форме, а не превратиться
+  // в редирект на ту же страницу логина.
+  const isAuthAttempt = url === "/auth/login" || url === "/auth/register";
+
+  if (res.status === 401 && !isAuthAttempt) {
+    window.location.href = "/login";
+    return new Promise(() => {}); // страница всё равно сейчас уйдёт со страницы
+  }
 
   if (!res.ok) {
     // Раньше здесь терялось сообщение об ошибке от сервера (например,
@@ -22,6 +33,10 @@ export async function request(url, options = {}) {
     throw new Error(message);
   }
 
+  if (res.status === 204) {
+    return null; // DELETE/logout не возвращают тело
+  }
+
   return res.json();
 }
 
@@ -33,6 +48,18 @@ export function post(url, data) {
   return request(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    body: data !== undefined ? JSON.stringify(data) : undefined
+  });
+}
+
+export function put(url, data) {
+  return request(url, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
   });
+}
+
+export function del(url) {
+  return request(url, { method: "DELETE" });
 }

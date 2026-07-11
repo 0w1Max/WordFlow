@@ -13,7 +13,9 @@ export async function renderReview() {
   `;
 
   try {
-    const words = await get("/words");
+    // /words/due — только слова, которые пора повторить сегодня по расписанию
+    // упрощённого SM-2 (см. services/spacedRepetition.js на бэкенде).
+    const words = await get("/words/due");
     startReview(app, words);
   } catch (e) {
     app.innerHTML = `
@@ -27,11 +29,6 @@ export async function renderReview() {
   }
 }
 
-// Настоящего алгоритма интервального повторения (SM-2 и т.п.) пока нет —
-// это осознанно оставлено на следующий этап (см. роадмап). Сейчас
-// повторяются все сохранённые слова по очереди, но каждое нажатие
-// "Вспомнил" уже пишет в базу review_count/last_review — данные,
-// на которых будущий алгоритм сможет строить расписание повторений.
 function startReview(app, words) {
   const state = {
     words,
@@ -50,7 +47,7 @@ function render(app, state) {
     app.innerHTML = `
       <div class="page">
         <h2>Повторение</h2>
-        <p>Пока нечего повторять — сначала добавьте хотя бы одно слово.</p>
+        <p>На сегодня повторять нечего — все слова уже показаны по расписанию.</p>
         <button id="addBtn">Добавить слово</button>
         <button id="back">Назад</button>
       </div>
@@ -91,7 +88,7 @@ function render(app, state) {
       <div class="form-actions">
         ${state.revealed ? `
           <button id="rememberedBtn">Вспомнил</button>
-          <button id="skipBtn">Не вспомнил</button>
+          <button id="forgotBtn">Не вспомнил</button>
         ` : `
           <button id="revealBtn">Показать ответ</button>
         `}
@@ -110,24 +107,22 @@ function render(app, state) {
     return;
   }
 
-  document.getElementById("rememberedBtn").onclick = async () => {
-    try {
-      await post(`/words/${word.id}/review`);
-      state.reviewedCount += 1;
-    } catch (e) {
-      // Не удалось сохранить отметку о повторении — не блокируем сам
-      // процесс повторения, просто идём дальше без учёта этого слова.
-    }
-
-    goToNext(app, state);
-  };
-
-  document.getElementById("skipBtn").onclick = () => {
-    goToNext(app, state);
-  };
+  document.getElementById("rememberedBtn").onclick = () => submitReview(app, state, word, true);
+  document.getElementById("forgotBtn").onclick = () => submitReview(app, state, word, false);
 }
 
-function goToNext(app, state) {
+// И "вспомнил", и "не вспомнил" отправляются на бэкенд — оба случая двигают
+// расписание повторений (SM-2): "вспомнил" отодвигает следующий показ
+// дальше, "не вспомнил" сбрасывает интервал, чтобы слово вернулось быстрее.
+async function submitReview(app, state, word, remembered) {
+  try {
+    await post(`/words/${word.id}/review`, { remembered });
+    if (remembered) state.reviewedCount += 1;
+  } catch (e) {
+    // Не удалось сохранить результат повторения — не блокируем сам процесс,
+    // просто идём дальше без учёта этого слова в статистике.
+  }
+
   state.index += 1;
   state.revealed = false;
   render(app, state);
