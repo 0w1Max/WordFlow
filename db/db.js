@@ -51,10 +51,16 @@ const CREATE_WORDS_TABLE = `
 // Мягкие миграции — на случай, если база уже существует со старой схемой.
 // SQLite/libSQL не умеет "ADD COLUMN IF NOT EXISTS", поэтому просто
 // игнорируем ошибку "duplicate column name", если колонка уже есть.
+//
+// ВАЖНО: SQLite/libSQL запрещает "изменяющиеся" значения по умолчанию
+// (CURRENT_TIMESTAMP и т.п.) именно в ALTER TABLE ADD COLUMN — это разрешено
+// только в CREATE TABLE ("Cannot add a column with non-constant default").
+// Поэтому next_review_at здесь добавляется без default, а существующие
+// строки (где он окажется NULL) отдельно "довозятся" в BACKFILLS ниже.
 const SOFT_MIGRATIONS = [
   'ALTER TABLE words ADD COLUMN user_id INTEGER NOT NULL DEFAULT 1',
   'ALTER TABLE words ADD COLUMN category_id INTEGER',
-  'ALTER TABLE words ADD COLUMN next_review_at DATETIME DEFAULT CURRENT_TIMESTAMP',
+  'ALTER TABLE words ADD COLUMN next_review_at DATETIME',
   'ALTER TABLE words ADD COLUMN interval_days INTEGER DEFAULT 0',
   'ALTER TABLE words ADD COLUMN ease_factor REAL DEFAULT 2.5',
   'ALTER TABLE users ADD COLUMN reset_token_hash TEXT',
@@ -63,6 +69,14 @@ const SOFT_MIGRATIONS = [
   // Как только зарегистрируется настоящий первый пользователь, старые
   // записи можно будет вручную перепривязать по email — это осознанно
   // не автоматизируем, чтобы не привязать чужие данные не к тому аккаунту.
+];
+
+// Обычный UPDATE (в отличие от ALTER ... ADD COLUMN) прекрасно допускает
+// CURRENT_TIMESTAMP — им и восполняем значение для строк, где колонка только
+// что появилась и осталась NULL. Условие WHERE делает эти запросы
+// идемпотентными: повторный запуск ничего не найдёт и не тронет данные.
+const BACKFILLS = [
+  'UPDATE words SET next_review_at = CURRENT_TIMESTAMP WHERE next_review_at IS NULL'
 ];
 
 async function runMigrations() {
@@ -79,6 +93,10 @@ async function runMigrations() {
         throw error;
       }
     }
+  }
+
+  for (const sql of BACKFILLS) {
+    await client.execute(sql);
   }
 }
 
