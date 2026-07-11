@@ -1,5 +1,5 @@
 const categoryRepository = require('../data/categoryRepository');
-const { ValidationError } = require('../errors/AppError');
+const { ValidationError, NotFoundError } = require('../errors/AppError');
 
 async function addCategory(name, userId) {
   if (!name || typeof name !== 'string' || name.trim() === '') {
@@ -13,4 +13,12 @@ async function getCategories(userId) {
   return categoryRepository.getAllCategories(userId);
 }
 
-module.exports = { addCategory, getCategories };
+async function deleteCategory(id, userId) {
+  const deleted = await categoryRepository.deleteCategory(id, userId);
+
+  if (!deleted) {
+    throw new NotFoundError(`Категория с id=${id} не найдена`);
+  }
+}
+
+module.exports = { addCategory, getCategories, deleteCategory };

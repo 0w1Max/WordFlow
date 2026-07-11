@@ -19,6 +19,13 @@ const { API_PREFIX } = require('./config/constants');
 const app = express();
 const publicDir = path.join(__dirname, 'public');
 
+// Vercel (как и большинство хостингов) ставит приложение за прокси и передаёт
+// реальный IP клиента через X-Forwarded-For. Без этой настройки Express (а
+// вместе с ним express-rate-limit) видел бы IP прокси одинаковым для всех
+// пользователей — то есть все посетители сайта делили бы один общий лимит
+// запросов вместо лимита "на посетителя".
+app.set('trust proxy', 1);
+
 // helmet выставляет набор стандартных security-заголовков (X-Content-Type-
 // -Options, отключение X-Powered-By и т.д.) — раньше их не было вообще.
 app.use(helmet());

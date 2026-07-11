@@ -102,6 +102,18 @@ function render(app, state) {
     <div class="page">
       <h2>Мои слова</h2>
       ${state.error ? `<p class="error">${escapeHtml(state.error)}</p>` : ""}
+
+      ${state.categories.length > 0 ? `
+        <div class="category-manager">
+          ${state.categories.map(c => `
+            <span class="badge badge-removable">
+              ${escapeHtml(c.name)}
+              <button class="delete-category-btn" data-id="${c.id}" title="Удалить категорию" aria-label="Удалить категорию ${escapeHtml(c.name)}">×</button>
+            </span>
+          `).join("")}
+        </div>
+      ` : ""}
+
       ${state.words.length === 0 ? "<p>Слов пока нет.</p>" : `<ul class="word-list">${itemsHtml}</ul>`}
       <div class="form-actions">
         <button id="addBtn">Добавить слово</button>
@@ -112,6 +124,29 @@ function render(app, state) {
 
   document.getElementById("addBtn").onclick = () => navigate("/add");
   document.getElementById("back").onclick = () => navigate("/");
+
+  app.querySelectorAll(".delete-category-btn").forEach(btn => {
+    btn.onclick = async () => {
+      const id = Number(btn.dataset.id);
+
+      if (!window.confirm("Удалить категорию? Слова останутся, но станут «без категории».")) {
+        return;
+      }
+
+      try {
+        await del(`/categories/${id}`);
+        state.categories = state.categories.filter(c => c.id !== id);
+        // Отражаем на клиенте то же, что сделал бэкенд: у слов этой
+        // категории обнуляем categoryId, не дожидаясь перезагрузки списка.
+        state.words = state.words.map(w => w.categoryId === id ? { ...w, categoryId: null } : w);
+        state.error = "";
+      } catch (err) {
+        state.error = err.message;
+      }
+
+      render(app, state);
+    };
+  });
 
   app.querySelectorAll(".edit-btn").forEach(btn => {
     btn.onclick = () => {

@@ -181,3 +181,26 @@ button:hover:not(:disabled) {
   border: 1px solid #ccc;
   border-radius: 6px;
 }
+
+.category-manager {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 20px;
+}
+
+.badge-removable {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge-removable button {
+  border: none;
+  background: none;
+  color: #2d6cdf;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}

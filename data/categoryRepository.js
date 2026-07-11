@@ -37,4 +37,25 @@ async function getAllCategories(userId) {
   return result.rows.map(mapCategoryRow);
 }
 
-module.exports = { addCategory, getAllCategories };
+// Схема объявляет FOREIGN KEY ... ON DELETE SET NULL, но PRAGMA foreign_keys
+// — настройка уровня соединения, а @libsql/client работает поверх HTTP, где
+// нет гарантии, что она сохранится к моменту этого запроса. Поэтому не
+// полагаемся на автоматический каскад, а явно отвязываем слова от категории
+// перед её удалением — так безопаснее вне зависимости от поведения драйвера.
+async function deleteCategory(id, userId) {
+  await ensureReady();
+
+  await client.execute({
+    sql: 'UPDATE words SET category_id = NULL WHERE category_id = ? AND user_id = ?',
+    args: [id, userId]
+  });
+
+  const result = await client.execute({
+    sql: 'DELETE FROM categories WHERE id = ? AND user_id = ?',
+    args: [id, userId]
+  });
+
+  return result.rowsAffected > 0;
+}
+
+module.exports = { addCategory, getAllCategories, deleteCategory };

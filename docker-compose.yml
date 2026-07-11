@@ -4,9 +4,14 @@ services:
   wordflow:
     build: .
     container_name: wordflow_app
-    volumes:
-      - ./db:/app/db
     ports:
       - "3000:3000"
     environment:
       NODE_ENV: development
+      PORT: 3000
+      # База теперь в Turso (облако), а не локальный файл — volume с ./db
+      # больше не нужен. Значения ниже возьмите из .env (см. .env.example)
+      # или пропишите напрямую, например через `docker compose --env-file .env up`.
+      TURSO_DATABASE_URL: ${TURSO_DATABASE_URL}
+      TURSO_AUTH_TOKEN: ${TURSO_AUTH_TOKEN}
+      JWT_SECRET: ${JWT_SECRET}
