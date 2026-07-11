@@ -35,9 +35,31 @@ function meController(req, res) {
   res.json({ user: req.user });
 }
 
+async function forgotPasswordController(req, res) {
+  const { email } = req.body;
+  // req.protocol корректно определяет https благодаря app.set('trust proxy', 1) —
+  // без этой настройки за прокси Vercel он всегда показывал бы http.
+  const baseUrl = `${req.protocol}://${req.get('host')}`;
+
+  await authService.requestPasswordReset(email, baseUrl);
+
+  // Один и тот же ответ независимо от того, существует email или нет —
+  // см. комментарий в authService.requestPasswordReset.
+  res.json({ message: 'Если такой email зарегистрирован, письмо со ссылкой уже отправлено' });
+}
+
+async function resetPasswordController(req, res) {
+  const { token, password } = req.body;
+  await authService.resetPassword(token, password);
+
+  res.json({ message: 'Пароль успешно изменён' });
+}
+
 module.exports = {
   registerController,
   loginController,
   logoutController,
-  meController
+  meController,
+  forgotPasswordController,
+  resetPasswordController
 };

@@ -4,6 +4,8 @@ import { renderAddWord } from "../pages/addWord.page.js";
 import { renderWordsList } from "../pages/wordsList.page.js";
 import { renderLogin } from "../pages/login.page.js";
 import { renderRegister } from "../pages/register.page.js";
+import { renderForgotPassword } from "../pages/forgotPassword.page.js";
+import { renderResetPassword } from "../pages/resetPassword.page.js";
 
 const routes = {
   "/": renderDashboard,
@@ -11,7 +13,9 @@ const routes = {
   "/add": renderAddWord,
   "/words": renderWordsList,
   "/login": renderLogin,
-  "/register": renderRegister
+  "/register": renderRegister,
+  "/forgot-password": renderForgotPassword,
+  "/reset-password": renderResetPassword
 };
 
 export function router() {

@@ -32,12 +32,18 @@ function render(app, errorMessage) {
       </form>
 
       <p>Нет аккаунта? <a href="/register" id="toRegister">Зарегистрироваться</a></p>
+      <p><a href="/forgot-password" id="toForgot">Забыли пароль?</a></p>
     </div>
   `;
 
   document.getElementById("toRegister").onclick = (e) => {
     e.preventDefault();
     navigate("/register");
+  };
+
+  document.getElementById("toForgot").onclick = (e) => {
+    e.preventDefault();
+    navigate("/forgot-password");
   };
 
   document.getElementById("loginForm").onsubmit = async (e) => {

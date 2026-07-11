@@ -1,14 +1,27 @@
 const { AppError } = require('../errors/AppError');
+const Sentry = require('../instrument');
 
 // Express 5 сам пробрасывает отклонённые промисы из async-контроллеров сюда,
 // поэтому в контроллерах больше не нужен try/catch на каждый роут.
-function errorHandler(err, req, res, next) { // eslint-disable-line no-unused-vars
+async function errorHandler(err, req, res, next) { // eslint-disable-line no-unused-vars
   if (err instanceof AppError) {
+    // Ожидаемые ошибки (валидация, "не найдено" и т.п.) не шлём в Sentry —
+    // это не баги, а нормальная часть работы приложения, незачем тратить
+    // на них лимит бесплатного плана.
     return res.status(err.statusCode).json({ error: err.message });
   }
 
-  // Неожиданная ошибка — не показываем стектрейс клиенту, только логируем на сервере
+  // Неожиданная ошибка — не показываем стектрейс клиенту, только логируем.
   console.error('Необработанная ошибка:', err);
+
+  if (process.env.SENTRY_DSN) {
+    Sentry.captureException(err);
+    // Vercel замораживает функцию сразу после отправки ответа, а транспорт
+    // Sentry шлёт события асинхронно в фоне — без явного flush событие может
+    // просто не успеть уйти и потеряться вместе с "замороженным" инстансом.
+    await Sentry.flush(2000);
+  }
+
   res.status(500).json({ error: 'Внутренняя ошибка сервера' });
 }
 
