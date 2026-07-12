@@ -9,29 +9,33 @@ export function renderRegister() {
 
 function render(app, errorMessage) {
   app.innerHTML = `
-    <div class="page">
-      <h1>WordFlow</h1>
-      <h2>Регистрация</h2>
+    <div class="auth-shell">
+      <div class="auth-card">
+        <span class="auth-mark">Wordflow</span>
+        <h1 class="headline">Регистрация</h1>
 
-      ${errorMessage ? `<p class="error">${escapeHtml(errorMessage)}</p>` : ""}
+        ${errorMessage ? `<p class="error-banner">${escapeHtml(errorMessage)}</p>` : ""}
 
-      <form id="registerForm" class="form">
-        <label>
-          Email
-          <input type="email" id="email" required autocomplete="email" />
-        </label>
+        <form id="registerForm" class="form">
+          <div class="field">
+            <label class="field-label" for="email">Email</label>
+            <input type="email" id="email" required autocomplete="email" />
+          </div>
 
-        <label>
-          Пароль (минимум 8 символов)
-          <input type="password" id="password" required minlength="8" autocomplete="new-password" />
-        </label>
+          <div class="field">
+            <label class="field-label" for="password">Пароль (минимум 8 символов)</label>
+            <input type="password" id="password" required minlength="8" autocomplete="new-password" />
+          </div>
 
-        <div class="form-actions">
-          <button type="submit" id="submitBtn">Зарегистрироваться</button>
+          <div class="actions">
+            <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%;">Создать аккаунт</button>
+          </div>
+        </form>
+
+        <div class="auth-links">
+          <span>Уже есть аккаунт? <a href="/login" id="toLogin">Войти</a></span>
         </div>
-      </form>
-
-      <p>Уже есть аккаунт? <a href="/login" id="toLogin">Войти</a></p>
+      </div>
     </div>
   `;
 
@@ -45,7 +49,7 @@ function render(app, errorMessage) {
 
     const submitBtn = document.getElementById("submitBtn");
     submitBtn.disabled = true;
-    submitBtn.textContent = "Создание аккаунта...";
+    submitBtn.textContent = "Создаём аккаунт…";
 
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;

@@ -11,10 +11,14 @@ export function renderResetPassword() {
 
   if (!token) {
     app.innerHTML = `
-      <div class="page">
-        <h1>WordFlow</h1>
-        <p class="error">Ссылка неполная — отсутствует токен сброса пароля.</p>
-        <p><a href="/login" id="toLogin">Вернуться ко входу</a></p>
+      <div class="auth-shell">
+        <div class="auth-card">
+          <span class="auth-mark">Wordflow</span>
+          <p class="error-banner">Ссылка неполная — отсутствует токен сброса пароля.</p>
+          <div class="auth-links">
+            <a href="/login" id="toLogin">Вернуться ко входу</a>
+          </div>
+        </div>
       </div>
     `;
     document.getElementById("toLogin").onclick = (e) => {
@@ -29,22 +33,24 @@ export function renderResetPassword() {
 
 function render(app, token, errorMessage) {
   app.innerHTML = `
-    <div class="page">
-      <h1>WordFlow</h1>
-      <h2>Новый пароль</h2>
+    <div class="auth-shell">
+      <div class="auth-card">
+        <span class="auth-mark">Wordflow</span>
+        <h1 class="headline">Новый пароль</h1>
 
-      ${errorMessage ? `<p class="error">${escapeHtml(errorMessage)}</p>` : ""}
+        ${errorMessage ? `<p class="error-banner">${escapeHtml(errorMessage)}</p>` : ""}
 
-      <form id="resetForm" class="form">
-        <label>
-          Новый пароль (минимум 8 символов)
-          <input type="password" id="password" required minlength="8" autocomplete="new-password" />
-        </label>
+        <form id="resetForm" class="form">
+          <div class="field">
+            <label class="field-label" for="password">Новый пароль (минимум 8 символов)</label>
+            <input type="password" id="password" required minlength="8" autocomplete="new-password" />
+          </div>
 
-        <div class="form-actions">
-          <button type="submit" id="submitBtn">Сохранить пароль</button>
-        </div>
-      </form>
+          <div class="actions">
+            <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%;">Сохранить пароль</button>
+          </div>
+        </form>
+      </div>
     </div>
   `;
 
@@ -53,7 +59,7 @@ function render(app, token, errorMessage) {
 
     const submitBtn = document.getElementById("submitBtn");
     submitBtn.disabled = true;
-    submitBtn.textContent = "Сохранение...";
+    submitBtn.textContent = "Сохраняем…";
 
     const password = document.getElementById("password").value;
 

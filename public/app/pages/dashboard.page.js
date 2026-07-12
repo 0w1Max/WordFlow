@@ -7,8 +7,7 @@ export async function renderDashboard() {
 
   app.innerHTML = `
     <div class="page">
-      <h1>WordFlow</h1>
-      <p>Загрузка...</p>
+      <p class="loading-line">Открываем коллекцию…</p>
     </div>
   `;
 
@@ -16,21 +15,27 @@ export async function renderDashboard() {
     // Если сессии нет — get("/auth/me") сам уведёт на /login (см. api.js),
     // дальше этот код не выполнится.
     const { user } = await get("/auth/me");
-    const words = await get("/words");
+    const [words, due] = await Promise.all([get("/words"), get("/words/due")]);
 
     app.innerHTML = `
       <div class="page">
-        <div class="topbar">
-          <h1>WordFlow</h1>
-          <button id="logoutBtn" class="link-btn">Выйти (${escapeHtml(user.email)})</button>
+        <div class="masthead">
+          <span class="masthead-mark">Wordflow</span>
+          <div class="masthead-user">
+            <span>${escapeHtml(user.email)}</span>
+            <button id="logoutBtn" class="btn-text">Выйти</button>
+          </div>
         </div>
 
-        <p>Слов в базе: ${words.length}</p>
+        <h1 class="headline">Ваша коллекция</h1>
+        <p class="meta-line"><strong>${words.length}</strong> слов${wordSuffix(words.length)} собрано · <strong>${due.length}</strong> на сегодня</p>
 
-        <div class="form-actions">
-          <button id="reviewBtn" ${words.length === 0 ? "disabled" : ""}>Повторить слова</button>
-          <button id="addBtn">Добавить слово</button>
-          <button id="wordsBtn">Мои слова</button>
+        <div class="actions">
+          <button id="reviewBtn" class="btn btn-primary" ${due.length === 0 ? "disabled" : ""}>
+            ${due.length === 0 ? "Нечего повторять" : `Повторить ${due.length}`}
+          </button>
+          <button id="addBtn" class="btn btn-ghost">Добавить слово</button>
+          <button id="wordsBtn" class="btn btn-ghost">Все слова</button>
         </div>
       </div>
     `;
@@ -50,9 +55,20 @@ export async function renderDashboard() {
   } catch (e) {
     app.innerHTML = `
       <div class="page">
-        <h1>WordFlow</h1>
-        <p class="error">Не удалось загрузить данные: ${escapeHtml(e.message)}</p>
+        <span class="masthead-mark">Wordflow</span>
+        <p class="error-banner" style="margin-top: 20px;">Не удалось загрузить коллекцию: ${escapeHtml(e.message)}</p>
       </div>
     `;
   }
+}
+
+// "1 слово", "2 слова", "5 слов" — родительный/именительный падеж по числу,
+// мелочь, но именно из таких мелочей складывается ощущение, что интерфейс
+// написан для человека, а не сгенерирован.
+function wordSuffix(n) {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return "о";
+  if ([2, 3, 4].includes(mod10) && ![12, 13, 14].includes(mod100)) return "а";
+  return "";
 }

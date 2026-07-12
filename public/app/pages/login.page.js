@@ -9,30 +9,34 @@ export function renderLogin() {
 
 function render(app, errorMessage) {
   app.innerHTML = `
-    <div class="page">
-      <h1>WordFlow</h1>
-      <h2>Вход</h2>
+    <div class="auth-shell">
+      <div class="auth-card">
+        <span class="auth-mark">Wordflow</span>
+        <h1 class="headline">Вход</h1>
 
-      ${errorMessage ? `<p class="error">${escapeHtml(errorMessage)}</p>` : ""}
+        ${errorMessage ? `<p class="error-banner">${escapeHtml(errorMessage)}</p>` : ""}
 
-      <form id="loginForm" class="form">
-        <label>
-          Email
-          <input type="email" id="email" required autocomplete="email" />
-        </label>
+        <form id="loginForm" class="form">
+          <div class="field">
+            <label class="field-label" for="email">Email</label>
+            <input type="email" id="email" required autocomplete="email" />
+          </div>
 
-        <label>
-          Пароль
-          <input type="password" id="password" required autocomplete="current-password" />
-        </label>
+          <div class="field">
+            <label class="field-label" for="password">Пароль</label>
+            <input type="password" id="password" required autocomplete="current-password" />
+          </div>
 
-        <div class="form-actions">
-          <button type="submit" id="submitBtn">Войти</button>
+          <div class="actions">
+            <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%;">Войти</button>
+          </div>
+        </form>
+
+        <div class="auth-links">
+          <span>Нет аккаунта? <a href="/register" id="toRegister">Зарегистрироваться</a></span>
+          <a href="/forgot-password" id="toForgot">Забыли пароль?</a>
         </div>
-      </form>
-
-      <p>Нет аккаунта? <a href="/register" id="toRegister">Зарегистрироваться</a></p>
-      <p><a href="/forgot-password" id="toForgot">Забыли пароль?</a></p>
+      </div>
     </div>
   `;
 
@@ -51,7 +55,7 @@ function render(app, errorMessage) {
 
     const submitBtn = document.getElementById("submitBtn");
     submitBtn.disabled = true;
-    submitBtn.textContent = "Вход...";
+    submitBtn.textContent = "Входим…";
 
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;

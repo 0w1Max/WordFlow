@@ -7,8 +7,7 @@ export async function renderReview() {
 
   app.innerHTML = `
     <div class="page">
-      <h2>Повторение</h2>
-      <p>Загрузка слов...</p>
+      <p class="loading-line">Собираем слова на сегодня…</p>
     </div>
   `;
 
@@ -20,9 +19,9 @@ export async function renderReview() {
   } catch (e) {
     app.innerHTML = `
       <div class="page">
-        <h2>Повторение</h2>
-        <p class="error">Не удалось загрузить слова: ${escapeHtml(e.message)}</p>
-        <button id="back">Назад</button>
+        <span class="masthead-mark">Wordflow</span>
+        <p class="error-banner" style="margin-top: 20px;">Не удалось загрузить слова: ${escapeHtml(e.message)}</p>
+        <div class="actions"><button id="back" class="btn btn-ghost">Назад</button></div>
       </div>
     `;
     document.getElementById("back").onclick = () => navigate("/");
@@ -46,10 +45,15 @@ function render(app, state) {
   if (words.length === 0) {
     app.innerHTML = `
       <div class="page">
-        <h2>Повторение</h2>
-        <p>На сегодня повторять нечего — все слова уже показаны по расписанию.</p>
-        <button id="addBtn">Добавить слово</button>
-        <button id="back">Назад</button>
+        <span class="masthead-mark">Wordflow</span>
+        <h1 class="headline" style="margin-top: 18px;">Повторение</h1>
+        <div class="empty-state">
+          <p>На сегодня наблюдений нет — всё уже показано по расписанию.</p>
+          <div class="actions" style="justify-content: center;">
+            <button id="addBtn" class="btn btn-primary">Добавить слово</button>
+            <button id="back" class="btn btn-ghost">На главную</button>
+          </div>
+        </div>
       </div>
     `;
     document.getElementById("addBtn").onclick = () => navigate("/add");
@@ -60,9 +64,10 @@ function render(app, state) {
   if (index >= words.length) {
     app.innerHTML = `
       <div class="page">
-        <h2>Повторение завершено</h2>
-        <p>Вы прошли ${words.length} слов(а), из них отмечено как «вспомнил»: ${state.reviewedCount}.</p>
-        <button id="back">На главную</button>
+        <span class="masthead-mark">Wordflow</span>
+        <h1 class="headline" style="margin-top: 18px;">Повторение завершено</h1>
+        <p class="meta-line">Пройдено <strong>${words.length}</strong> · вспомнено <strong>${state.reviewedCount}</strong></p>
+        <div class="actions"><button id="back" class="btn btn-primary">На главную</button></div>
       </div>
     `;
     document.getElementById("back").onclick = () => navigate("/");
@@ -73,26 +78,28 @@ function render(app, state) {
 
   app.innerHTML = `
     <div class="page">
-      <h2>Повторение</h2>
-      <p class="progress">Слово ${index + 1} из ${words.length}</p>
+      <span class="masthead-mark">Wordflow</span>
+      <p class="flashcard-progress" style="margin-top: 18px;">Слово ${index + 1} из ${words.length}</p>
 
-      <div class="card">
-        <p class="card-word">${escapeHtml(word.text)}</p>
+      <div class="flashcard">
+        <p class="flashcard-word">${escapeHtml(word.text)}</p>
 
         ${state.revealed ? `
-          <p class="card-meaning">${escapeHtml(word.meaning)}</p>
-          ${word.example ? `<p class="card-example">«${escapeHtml(word.example)}»</p>` : ""}
+          <div class="flashcard-answer">
+            <p class="flashcard-meaning">${escapeHtml(word.meaning)}</p>
+            ${word.example ? `<p class="flashcard-example">«${escapeHtml(word.example)}»</p>` : ""}
+          </div>
         ` : ""}
       </div>
 
-      <div class="form-actions">
+      <div class="actions">
         ${state.revealed ? `
-          <button id="rememberedBtn">Вспомнил</button>
-          <button id="forgotBtn">Не вспомнил</button>
+          <button id="rememberedBtn" class="btn btn-primary">Вспомнил</button>
+          <button id="forgotBtn" class="btn btn-ghost">Не вспомнил</button>
         ` : `
-          <button id="revealBtn">Показать ответ</button>
+          <button id="revealBtn" class="btn btn-primary">Показать ответ</button>
         `}
-        <button id="back">Прервать</button>
+        <button id="back" class="btn-text">Прервать</button>
       </div>
     </div>
   `;

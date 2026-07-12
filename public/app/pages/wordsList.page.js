@@ -7,8 +7,7 @@ export async function renderWordsList() {
 
   app.innerHTML = `
     <div class="page">
-      <h2>Мои слова</h2>
-      <p>Загрузка...</p>
+      <p class="loading-line">Открываем коллекцию…</p>
     </div>
   `;
 
@@ -18,9 +17,9 @@ export async function renderWordsList() {
   } catch (e) {
     app.innerHTML = `
       <div class="page">
-        <h2>Мои слова</h2>
-        <p class="error">Не удалось загрузить данные: ${escapeHtml(e.message)}</p>
-        <button id="back">Назад</button>
+        <span class="masthead-mark">Wordflow</span>
+        <p class="error-banner" style="margin-top: 20px;">Не удалось загрузить данные: ${escapeHtml(e.message)}</p>
+        <div class="actions"><button id="back" class="btn btn-ghost">Назад</button></div>
       </div>
     `;
     document.getElementById("back").onclick = () => navigate("/");
@@ -43,38 +42,49 @@ function categoryName(state, categoryId) {
   return found ? found.name : null;
 }
 
-function render(app, state) {
-  const categoryOptions = state.categories
-    .map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`)
-    .join("");
+// 0 повторений — только собрано; 1-3 — на пути к запоминанию; 4+ — усвоено.
+// Управляет цветом левой полосы карточки (см. .specimen[data-strength] в CSS).
+function strengthOf(word) {
+  if (word.reviewCount === 0) return "new";
+  if (word.reviewCount <= 3) return "learning";
+  return "known";
+}
 
+function isDue(word) {
+  return word.nextReviewAt && new Date(word.nextReviewAt) <= new Date();
+}
+
+function render(app, state) {
   const itemsHtml = state.words.map(word => {
     if (word.editing) {
       return `
-        <li class="word-card" data-id="${word.id}">
-          <div class="form">
-            <label>
-              Слово
-              <input type="text" class="edit-text" value="${escapeHtml(word.text)}" />
-            </label>
-            <label>
-              Значение
-              <input type="text" class="edit-meaning" value="${escapeHtml(word.meaning)}" />
-            </label>
-            <label>
-              Пример
-              <input type="text" class="edit-example" value="${escapeHtml(word.example || "")}" />
-            </label>
-            <label>
-              Категория
-              <select class="edit-category">
-                <option value="">Без категории</option>
-                ${state.categories.map(c => `<option value="${c.id}" ${c.id === word.categoryId ? "selected" : ""}>${escapeHtml(c.name)}</option>`).join("")}
-              </select>
-            </label>
-            <div class="form-actions">
-              <button class="save-btn" data-id="${word.id}">Сохранить</button>
-              <button class="cancel-btn" data-id="${word.id}" type="button">Отмена</button>
+        <li class="specimen" data-id="${word.id}">
+          <div class="specimen-bar"></div>
+          <div class="specimen-body">
+            <div class="form">
+              <div class="field">
+                <label class="field-label">Слово</label>
+                <input type="text" class="edit-text" value="${escapeHtml(word.text)}" />
+              </div>
+              <div class="field">
+                <label class="field-label">Значение</label>
+                <input type="text" class="edit-meaning" value="${escapeHtml(word.meaning)}" />
+              </div>
+              <div class="field">
+                <label class="field-label">Пример</label>
+                <input type="text" class="edit-example" value="${escapeHtml(word.example || "")}" />
+              </div>
+              <div class="field">
+                <label class="field-label">Категория</label>
+                <select class="edit-category">
+                  <option value="">Без категории</option>
+                  ${state.categories.map(c => `<option value="${c.id}" ${c.id === word.categoryId ? "selected" : ""}>${escapeHtml(c.name)}</option>`).join("")}
+                </select>
+              </div>
+              <div class="actions">
+                <button class="save-btn btn btn-primary" data-id="${word.id}">Сохранить</button>
+                <button class="cancel-btn btn btn-ghost" data-id="${word.id}" type="button">Отмена</button>
+              </div>
             </div>
           </div>
         </li>
@@ -82,17 +92,25 @@ function render(app, state) {
     }
 
     const catName = categoryName(state, word.categoryId);
+    const due = isDue(word);
 
     return `
-      <li class="word-card" data-id="${word.id}">
-        <p class="card-word">${escapeHtml(word.text)}</p>
-        <p class="card-meaning">${escapeHtml(word.meaning)}</p>
-        ${word.example ? `<p class="card-example">«${escapeHtml(word.example)}»</p>` : ""}
-        ${catName ? `<p class="badge">${escapeHtml(catName)}</p>` : ""}
-        <p class="progress">Повторений: ${word.reviewCount}</p>
-        <div class="form-actions">
-          <button class="edit-btn" data-id="${word.id}">Изменить</button>
-          <button class="delete-btn" data-id="${word.id}">Удалить</button>
+      <li class="specimen" data-id="${word.id}" data-strength="${strengthOf(word)}">
+        <div class="specimen-bar"></div>
+        <div class="specimen-body">
+          <div class="specimen-eyebrow">
+            <span>${catName ? escapeHtml(catName) : "Без категории"}</span>
+            <span>·</span>
+            <span>${word.reviewCount}× повторено</span>
+            ${due ? `<span class="chip chip-due">Пора повторить</span>` : ""}
+          </div>
+          <p class="specimen-word">${escapeHtml(word.text)}</p>
+          <p class="specimen-meaning">${escapeHtml(word.meaning)}</p>
+          ${word.example ? `<p class="specimen-example">«${escapeHtml(word.example)}»</p>` : ""}
+          <div class="specimen-actions">
+            <button class="edit-btn btn-text" data-id="${word.id}">Изменить</button>
+            <button class="delete-btn btn-danger-text" data-id="${word.id}">Удалить</button>
+          </div>
         </div>
       </li>
     `;
@@ -100,29 +118,38 @@ function render(app, state) {
 
   app.innerHTML = `
     <div class="page">
-      <h2>Мои слова</h2>
-      ${state.error ? `<p class="error">${escapeHtml(state.error)}</p>` : ""}
+      <span class="masthead-mark">Wordflow</span>
+      <h1 class="headline" style="margin-top: 18px;">Все слова</h1>
+      <p class="meta-line">${state.words.length} слов${state.words.length === 1 ? "о" : ""} в коллекции</p>
+
+      ${state.error ? `<p class="error-banner">${escapeHtml(state.error)}</p>` : ""}
 
       ${state.categories.length > 0 ? `
-        <div class="category-manager">
+        <div class="chip-row">
           ${state.categories.map(c => `
-            <span class="badge badge-removable">
+            <span class="chip">
               ${escapeHtml(c.name)}
-              <button class="delete-category-btn" data-id="${c.id}" title="Удалить категорию" aria-label="Удалить категорию ${escapeHtml(c.name)}">×</button>
+              <button class="chip-remove delete-category-btn" data-id="${c.id}" title="Удалить категорию" aria-label="Удалить категорию ${escapeHtml(c.name)}">×</button>
             </span>
           `).join("")}
         </div>
       ` : ""}
 
-      ${state.words.length === 0 ? "<p>Слов пока нет.</p>" : `<ul class="word-list">${itemsHtml}</ul>`}
-      <div class="form-actions">
-        <button id="addBtn">Добавить слово</button>
-        <button id="back">На главную</button>
+      ${state.words.length === 0 ? `
+        <div class="empty-state">
+          <p>Коллекция пуста. Добавьте первое слово, чтобы начать наблюдения.</p>
+          <button id="addBtn" class="btn btn-primary">Добавить слово</button>
+        </div>
+      ` : `<ul class="specimen-list">${itemsHtml}</ul>`}
+
+      <div class="actions">
+        ${state.words.length > 0 ? `<button id="addBtn" class="btn btn-ghost">Добавить слово</button>` : ""}
+        <button id="back" class="btn btn-ghost">На главную</button>
       </div>
     </div>
   `;
 
-  document.getElementById("addBtn").onclick = () => navigate("/add");
+  document.getElementById("addBtn")?.addEventListener("click", () => navigate("/add"));
   document.getElementById("back").onclick = () => navigate("/");
 
   app.querySelectorAll(".delete-category-btn").forEach(btn => {

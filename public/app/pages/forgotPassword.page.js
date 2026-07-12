@@ -9,27 +9,31 @@ export function renderForgotPassword() {
 
 function render(app, message, errorMessage) {
   app.innerHTML = `
-    <div class="page">
-      <h1>WordFlow</h1>
-      <h2>Восстановление пароля</h2>
+    <div class="auth-shell">
+      <div class="auth-card">
+        <span class="auth-mark">Wordflow</span>
+        <h1 class="headline">Восстановление пароля</h1>
 
-      ${errorMessage ? `<p class="error">${escapeHtml(errorMessage)}</p>` : ""}
-      ${message ? `<p>${escapeHtml(message)}</p>` : ""}
+        ${errorMessage ? `<p class="error-banner">${escapeHtml(errorMessage)}</p>` : ""}
+        ${message ? `<p class="notice-banner">${escapeHtml(message)}</p>` : ""}
 
-      ${!message ? `
-        <form id="forgotForm" class="form">
-          <label>
-            Email
-            <input type="email" id="email" required autocomplete="email" />
-          </label>
+        ${!message ? `
+          <form id="forgotForm" class="form">
+            <div class="field">
+              <label class="field-label" for="email">Email</label>
+              <input type="email" id="email" required autocomplete="email" />
+            </div>
 
-          <div class="form-actions">
-            <button type="submit" id="submitBtn">Отправить ссылку</button>
-          </div>
-        </form>
-      ` : ""}
+            <div class="actions">
+              <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%;">Отправить ссылку</button>
+            </div>
+          </form>
+        ` : ""}
 
-      <p><a href="/login" id="toLogin">Вернуться ко входу</a></p>
+        <div class="auth-links">
+          <a href="/login" id="toLogin">Вернуться ко входу</a>
+        </div>
+      </div>
     </div>
   `;
 
@@ -46,7 +50,7 @@ function render(app, message, errorMessage) {
 
     const submitBtn = document.getElementById("submitBtn");
     submitBtn.disabled = true;
-    submitBtn.textContent = "Отправка...";
+    submitBtn.textContent = "Отправляем…";
 
     const email = document.getElementById("email").value.trim();
 

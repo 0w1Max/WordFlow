@@ -7,8 +7,7 @@ export async function renderAddWord() {
 
   app.innerHTML = `
     <div class="page">
-      <h2>Добавить слово</h2>
-      <p>Загрузка категорий...</p>
+      <p class="loading-line">Открываем категории…</p>
     </div>
   `;
 
@@ -31,47 +30,49 @@ function renderForm(app, categories, errorMessage = "", selectedCategoryId = "")
 
   app.innerHTML = `
     <div class="page">
-      <h2>Добавить слово</h2>
+      <span class="masthead-mark">Wordflow</span>
+      <h1 class="headline" style="margin-top: 18px;">Новый экземпляр</h1>
+      <p class="meta-line">Слово, значение и пример — коллекция начинается с одной записи.</p>
 
-      ${errorMessage ? `<p class="error">${escapeHtml(errorMessage)}</p>` : ""}
+      ${errorMessage ? `<p class="error-banner">${escapeHtml(errorMessage)}</p>` : ""}
 
       <form id="addWordForm" class="form">
-        <label>
-          Слово *
+        <div class="field">
+          <label class="field-label" for="text">Слово *</label>
           <input type="text" id="text" required autocomplete="off" />
-        </label>
+        </div>
 
-        <label>
-          Значение *
+        <div class="field">
+          <label class="field-label" for="meaning">Значение *</label>
           <input type="text" id="meaning" required autocomplete="off" />
-        </label>
+        </div>
 
-        <label>
-          Пример использования
+        <div class="field">
+          <label class="field-label" for="example">Пример использования</label>
           <input type="text" id="example" autocomplete="off" />
-        </label>
+        </div>
 
-        <label>
-          Категория
+        <div class="field">
+          <label class="field-label" for="categoryId">Категория</label>
           <select id="categoryId">
             <option value="">Без категории</option>
             ${categoryOptions}
           </select>
-        </label>
+        </div>
 
-        <div class="form-actions">
-          <button type="submit" id="submitBtn">Сохранить</button>
-          <button type="button" id="back">Назад</button>
+        <div class="actions">
+          <button type="submit" id="submitBtn" class="btn btn-primary">Сохранить слово</button>
+          <button type="button" id="back" class="btn btn-ghost">Назад</button>
         </div>
       </form>
 
-      <details class="new-category">
-        <summary>+ Новая категория</summary>
-        <div class="form-actions">
+      <details class="category-drawer">
+        <summary>Новая категория</summary>
+        <div class="actions">
           <input type="text" id="newCategoryName" placeholder="Название категории" />
-          <button type="button" id="createCategoryBtn">Создать</button>
+          <button type="button" id="createCategoryBtn" class="btn btn-ghost">Создать</button>
         </div>
-        <p id="categoryError" class="error" hidden></p>
+        <p id="categoryError" class="error-banner" style="margin-top: 12px;" hidden></p>
       </details>
     </div>
   `;
@@ -101,7 +102,7 @@ function renderForm(app, categories, errorMessage = "", selectedCategoryId = "")
 
     const submitBtn = document.getElementById("submitBtn");
     submitBtn.disabled = true;
-    submitBtn.textContent = "Сохранение...";
+    submitBtn.textContent = "Сохраняем…";
 
     const text = document.getElementById("text").value.trim();
     const meaning = document.getElementById("meaning").value.trim();
