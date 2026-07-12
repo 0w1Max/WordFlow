@@ -4,10 +4,10 @@ import { escapeHtml } from "../core/dom.js";
 
 export function renderForgotPassword() {
   const app = document.getElementById("app");
-  render(app, "", "");
+  render(app, "", "", "");
 }
 
-function render(app, message, errorMessage) {
+function render(app, message, errorMessage, emailValue) {
   app.innerHTML = `
     <div class="auth-shell">
       <div class="auth-card">
@@ -21,7 +21,7 @@ function render(app, message, errorMessage) {
           <form id="forgotForm" class="form">
             <div class="field">
               <label class="field-label" for="email">Email</label>
-              <input type="email" id="email" required autocomplete="email" />
+              <input type="email" id="email" required autocomplete="email" value="${escapeHtml(emailValue)}" />
             </div>
 
             <div class="actions">
@@ -58,9 +58,9 @@ function render(app, message, errorMessage) {
       const res = await post("/auth/forgot-password", { email });
       // Бэкенд намеренно отвечает одинаково успешно независимо от того,
       // существует такой email или нет — это защита от перебора адресов.
-      render(app, res.message, "");
+      render(app, res.message, "", email);
     } catch (err) {
-      render(app, "", err.message);
+      render(app, "", err.message, email);
     }
   };
 }

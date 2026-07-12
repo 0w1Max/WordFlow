@@ -23,9 +23,9 @@ export async function renderAddWord() {
   renderForm(app, categories);
 }
 
-function renderForm(app, categories, errorMessage = "", selectedCategoryId = "") {
+function renderForm(app, categories) {
   const categoryOptions = categories
-    .map(c => `<option value="${c.id}" ${String(c.id) === String(selectedCategoryId) ? "selected" : ""}>${escapeHtml(c.name)}</option>`)
+    .map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`)
     .join("");
 
   app.innerHTML = `
@@ -34,7 +34,7 @@ function renderForm(app, categories, errorMessage = "", selectedCategoryId = "")
       <h1 class="headline" style="margin-top: 18px;">Новый экземпляр</h1>
       <p class="meta-line">Слово, значение и пример — коллекция начинается с одной записи.</p>
 
-      ${errorMessage ? `<p class="error-banner">${escapeHtml(errorMessage)}</p>` : ""}
+      <div id="formError"></div>
 
       <form id="addWordForm" class="form">
         <div class="field">
@@ -81,8 +81,15 @@ function renderForm(app, categories, errorMessage = "", selectedCategoryId = "")
     navigate("/");
   };
 
+  // ВАЖНО: создание категории раньше вызывало полную перерисовку формы
+  // (renderForm(...)), которая стирала уже введённые слово/значение/пример —
+  // человек терял заполненные данные только потому, что попутно завёл
+  // категорию. Теперь новый <option> просто добавляется в существующий
+  // <select> точечно, ни один другой элемент формы не трогается и не
+  // перерисовывается.
   document.getElementById("createCategoryBtn").onclick = async () => {
-    const name = document.getElementById("newCategoryName").value.trim();
+    const nameInput = document.getElementById("newCategoryName");
+    const name = nameInput.value.trim();
     const categoryError = document.getElementById("categoryError");
 
     if (!name) return;
@@ -90,7 +97,16 @@ function renderForm(app, categories, errorMessage = "", selectedCategoryId = "")
     try {
       const category = await post("/categories", { name });
       categories = [...categories, category];
-      renderForm(app, categories, errorMessage, category.id);
+
+      const select = document.getElementById("categoryId");
+      const option = document.createElement("option");
+      option.value = category.id;
+      option.textContent = category.name;
+      select.appendChild(option);
+      select.value = category.id;
+
+      nameInput.value = "";
+      categoryError.hidden = true;
     } catch (err) {
       categoryError.textContent = err.message;
       categoryError.hidden = false;
@@ -119,10 +135,18 @@ function renderForm(app, categories, errorMessage = "", selectedCategoryId = "")
 
       navigate("/");
     } catch (err) {
-      // Сюда попадёт как сетевая ошибка, так и ошибка валидации от
-      // сервера (например, "Поле "Слово" обязательно") — api.js уже
-      // достаёт текст из { error: "..." }, так что показываем его как есть.
-      renderForm(app, categories, err.message, categoryId);
+      // ВАЖНО: раньше ошибка валидации перерисовывала всю форму заново —
+      // человек, опечатавшийся в одном поле, терял и все остальные.
+      // Теперь баннер ошибки просто вставляется/обновляется на месте,
+      // сама форма и всё, что в неё введено, не трогается.
+      showFormError(err.message);
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Сохранить слово";
     }
   };
+}
+
+function showFormError(message) {
+  document.getElementById("formError").innerHTML =
+    `<p class="error-banner">${escapeHtml(message)}</p>`;
 }

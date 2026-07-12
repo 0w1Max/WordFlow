@@ -4,10 +4,13 @@ import { escapeHtml } from "../core/dom.js";
 
 export function renderRegister() {
   const app = document.getElementById("app");
-  render(app, "");
+  render(app, "", "");
 }
 
-function render(app, errorMessage) {
+// emailValue сохраняет введённый email при повторной отрисовке после ошибки
+// (например, "такой email уже занят") — без этого пришлось бы вводить его
+// заново только из-за проблемы в отдельном поле.
+function render(app, errorMessage, emailValue) {
   app.innerHTML = `
     <div class="auth-shell">
       <div class="auth-card">
@@ -19,7 +22,7 @@ function render(app, errorMessage) {
         <form id="registerForm" class="form">
           <div class="field">
             <label class="field-label" for="email">Email</label>
-            <input type="email" id="email" required autocomplete="email" />
+            <input type="email" id="email" required autocomplete="email" value="${escapeHtml(emailValue)}" />
           </div>
 
           <div class="field">
@@ -58,7 +61,7 @@ function render(app, errorMessage) {
       await post("/auth/register", { email, password });
       navigate("/");
     } catch (err) {
-      render(app, err.message);
+      render(app, err.message, email);
     }
   };
 }

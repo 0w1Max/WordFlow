@@ -4,10 +4,14 @@ import { escapeHtml } from "../core/dom.js";
 
 export function renderLogin() {
   const app = document.getElementById("app");
-  render(app, "");
+  render(app, "", "");
 }
 
-function render(app, errorMessage) {
+// emailValue сохраняет введённый email при повторной отрисовке после ошибки —
+// раньше форма перерисовывалась с нуля и человеку приходилось вводить email
+// заново, потеряв всего лишь из-за опечатки в пароле. Пароль сознательно не
+// восстанавливаем — это стандартная практика после неудачного входа.
+function render(app, errorMessage, emailValue) {
   app.innerHTML = `
     <div class="auth-shell">
       <div class="auth-card">
@@ -19,7 +23,7 @@ function render(app, errorMessage) {
         <form id="loginForm" class="form">
           <div class="field">
             <label class="field-label" for="email">Email</label>
-            <input type="email" id="email" required autocomplete="email" />
+            <input type="email" id="email" required autocomplete="email" value="${escapeHtml(emailValue)}" />
           </div>
 
           <div class="field">
@@ -64,7 +68,7 @@ function render(app, errorMessage) {
       await post("/auth/login", { email, password });
       navigate("/");
     } catch (err) {
-      render(app, err.message);
+      render(app, err.message, email);
     }
   };
 }

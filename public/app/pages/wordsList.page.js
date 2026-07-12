@@ -54,9 +54,40 @@ function isDue(word) {
   return word.nextReviewAt && new Date(word.nextReviewAt) <= new Date();
 }
 
+// ВАЖНО: если пользователь редактирует слово A и в этот момент удаляет
+// категорию или другое слово B, происходит render(app, state) заново —
+// без этого шага несохранённый черновик редактирования A стирался бы,
+// хотя действие вообще к A не относилось. Здесь мы забираем то, что
+// реально введено в открытых полях, и кладём как "черновик" на сам объект
+// слова — render() ниже подставит именно черновик, если он есть.
+function captureEditingDraft(app, state) {
+  const editingWord = state.words.find(w => w.editing);
+  if (!editingWord) return;
+
+  const card = app.querySelector(`li[data-id="${editingWord.id}"]`);
+  if (!card) return;
+
+  editingWord.draftText = card.querySelector(".edit-text")?.value ?? editingWord.text;
+  editingWord.draftMeaning = card.querySelector(".edit-meaning")?.value ?? editingWord.meaning;
+  editingWord.draftExample = card.querySelector(".edit-example")?.value ?? (editingWord.example || "");
+  editingWord.draftCategoryId = card.querySelector(".edit-category")?.value ?? "";
+}
+
+function clearDraft(word) {
+  delete word.draftText;
+  delete word.draftMeaning;
+  delete word.draftExample;
+  delete word.draftCategoryId;
+}
+
 function render(app, state) {
   const itemsHtml = state.words.map(word => {
     if (word.editing) {
+      const text = word.draftText ?? word.text;
+      const meaning = word.draftMeaning ?? word.meaning;
+      const example = word.draftExample ?? (word.example || "");
+      const categoryId = word.draftCategoryId !== undefined ? word.draftCategoryId : (word.categoryId ?? "");
+
       return `
         <li class="specimen" data-id="${word.id}">
           <div class="specimen-bar"></div>
@@ -64,21 +95,21 @@ function render(app, state) {
             <div class="form">
               <div class="field">
                 <label class="field-label">Слово</label>
-                <input type="text" class="edit-text" value="${escapeHtml(word.text)}" />
+                <input type="text" class="edit-text" value="${escapeHtml(text)}" />
               </div>
               <div class="field">
                 <label class="field-label">Значение</label>
-                <input type="text" class="edit-meaning" value="${escapeHtml(word.meaning)}" />
+                <input type="text" class="edit-meaning" value="${escapeHtml(meaning)}" />
               </div>
               <div class="field">
                 <label class="field-label">Пример</label>
-                <input type="text" class="edit-example" value="${escapeHtml(word.example || "")}" />
+                <input type="text" class="edit-example" value="${escapeHtml(example)}" />
               </div>
               <div class="field">
                 <label class="field-label">Категория</label>
                 <select class="edit-category">
                   <option value="">Без категории</option>
-                  ${state.categories.map(c => `<option value="${c.id}" ${c.id === word.categoryId ? "selected" : ""}>${escapeHtml(c.name)}</option>`).join("")}
+                  ${state.categories.map(c => `<option value="${c.id}" ${String(c.id) === String(categoryId) ? "selected" : ""}>${escapeHtml(c.name)}</option>`).join("")}
                 </select>
               </div>
               <div class="actions">
@@ -160,6 +191,8 @@ function render(app, state) {
         return;
       }
 
+      captureEditingDraft(app, state);
+
       try {
         await del(`/categories/${id}`);
         state.categories = state.categories.filter(c => c.id !== id);
@@ -177,6 +210,7 @@ function render(app, state) {
 
   app.querySelectorAll(".edit-btn").forEach(btn => {
     btn.onclick = () => {
+      captureEditingDraft(app, state);
       const id = Number(btn.dataset.id);
       state.words = state.words.map(w => ({ ...w, editing: w.id === id }));
       render(app, state);
@@ -186,7 +220,12 @@ function render(app, state) {
   app.querySelectorAll(".cancel-btn").forEach(btn => {
     btn.onclick = () => {
       const id = Number(btn.dataset.id);
-      state.words = state.words.map(w => w.id === id ? { ...w, editing: false } : w);
+      state.words = state.words.map(w => {
+        if (w.id !== id) return w;
+        const cleared = { ...w, editing: false };
+        clearDraft(cleared);
+        return cleared;
+      });
       render(app, state);
     };
   });
@@ -226,6 +265,8 @@ function render(app, state) {
       if (!window.confirm("Удалить это слово? Действие необратимо.")) {
         return;
       }
+
+      captureEditingDraft(app, state);
 
       try {
         await del(`/words/${id}`);
