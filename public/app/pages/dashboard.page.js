@@ -22,10 +22,17 @@ export async function renderDashboard() {
         <div class="masthead">
           <span class="masthead-mark">Wordflow</span>
           <div class="masthead-user">
-            <span>${escapeHtml(user.email)}</span>
+            <span>${user.isGuest ? "Гость" : escapeHtml(user.email)}</span>
             <button id="logoutBtn" class="btn-text">Выйти</button>
           </div>
         </div>
+
+        ${user.isGuest ? `
+          <div class="guest-banner">
+            <span>Вы пробуете WordFlow как гость — данные сохранены в этом браузере. Зарегистрируйтесь, чтобы не потерять их при смене устройства.</span>
+            <button id="saveProgressBtn" class="btn btn-ghost">Сохранить прогресс</button>
+          </div>
+        ` : ""}
 
         <h1 class="headline">Ваша коллекция</h1>
         <p class="meta-line"><strong>${words.length}</strong> слов${wordSuffix(words.length)} собрано · <strong>${due.length}</strong> на сегодня</p>
@@ -43,12 +50,13 @@ export async function renderDashboard() {
     document.getElementById("reviewBtn").onclick = () => navigate("/review");
     document.getElementById("addBtn").onclick = () => navigate("/add");
     document.getElementById("wordsBtn").onclick = () => navigate("/words");
+    document.getElementById("saveProgressBtn")?.addEventListener("click", () => navigate("/save-progress"));
 
     document.getElementById("logoutBtn").onclick = async () => {
       try {
         await post("/auth/logout");
       } finally {
-        window.location.href = "/login";
+        window.location.href = "/";
       }
     };
 

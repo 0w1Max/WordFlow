@@ -7,7 +7,9 @@ const {
   logoutController,
   meController,
   forgotPasswordController,
-  resetPasswordController
+  resetPasswordController,
+  guestController,
+  claimController
 } = require('../controllers/authController');
 const { requireAuth } = require('../middleware/auth');
 const { authRateLimiter } = require('../middleware/rateLimiters');
@@ -18,5 +20,7 @@ router.post('/logout', logoutController);
 router.get('/me', requireAuth, meController);
 router.post('/forgot-password', authRateLimiter, forgotPasswordController);
 router.post('/reset-password', authRateLimiter, resetPasswordController);
+router.post('/guest', authRateLimiter, guestController);
+router.post('/claim', requireAuth, claimController);
 
 module.exports = router;

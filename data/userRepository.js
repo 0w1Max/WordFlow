@@ -8,6 +8,7 @@ function mapUserRow(row) {
   return {
     id: row.id,
     email: row.email,
+    isGuest: !!row.is_guest,
     createdAt: row.created_at
   };
 }
@@ -18,6 +19,22 @@ async function addUser(user) {
   const result = await client.execute({
     sql: 'INSERT INTO users (email, password_hash) VALUES (?, ?)',
     args: [user.email, user.passwordHash]
+  });
+
+  return getUserById(Number(result.lastInsertRowid));
+}
+
+// Гостевой аккаунт — обычная строка в users с is_guest=1 и сгенерированными
+// email/паролем, которыми никто никогда не будет входить руками. Дальше он
+// ничем не отличается от обычного пользователя: те же слова, категории,
+// тот же JWT в cookie — поэтому весь остальной код (words/categories) не
+// нужно было переписывать под "гостевой режим" отдельно.
+async function addGuestUser(email, passwordHash) {
+  await ensureReady();
+
+  const result = await client.execute({
+    sql: 'INSERT INTO users (email, password_hash, is_guest) VALUES (?, ?, 1)',
+    args: [email, passwordHash]
   });
 
   return getUserById(Number(result.lastInsertRowid));
@@ -88,12 +105,29 @@ async function updatePassword(userId, passwordHash) {
   });
 }
 
+// "Привязка" гостевого аккаунта к настоящему email/паролю — id пользователя
+// не меняется, поэтому все его слова и категории (которые ссылаются на этот
+// id) остаются на месте. Это и есть весь смысл гостевого режима: попробовать,
+// а затем не потерять то, что уже собрано.
+async function claimGuestUser(userId, { email, passwordHash }) {
+  await ensureReady();
+
+  await client.execute({
+    sql: 'UPDATE users SET email = ?, password_hash = ?, is_guest = 0 WHERE id = ?',
+    args: [email, passwordHash, userId]
+  });
+
+  return getUserById(userId);
+}
+
 module.exports = {
   addUser,
+  addGuestUser,
   getUserById,
   getUserRowByEmail,
   setResetToken,
   getUserRowByResetTokenHash,
   updatePassword,
+  claimGuestUser,
   mapUserRow
 };

@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { post } from "../core/api.js";
-import { escapeHtml } from "../core/dom.js";
+import { escapeHtml, passwordFieldHtml, attachPasswordToggles } from "../core/dom.js";
 
 export function renderLogin() {
   const app = document.getElementById("app");
@@ -26,10 +26,7 @@ function render(app, errorMessage, emailValue) {
             <input type="email" id="email" required autocomplete="email" value="${escapeHtml(emailValue)}" />
           </div>
 
-          <div class="field">
-            <label class="field-label" for="password">Пароль</label>
-            <input type="password" id="password" required autocomplete="current-password" />
-          </div>
+          ${passwordFieldHtml("password", "Пароль", 'required autocomplete="current-password"')}
 
           <div class="actions">
             <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%;">Войти</button>
@@ -49,6 +46,8 @@ function render(app, errorMessage, emailValue) {
     navigate("/register");
   };
 
+  attachPasswordToggles(app);
+
   document.getElementById("toForgot").onclick = (e) => {
     e.preventDefault();
     navigate("/forgot-password");
@@ -66,7 +65,7 @@ function render(app, errorMessage, emailValue) {
 
     try {
       await post("/auth/login", { email, password });
-      navigate("/");
+      navigate("/dashboard");
     } catch (err) {
       render(app, err.message, email);
     }

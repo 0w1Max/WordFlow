@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { post } from "../core/api.js";
-import { escapeHtml } from "../core/dom.js";
+import { escapeHtml, passwordFieldHtml, attachPasswordToggles } from "../core/dom.js";
 
 export function renderResetPassword() {
   const app = document.getElementById("app");
@@ -41,10 +41,7 @@ function render(app, token, errorMessage) {
         ${errorMessage ? `<p class="error-banner">${escapeHtml(errorMessage)}</p>` : ""}
 
         <form id="resetForm" class="form">
-          <div class="field">
-            <label class="field-label" for="password">Новый пароль (минимум 8 символов)</label>
-            <input type="password" id="password" required minlength="8" autocomplete="new-password" />
-          </div>
+          ${passwordFieldHtml("password", "Новый пароль (минимум 8 символов)", 'required minlength="8" autocomplete="new-password"')}
 
           <div class="actions">
             <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%;">Сохранить пароль</button>
@@ -53,6 +50,8 @@ function render(app, token, errorMessage) {
       </div>
     </div>
   `;
+
+  attachPasswordToggles(app);
 
   document.getElementById("resetForm").onsubmit = async (e) => {
     e.preventDefault();

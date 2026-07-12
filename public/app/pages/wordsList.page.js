@@ -22,7 +22,7 @@ export async function renderWordsList() {
         <div class="actions"><button id="back" class="btn btn-ghost">Назад</button></div>
       </div>
     `;
-    document.getElementById("back").onclick = () => navigate("/");
+    document.getElementById("back").onclick = () => navigate("/dashboard");
   }
 }
 
@@ -181,7 +181,7 @@ function render(app, state) {
   `;
 
   document.getElementById("addBtn")?.addEventListener("click", () => navigate("/add"));
-  document.getElementById("back").onclick = () => navigate("/");
+  document.getElementById("back").onclick = () => navigate("/dashboard");
 
   app.querySelectorAll(".delete-category-btn").forEach(btn => {
     btn.onclick = async () => {

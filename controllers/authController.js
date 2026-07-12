@@ -55,11 +55,35 @@ async function resetPasswordController(req, res) {
   res.json({ message: 'Пароль успешно изменён' });
 }
 
+// "Попробовать без регистрации" — создаёт обычный аккаунт с сгенерированными
+// email/паролем и сразу выдаёт ту же cookie-сессию, что и логин/регистрация.
+// Дальше гость ничем не отличается от обычного пользователя для остального
+// API (слова, категории и т.д.).
+async function guestController(req, res) {
+  const { user, token } = await authService.createGuestSession();
+
+  res.cookie(AUTH_COOKIE_NAME, token, COOKIE_OPTIONS);
+  res.status(201).json({ user });
+}
+
+// "Сохранить прогресс" — привязывает email/пароль к уже существующему
+// (гостевому) аккаунту вместо создания нового, поэтому все слова и
+// категории, собранные как гость, остаются на месте.
+async function claimController(req, res) {
+  const { email, password } = req.body;
+  const { user, token } = await authService.claimAccount(req.user.id, { email, password });
+
+  res.cookie(AUTH_COOKIE_NAME, token, COOKIE_OPTIONS);
+  res.json({ user });
+}
+
 module.exports = {
   registerController,
   loginController,
   logoutController,
   meController,
   forgotPasswordController,
-  resetPasswordController
+  resetPasswordController,
+  guestController,
+  claimController
 };

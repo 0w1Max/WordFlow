@@ -78,7 +78,7 @@ function renderForm(app, categories) {
   `;
 
   document.getElementById("back").onclick = () => {
-    navigate("/");
+    navigate("/dashboard");
   };
 
   // ВАЖНО: создание категории раньше вызывало полную перерисовку формы
@@ -133,7 +133,7 @@ function renderForm(app, categories) {
         categoryId: categoryId ? Number(categoryId) : null
       });
 
-      navigate("/");
+      navigate("/dashboard");
     } catch (err) {
       // ВАЖНО: раньше ошибка валидации перерисовывала всю форму заново —
       // человек, опечатавшийся в одном поле, терял и все остальные.

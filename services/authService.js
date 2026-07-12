@@ -16,7 +16,7 @@ const SALT_ROUNDS = 10;
 const RESET_TOKEN_TTL_MS = 60 * 60 * 1000; // 1 час
 
 function signToken(user) {
-  return jwt.sign({ sub: user.id, email: user.email }, JWT_SECRET, {
+  return jwt.sign({ sub: user.id, email: user.email, isGuest: !!user.isGuest }, JWT_SECRET, {
     expiresIn: JWT_EXPIRES_IN
   });
 }
@@ -116,4 +116,43 @@ async function resetPassword(token, newPassword) {
   await userRepository.updatePassword(row.id, passwordHash);
 }
 
-module.exports = { register, login, requestPasswordReset, resetPassword };
+// Гостевая сессия — обычный аккаунт с сгенерированными email/паролем,
+// которыми никто и никогда не будет пытаться войти. Дальше это такой же
+// пользователь, как и любой другой: тот же JWT в той же httpOnly-cookie,
+// то же ограничение по user_id на все слова и категории.
+async function createGuestSession() {
+  const guestEmail = `guest-${crypto.randomBytes(6).toString('hex')}@wordflow.local`;
+  const randomPassword = crypto.randomBytes(24).toString('hex');
+  const passwordHash = await bcrypt.hash(randomPassword, SALT_ROUNDS);
+
+  const user = await userRepository.addGuestUser(guestEmail, passwordHash);
+  return { user, token: signToken(user) };
+}
+
+// "Привязка" гостевого аккаунта к настоящему email/паролю. id пользователя
+// не меняется — все уже собранные слова и категории просто продолжают
+// ссылаться на тот же user_id, ничего не переносится и не теряется.
+async function claimAccount(userId, { email, password }) {
+  validateCredentials({ email, password });
+
+  const normalizedEmail = email.trim().toLowerCase();
+  const existing = await userRepository.getUserRowByEmail(normalizedEmail);
+
+  if (existing && existing.id !== userId) {
+    throw new ConflictError('Пользователь с таким email уже зарегистрирован');
+  }
+
+  const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+  const user = await userRepository.claimGuestUser(userId, { email: normalizedEmail, passwordHash });
+
+  return { user, token: signToken(user) };
+}
+
+module.exports = {
+  register,
+  login,
+  requestPasswordReset,
+  resetPassword,
+  createGuestSession,
+  claimAccount
+};

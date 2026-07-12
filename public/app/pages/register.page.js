@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { post } from "../core/api.js";
-import { escapeHtml } from "../core/dom.js";
+import { escapeHtml, passwordFieldHtml, attachPasswordToggles } from "../core/dom.js";
 
 export function renderRegister() {
   const app = document.getElementById("app");
@@ -25,10 +25,7 @@ function render(app, errorMessage, emailValue) {
             <input type="email" id="email" required autocomplete="email" value="${escapeHtml(emailValue)}" />
           </div>
 
-          <div class="field">
-            <label class="field-label" for="password">Пароль (минимум 8 символов)</label>
-            <input type="password" id="password" required minlength="8" autocomplete="new-password" />
-          </div>
+          ${passwordFieldHtml("password", "Пароль (минимум 8 символов)", 'required minlength="8" autocomplete="new-password"')}
 
           <div class="actions">
             <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%;">Создать аккаунт</button>
@@ -47,6 +44,8 @@ function render(app, errorMessage, emailValue) {
     navigate("/login");
   };
 
+  attachPasswordToggles(app);
+
   document.getElementById("registerForm").onsubmit = async (e) => {
     e.preventDefault();
 
@@ -59,7 +58,7 @@ function render(app, errorMessage, emailValue) {
 
     try {
       await post("/auth/register", { email, password });
-      navigate("/");
+      navigate("/dashboard");
     } catch (err) {
       render(app, err.message, email);
     }

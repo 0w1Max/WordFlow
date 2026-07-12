@@ -15,7 +15,7 @@ function requireAuth(req, res, next) {
 
   try {
     const payload = jwt.verify(token, JWT_SECRET);
-    req.user = { id: payload.sub, email: payload.email };
+    req.user = { id: payload.sub, email: payload.email, isGuest: !!payload.isGuest };
     next();
   } catch {
     next(new UnauthorizedError('Сессия истекла или недействительна, войдите заново'));

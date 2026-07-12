@@ -15,6 +15,7 @@ const CREATE_USERS_TABLE = `
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
+    is_guest INTEGER NOT NULL DEFAULT 0,
     reset_token_hash TEXT,
     reset_token_expires_at DATETIME,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -65,6 +66,7 @@ const SOFT_MIGRATIONS = [
   'ALTER TABLE words ADD COLUMN ease_factor REAL DEFAULT 2.5',
   'ALTER TABLE users ADD COLUMN reset_token_hash TEXT',
   'ALTER TABLE users ADD COLUMN reset_token_expires_at DATETIME',
+  'ALTER TABLE users ADD COLUMN is_guest INTEGER NOT NULL DEFAULT 0',
   // Раньше не было пользователей, все слова "жили" под условным user_id=1.
   // Как только зарегистрируется настоящий первый пользователь, старые
   // записи можно будет вручную перепривязать по email — это осознанно

@@ -24,7 +24,7 @@ export async function renderReview() {
         <div class="actions"><button id="back" class="btn btn-ghost">Назад</button></div>
       </div>
     `;
-    document.getElementById("back").onclick = () => navigate("/");
+    document.getElementById("back").onclick = () => navigate("/dashboard");
   }
 }
 
@@ -57,7 +57,7 @@ function render(app, state) {
       </div>
     `;
     document.getElementById("addBtn").onclick = () => navigate("/add");
-    document.getElementById("back").onclick = () => navigate("/");
+    document.getElementById("back").onclick = () => navigate("/dashboard");
     return;
   }
 
@@ -70,7 +70,7 @@ function render(app, state) {
         <div class="actions"><button id="back" class="btn btn-primary">На главную</button></div>
       </div>
     `;
-    document.getElementById("back").onclick = () => navigate("/");
+    document.getElementById("back").onclick = () => navigate("/dashboard");
     return;
   }
 
@@ -104,7 +104,7 @@ function render(app, state) {
     </div>
   `;
 
-  document.getElementById("back").onclick = () => navigate("/");
+  document.getElementById("back").onclick = () => navigate("/dashboard");
 
   if (!state.revealed) {
     document.getElementById("revealBtn").onclick = () => {

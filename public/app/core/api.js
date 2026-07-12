@@ -63,3 +63,18 @@ export function put(url, data) {
 export function del(url) {
   return request(url, { method: "DELETE" });
 }
+
+// Обычный get("/auth/me") при 401 сам уводит на /login (см. выше) — это
+// правильно внутри приложения, но не на публичной лендинг-странице, где
+// "не залогинен" — совершенно нормальное состояние, а не ошибка. Поэтому
+// здесь отдельный, "тихий" запрос в обход общего request().
+export async function checkAuth() {
+  try {
+    const res = await fetch(BASE_URL + "/auth/me", { credentials: "same-origin" });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.user;
+  } catch {
+    return null;
+  }
+}
