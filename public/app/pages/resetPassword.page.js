@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { post } from "../core/api.js";
-import { escapeHtml, passwordFieldHtml, attachPasswordToggles } from "../core/dom.js";
+import { escapeHtml, passwordFieldHtml, attachPasswordToggles, brandMark } from "../core/dom.js";
 
 export function renderResetPassword() {
   const app = document.getElementById("app");
@@ -13,7 +13,7 @@ export function renderResetPassword() {
     app.innerHTML = `
       <div class="auth-shell">
         <div class="auth-card">
-          <span class="auth-mark">Wordflow</span>
+          ${brandMark("auth")}
           <p class="error-banner">Ссылка неполная — отсутствует токен сброса пароля.</p>
           <div class="auth-links">
             <a href="/login" id="toLogin">Вернуться ко входу</a>
@@ -35,7 +35,7 @@ function render(app, token, errorMessage) {
   app.innerHTML = `
     <div class="auth-shell">
       <div class="auth-card">
-        <span class="auth-mark">Wordflow</span>
+        ${brandMark("auth")}
         <h1 class="headline">Новый пароль</h1>
 
         ${errorMessage ? `<p class="error-banner">${escapeHtml(errorMessage)}</p>` : ""}

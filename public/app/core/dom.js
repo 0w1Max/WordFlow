@@ -6,6 +6,18 @@ export function escapeHtml(str) {
   return div.innerHTML;
 }
 
+function sprigIcon() {
+  return `<svg width="15" height="15" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.3"/><path d="M8 12V5M8 5C6.5 5 5.5 6.2 5.5 7.8M8 5C9.5 5 10.6 6.3 10.2 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>`;
+}
+
+// Фирменный знак WordFlow — штамп-«клеймо» коллекционера образцов вместо
+// обычной точки. Используется в шапке каждой страницы и на auth-экранах,
+// поэтому вынесен в один переиспользуемый хелпер.
+export function brandMark(variant = "masthead") {
+  const cls = variant === "auth" ? "auth-mark" : "masthead-mark";
+  return `<span class="${cls}"><span class="brand-icon">${sprigIcon()}</span>Wordflow</span>`;
+}
+
 function eyeIcon() {
   return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>`;
 }

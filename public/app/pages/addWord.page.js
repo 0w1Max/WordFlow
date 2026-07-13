@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { get, post } from "../core/api.js";
-import { escapeHtml } from "../core/dom.js";
+import { escapeHtml, brandMark } from "../core/dom.js";
 
 export async function renderAddWord() {
   const app = document.getElementById("app");
@@ -30,7 +30,7 @@ function renderForm(app, categories) {
 
   app.innerHTML = `
     <div class="page">
-      <span class="masthead-mark">Wordflow</span>
+      ${brandMark()}
       <h1 class="headline" style="margin-top: 18px;">Новый экземпляр</h1>
       <p class="meta-line">Слово, значение и пример — коллекция начинается с одной записи.</p>
 

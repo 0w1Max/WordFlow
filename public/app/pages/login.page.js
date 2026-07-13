@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { post } from "../core/api.js";
-import { escapeHtml, passwordFieldHtml, attachPasswordToggles } from "../core/dom.js";
+import { escapeHtml, passwordFieldHtml, attachPasswordToggles, brandMark } from "../core/dom.js";
 
 export function renderLogin() {
   const app = document.getElementById("app");
@@ -15,7 +15,7 @@ function render(app, errorMessage, emailValue) {
   app.innerHTML = `
     <div class="auth-shell">
       <div class="auth-card">
-        <span class="auth-mark">Wordflow</span>
+        ${brandMark("auth")}
         <h1 class="headline">Вход</h1>
 
         ${errorMessage ? `<p class="error-banner">${escapeHtml(errorMessage)}</p>` : ""}

@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { get, post } from "../core/api.js";
-import { escapeHtml } from "../core/dom.js";
+import { escapeHtml, brandMark } from "../core/dom.js";
 
 export async function renderReview() {
   const app = document.getElementById("app");
@@ -19,7 +19,7 @@ export async function renderReview() {
   } catch (e) {
     app.innerHTML = `
       <div class="page">
-        <span class="masthead-mark">Wordflow</span>
+        ${brandMark()}
         <p class="error-banner" style="margin-top: 20px;">Не удалось загрузить слова: ${escapeHtml(e.message)}</p>
         <div class="actions"><button id="back" class="btn btn-ghost">Назад</button></div>
       </div>
@@ -45,7 +45,7 @@ function render(app, state) {
   if (words.length === 0) {
     app.innerHTML = `
       <div class="page">
-        <span class="masthead-mark">Wordflow</span>
+        ${brandMark()}
         <h1 class="headline" style="margin-top: 18px;">Повторение</h1>
         <div class="empty-state">
           <p>На сегодня наблюдений нет — всё уже показано по расписанию.</p>
@@ -64,7 +64,7 @@ function render(app, state) {
   if (index >= words.length) {
     app.innerHTML = `
       <div class="page">
-        <span class="masthead-mark">Wordflow</span>
+        ${brandMark()}
         <h1 class="headline" style="margin-top: 18px;">Повторение завершено</h1>
         <p class="meta-line">Пройдено <strong>${words.length}</strong> · вспомнено <strong>${state.reviewedCount}</strong></p>
         <div class="actions"><button id="back" class="btn btn-primary">На главную</button></div>
@@ -78,7 +78,7 @@ function render(app, state) {
 
   app.innerHTML = `
     <div class="page">
-      <span class="masthead-mark">Wordflow</span>
+      ${brandMark()}
       <p class="flashcard-progress" style="margin-top: 18px;">Слово ${index + 1} из ${words.length}</p>
 
       <div class="flashcard">

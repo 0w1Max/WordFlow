@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { get, post } from "../core/api.js";
-import { escapeHtml, passwordFieldHtml, attachPasswordToggles } from "../core/dom.js";
+import { escapeHtml, passwordFieldHtml, attachPasswordToggles, brandMark } from "../core/dom.js";
 
 export async function renderSaveProgress() {
   const app = document.getElementById("app");
@@ -24,7 +24,7 @@ function render(app, errorMessage) {
   app.innerHTML = `
     <div class="auth-shell">
       <div class="auth-card">
-        <span class="auth-mark">Wordflow</span>
+        ${brandMark("auth")}
         <h1 class="headline">Сохранить прогресс</h1>
         <p class="meta-line" style="margin-bottom: 20px;">
           Привяжите email и пароль к этому аккаунту — все уже собранные слова останутся на месте.

@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { post } from "../core/api.js";
-import { escapeHtml } from "../core/dom.js";
+import { escapeHtml, brandMark } from "../core/dom.js";
 
 export function renderForgotPassword() {
   const app = document.getElementById("app");
@@ -11,7 +11,7 @@ function render(app, message, errorMessage, emailValue) {
   app.innerHTML = `
     <div class="auth-shell">
       <div class="auth-card">
-        <span class="auth-mark">Wordflow</span>
+        ${brandMark("auth")}
         <h1 class="headline">Восстановление пароля</h1>
 
         ${errorMessage ? `<p class="error-banner">${escapeHtml(errorMessage)}</p>` : ""}

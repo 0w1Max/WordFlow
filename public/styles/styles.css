@@ -123,13 +123,10 @@ a {
   gap: 8px;
 }
 
-.masthead-mark::before {
-  content: "";
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--color-moss);
-  display: inline-block;
+.brand-icon {
+  color: var(--color-moss);
+  display: inline-flex;
+  flex-shrink: 0;
 }
 
 .masthead-user {
@@ -586,15 +583,6 @@ a {
   margin-bottom: 18px;
 }
 
-.auth-mark::before {
-  content: "";
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--color-moss);
-  display: inline-block;
-}
-
 .auth-card .headline {
   font-size: 24px;
   margin-bottom: 20px;
@@ -909,4 +897,155 @@ a {
 /* ---------- More tactile buttons, site-wide ---------- */
 .btn:hover:not(:disabled) {
   transform: translateY(-1px);
+}
+
+/* ---------- Scroll reveal ---------- */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 620ms var(--ease-out), transform 620ms var(--ease-out);
+}
+
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- Hero cover (dark band) ---------- */
+.hero-cover {
+  background: #1b241a;
+  color: #f2f0e6;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.055) 1px, transparent 0);
+  background-size: 15px 15px;
+  pointer-events: none;
+}
+
+.hero-cover .landing-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-cover .masthead-mark {
+  color: #f2f0e6;
+}
+
+.hero-cover .btn-text {
+  color: #f2f0e6;
+}
+
+.hero-cover .btn-ghost {
+  background: transparent;
+  border-color: rgba(242, 240, 230, 0.32);
+  color: #f2f0e6;
+}
+
+.hero-cover .btn-ghost:hover:not(:disabled) {
+  border-color: #f2f0e6;
+  color: #ffffff;
+}
+
+.hero-cover .hero-sub {
+  color: rgba(242, 240, 230, 0.78);
+}
+
+.hero-cover .hero-note {
+  color: rgba(242, 240, 230, 0.5);
+}
+
+/* highlight-marker behind a key word in the headline, like pen highlighter
+   ink on a field-journal page — the one deliberately vivid accent on an
+   otherwise restrained palette. */
+.headline-mark {
+  position: relative;
+  white-space: nowrap;
+  color: #1b241a;
+}
+
+.headline-mark::after {
+  content: "";
+  position: absolute;
+  left: -3px;
+  right: -3px;
+  bottom: 0.08em;
+  height: 0.4em;
+  background: #f0c33c;
+  transform: rotate(-1.2deg);
+  border-radius: 2px;
+  z-index: -1;
+}
+
+/* ---------- Showcase: fanned specimen cards ---------- */
+.showcase {
+  display: flex;
+  justify-content: center;
+  padding: 56px 0 60px;
+}
+
+.showcase-stack {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  height: 300px;
+}
+
+.showcase-card {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 290px;
+  transition: transform 320ms var(--ease-out), box-shadow 320ms var(--ease-out);
+}
+
+.showcase-card-1 {
+  transform: translateX(-50%) rotate(-8deg) translateY(16px);
+  z-index: 1;
+}
+
+.showcase-card-2 {
+  transform: translateX(-50%);
+  z-index: 3;
+}
+
+.showcase-card-3 {
+  transform: translateX(-50%) rotate(8deg) translateY(16px);
+  z-index: 2;
+}
+
+@media (hover: hover) {
+  .showcase-stack:hover .showcase-card-1 {
+    transform: translateX(calc(-50% - 116px)) rotate(-10deg) translateY(4px);
+    box-shadow: 0 10px 22px rgba(32, 43, 34, 0.14);
+  }
+
+  .showcase-stack:hover .showcase-card-2 {
+    transform: translateX(-50%) translateY(-10px);
+    box-shadow: 0 12px 26px rgba(32, 43, 34, 0.16);
+  }
+
+  .showcase-stack:hover .showcase-card-3 {
+    transform: translateX(calc(-50% + 116px)) rotate(10deg) translateY(4px);
+    box-shadow: 0 10px 22px rgba(32, 43, 34, 0.14);
+  }
+}
+
+/* ---------- Step icons ---------- */
+.step-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-rule);
+  border-radius: 50%;
+  color: var(--color-moss);
+  background: var(--color-card);
+  margin-bottom: 16px;
 }

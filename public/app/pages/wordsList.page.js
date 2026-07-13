@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { get, put, del } from "../core/api.js";
-import { escapeHtml } from "../core/dom.js";
+import { escapeHtml, brandMark } from "../core/dom.js";
 
 export async function renderWordsList() {
   const app = document.getElementById("app");
@@ -17,7 +17,7 @@ export async function renderWordsList() {
   } catch (e) {
     app.innerHTML = `
       <div class="page">
-        <span class="masthead-mark">Wordflow</span>
+        ${brandMark()}
         <p class="error-banner" style="margin-top: 20px;">Не удалось загрузить данные: ${escapeHtml(e.message)}</p>
         <div class="actions"><button id="back" class="btn btn-ghost">Назад</button></div>
       </div>
@@ -149,7 +149,7 @@ function render(app, state) {
 
   app.innerHTML = `
     <div class="page">
-      <span class="masthead-mark">Wordflow</span>
+      ${brandMark()}
       <h1 class="headline" style="margin-top: 18px;">Все слова</h1>
       <p class="meta-line">${state.words.length} слов${state.words.length === 1 ? "о" : ""} в коллекции</p>
 

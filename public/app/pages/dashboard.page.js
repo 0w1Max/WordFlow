@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { get, post } from "../core/api.js";
-import { escapeHtml } from "../core/dom.js";
+import { escapeHtml, brandMark } from "../core/dom.js";
 
 export async function renderDashboard() {
   const app = document.getElementById("app");
@@ -20,7 +20,7 @@ export async function renderDashboard() {
     app.innerHTML = `
       <div class="page">
         <div class="masthead">
-          <span class="masthead-mark">Wordflow</span>
+          ${brandMark()}
           <div class="masthead-user">
             <span>${user.isGuest ? "Гость" : escapeHtml(user.email)}</span>
             <button id="logoutBtn" class="btn-text">Выйти</button>
@@ -63,7 +63,7 @@ export async function renderDashboard() {
   } catch (e) {
     app.innerHTML = `
       <div class="page">
-        <span class="masthead-mark">Wordflow</span>
+        ${brandMark()}
         <p class="error-banner" style="margin-top: 20px;">Не удалось загрузить коллекцию: ${escapeHtml(e.message)}</p>
       </div>
     `;
