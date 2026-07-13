@@ -916,7 +916,6 @@ a {
   background: #1b241a;
   color: #f2f0e6;
   position: relative;
-  overflow: hidden;
 }
 
 .hero-cover::after {
@@ -926,6 +925,7 @@ a {
   background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.055) 1px, transparent 0);
   background-size: 15px 15px;
   pointer-events: none;
+  z-index: 0;
 }
 
 .hero-cover .landing-wrap {
@@ -954,6 +954,10 @@ a {
 
 .hero-cover .hero-sub {
   color: rgba(242, 240, 230, 0.78);
+}
+
+.hero-cover .hero-headline {
+  color: #faf8f0;
 }
 
 .hero-cover .hero-note {
@@ -1001,7 +1005,8 @@ a {
   top: 0;
   left: 50%;
   width: 290px;
-  transition: transform 320ms var(--ease-out), box-shadow 320ms var(--ease-out);
+  opacity: 1;
+  transition: transform 420ms var(--ease-out), box-shadow 320ms var(--ease-out), opacity 420ms var(--ease-out);
 }
 
 .showcase-card-1 {
@@ -1019,18 +1024,39 @@ a {
   z-index: 2;
 }
 
+/* Стартовое состояние "карты ещё не сданы" — landing.page.js снимает этот
+   класс сразу после вставки разметки (с небольшой задержкой на карту),
+   и transition выше плавно переносит карточку в её обычное положение.
+   Это НЕ завязано на прокрутку — эффект гарантированно проигрывается
+   при каждой загрузке страницы, даже если секция сразу видна на экране. */
+.showcase-card.is-dealing {
+  opacity: 0;
+}
+
+.showcase-card-1.is-dealing {
+  transform: translateX(-50%) rotate(-8deg) translateY(64px) scale(0.92);
+}
+
+.showcase-card-2.is-dealing {
+  transform: translateX(-50%) translateY(64px) scale(0.92);
+}
+
+.showcase-card-3.is-dealing {
+  transform: translateX(-50%) rotate(8deg) translateY(64px) scale(0.92);
+}
+
 @media (hover: hover) {
-  .showcase-stack:hover .showcase-card-1 {
+  .showcase-stack:hover .showcase-card-1:not(.is-dealing) {
     transform: translateX(calc(-50% - 116px)) rotate(-10deg) translateY(4px);
     box-shadow: 0 10px 22px rgba(32, 43, 34, 0.14);
   }
 
-  .showcase-stack:hover .showcase-card-2 {
+  .showcase-stack:hover .showcase-card-2:not(.is-dealing) {
     transform: translateX(-50%) translateY(-10px);
     box-shadow: 0 12px 26px rgba(32, 43, 34, 0.16);
   }
 
-  .showcase-stack:hover .showcase-card-3 {
+  .showcase-stack:hover .showcase-card-3:not(.is-dealing) {
     transform: translateX(calc(-50% + 116px)) rotate(10deg) translateY(4px);
     box-shadow: 0 10px 22px rgba(32, 43, 34, 0.14);
   }
