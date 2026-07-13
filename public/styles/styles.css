@@ -179,6 +179,7 @@ a {
 
 .btn:active:not(:disabled) {
   transform: translateY(1px);
+  box-shadow: none;
 }
 
 .btn:disabled {
@@ -195,6 +196,7 @@ a {
 .btn-primary:hover:not(:disabled) {
   background: var(--color-moss-deep);
   border-color: var(--color-moss-deep);
+  box-shadow: 0 6px 16px rgba(63, 107, 74, 0.28);
 }
 
 .btn-ghost {
@@ -852,4 +854,59 @@ a {
   .hero {
     padding-top: 16px;
   }
+}
+
+/* ---------- Scroll reveal (landing) ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 520ms var(--ease-out), transform 520ms var(--ease-out);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- Hand-drawn headline accent ---------- */
+.hl {
+  position: relative;
+  color: var(--color-moss-deep);
+  display: inline-block;
+}
+
+.hl-underline {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  bottom: -8px;
+  width: calc(100% - 4px);
+  height: 12px;
+  color: var(--color-moss);
+}
+
+/* ---------- Specimen board (landing showcase) ---------- */
+.specimen-board {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 12px 8px 24px;
+}
+
+.specimen.pinned {
+  max-width: 280px;
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
+  cursor: default;
+}
+
+.specimen.pinned:hover {
+  transform: rotate(0deg) translateY(-6px);
+  box-shadow: 0 14px 28px rgba(32, 43, 34, 0.16), 0 3px 8px rgba(32, 43, 34, 0.08);
+}
+
+/* ---------- More tactile buttons, site-wide ---------- */
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
 }
