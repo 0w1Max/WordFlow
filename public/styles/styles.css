@@ -729,7 +729,7 @@ a {
   font-family: var(--font-display);
   font-size: clamp(2rem, 3.4vw + 1rem, 3.1rem);
   font-weight: 600;
-  line-height: 1.1;
+  line-height: 1.28;
   letter-spacing: -0.01em;
   margin: 0 0 20px;
 }
@@ -966,24 +966,17 @@ a {
 
 /* highlight-marker behind a key word in the headline, like pen highlighter
    ink on a field-journal page — the one deliberately vivid accent on an
-   otherwise restrained palette. */
+   otherwise restrained palette. Background-gradient directly on the span
+   (not an absolutely-positioned pseudo-element) — the standard, robust
+   cross-browser technique for a highlighter effect behind inline text,
+   with no z-index/stacking-context edge cases. */
 .headline-mark {
-  position: relative;
-  white-space: nowrap;
   color: #1b241a;
-}
-
-.headline-mark::after {
-  content: "";
-  position: absolute;
-  left: -3px;
-  right: -3px;
-  bottom: 0.08em;
-  height: 0.4em;
-  background: #f0c33c;
-  transform: rotate(-1.2deg);
+  background-image: linear-gradient(180deg, transparent 60%, #f0c33c 60%, #f0c33c 92%, transparent 92%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding: 0 0.06em;
   border-radius: 2px;
-  z-index: -1;
 }
 
 /* ---------- Showcase: fanned specimen cards ---------- */
