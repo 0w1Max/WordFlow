@@ -990,45 +990,83 @@ a {
   transition: transform 260ms var(--ease-out), box-shadow 260ms var(--ease-out);
 }
 
-/* Карточки буквально "разлетаются по местам", как при раздаче карт:
-   боковые — залетают со своих сторон с разворотом, центральная падает
-   сверху вниз с лёгким пружинистым перелётом (overshoot). Это чистый
-   CSS @keyframes — анимация стартует сама при отрисовке, без JS-таймеров.
-   JS (landing.page.js) только один раз слушает animationend и убирает
-   инлайновое свойство animation, чтобы дальше transform из :hover ниже
-   мог спокойно работать (иначе fill-mode:both у завершённой анимации
-   продолжал бы "удерживать" transform и перекрывал бы hover-эффект). */
-@keyframes deal-in-left {
-  0% { opacity: 0; transform: translateX(calc(-50% - 220px)) rotate(-34deg) translateY(-14px); }
-  100% { opacity: 1; transform: translateX(-50%) rotate(-8deg) translateY(16px); }
+/* Концепция входа: карточка — образец под лупой натуралиста. Сначала она
+   размыта и уменьшена, будто ещё не в фокусе, — затем "наводится на
+   резкость" (blur + scale) и опускается на своё место в веере. Как только
+   она сфокусирована, её собственные строки (категория → слово → значение →
+   пример) проступают одна за другой — будто запись только что вносится
+   в каталог, а не появляется всем текстом разом.
+   Тайминг строк рассчитан через --entry-delay (CSS-переменная, наследуется
+   от карточки к её содержимому) — отдельного JS для стаггера не нужно. */
+@keyframes focus-in-left {
+  0% { opacity: 0; filter: blur(9px); transform: translateX(-50%) rotate(-8deg) translateY(34px) scale(0.9); }
+  62% { filter: blur(0); }
+  100% { opacity: 1; filter: blur(0); transform: translateX(-50%) rotate(-8deg) translateY(16px) scale(1); }
 }
 
-@keyframes deal-in-center {
-  0% { opacity: 0; transform: translateX(-50%) translateY(-96px) scale(0.86); }
-  100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+@keyframes focus-in-center {
+  0% { opacity: 0; filter: blur(10px); transform: translateX(-50%) translateY(-26px) scale(0.88); }
+  62% { filter: blur(0); }
+  100% { opacity: 1; filter: blur(0); transform: translateX(-50%) translateY(0) scale(1); }
 }
 
-@keyframes deal-in-right {
-  0% { opacity: 0; transform: translateX(calc(-50% + 220px)) rotate(34deg) translateY(-14px); }
-  100% { opacity: 1; transform: translateX(-50%) rotate(8deg) translateY(16px); }
+@keyframes focus-in-right {
+  0% { opacity: 0; filter: blur(9px); transform: translateX(-50%) rotate(8deg) translateY(34px) scale(0.9); }
+  62% { filter: blur(0); }
+  100% { opacity: 1; filter: blur(0); transform: translateX(-50%) rotate(8deg) translateY(16px) scale(1); }
+}
+
+@keyframes line-in {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .showcase-card-1 {
   z-index: 1;
+  --entry-delay: 220ms;
   transform: translateX(-50%) rotate(-8deg) translateY(16px);
-  animation: deal-in-left 760ms cubic-bezier(0.34, 1.56, 0.64, 1) 120ms both;
+  animation: focus-in-left 640ms cubic-bezier(0.22, 1, 0.36, 1) var(--entry-delay) both;
 }
 
 .showcase-card-2 {
   z-index: 3;
+  --entry-delay: 0ms;
   transform: translateX(-50%);
-  animation: deal-in-center 680ms cubic-bezier(0.34, 1.56, 0.64, 1) 380ms both;
+  animation: focus-in-center 620ms cubic-bezier(0.22, 1, 0.36, 1) var(--entry-delay) both;
 }
 
 .showcase-card-3 {
   z-index: 2;
+  --entry-delay: 220ms;
   transform: translateX(-50%) rotate(8deg) translateY(16px);
-  animation: deal-in-right 760ms cubic-bezier(0.34, 1.56, 0.64, 1) 120ms both;
+  animation: focus-in-right 640ms cubic-bezier(0.22, 1, 0.36, 1) var(--entry-delay) both;
+}
+
+/* Строки внутри карточки наследуют --entry-delay и достраивают к нему свой
+   собственный сдвиг — каждая следующая строка проступает на ~70мс позже
+   предыдущей, уже после того как сама карточка навелась на резкость. */
+.showcase-card .specimen-eyebrow,
+.showcase-card .specimen-word,
+.showcase-card .specimen-meaning,
+.showcase-card .specimen-example {
+  opacity: 0;
+  animation: line-in 360ms var(--ease-out) both;
+}
+
+.showcase-card .specimen-eyebrow {
+  animation-delay: calc(var(--entry-delay) + 460ms);
+}
+
+.showcase-card .specimen-word {
+  animation-delay: calc(var(--entry-delay) + 530ms);
+}
+
+.showcase-card .specimen-meaning {
+  animation-delay: calc(var(--entry-delay) + 600ms);
+}
+
+.showcase-card .specimen-example {
+  animation-delay: calc(var(--entry-delay) + 670ms);
 }
 
 @media (hover: hover) {

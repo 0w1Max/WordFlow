@@ -146,10 +146,20 @@ export async function renderLanding() {
   // без JS-таймеров. Здесь только освобождаем transform для hover-эффекта
   // после того, как анимация доиграла — иначе animation-fill-mode:both
   // держал бы transform на "прикреплённом" значении и перекрывал бы hover.
+  // Внутри карточки ещё играют свои анимации (проступающие строки текста) —
+  // они тоже всплывают как animationend до самой карточки, поэтому здесь
+  // сверяемся по имени конкретной анимации входа, а не берём первое
+  // попавшееся событие.
+  const entryAnimations = ["focus-in-left", "focus-in-center", "focus-in-right"];
+
   app.querySelectorAll(".showcase-card").forEach(card => {
-    card.addEventListener("animationend", () => {
+    function onAnimationEnd(e) {
+      if (!entryAnimations.includes(e.animationName)) return;
       card.style.animation = "none";
-    }, { once: true });
+      card.removeEventListener("animationend", onAnimationEnd);
+    }
+
+    card.addEventListener("animationend", onAnimationEnd);
   });
 
   initScrollReveal(app);
