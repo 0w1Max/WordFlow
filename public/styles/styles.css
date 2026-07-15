@@ -999,58 +999,62 @@ a {
   top: 0;
   left: 50%;
   width: 290px;
-  opacity: 1;
-  transition: transform 420ms var(--ease-out), box-shadow 320ms var(--ease-out), opacity 420ms var(--ease-out);
+  transition: transform 260ms var(--ease-out), box-shadow 260ms var(--ease-out);
+}
+
+/* Карточки буквально "разлетаются по местам", как при раздаче карт:
+   боковые — залетают со своих сторон с разворотом, центральная падает
+   сверху вниз с лёгким пружинистым перелётом (overshoot). Это чистый
+   CSS @keyframes — анимация стартует сама при отрисовке, без JS-таймеров.
+   JS (landing.page.js) только один раз слушает animationend и убирает
+   инлайновое свойство animation, чтобы дальше transform из :hover ниже
+   мог спокойно работать (иначе fill-mode:both у завершённой анимации
+   продолжал бы "удерживать" transform и перекрывал бы hover-эффект). */
+@keyframes deal-in-left {
+  0% { opacity: 0; transform: translateX(calc(-50% - 220px)) rotate(-34deg) translateY(-14px); }
+  100% { opacity: 1; transform: translateX(-50%) rotate(-8deg) translateY(16px); }
+}
+
+@keyframes deal-in-center {
+  0% { opacity: 0; transform: translateX(-50%) translateY(-96px) scale(0.86); }
+  100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+@keyframes deal-in-right {
+  0% { opacity: 0; transform: translateX(calc(-50% + 220px)) rotate(34deg) translateY(-14px); }
+  100% { opacity: 1; transform: translateX(-50%) rotate(8deg) translateY(16px); }
 }
 
 .showcase-card-1 {
-  transform: translateX(-50%) rotate(-8deg) translateY(16px);
   z-index: 1;
+  transform: translateX(-50%) rotate(-8deg) translateY(16px);
+  animation: deal-in-left 760ms cubic-bezier(0.34, 1.56, 0.64, 1) 120ms both;
 }
 
 .showcase-card-2 {
-  transform: translateX(-50%);
   z-index: 3;
+  transform: translateX(-50%);
+  animation: deal-in-center 680ms cubic-bezier(0.34, 1.56, 0.64, 1) 380ms both;
 }
 
 .showcase-card-3 {
-  transform: translateX(-50%) rotate(8deg) translateY(16px);
   z-index: 2;
-}
-
-/* Стартовое состояние "карты ещё не сданы" — landing.page.js снимает этот
-   класс сразу после вставки разметки (с небольшой задержкой на карту),
-   и transition выше плавно переносит карточку в её обычное положение.
-   Это НЕ завязано на прокрутку — эффект гарантированно проигрывается
-   при каждой загрузке страницы, даже если секция сразу видна на экране. */
-.showcase-card.is-dealing {
-  opacity: 0;
-}
-
-.showcase-card-1.is-dealing {
-  transform: translateX(-50%) rotate(-8deg) translateY(64px) scale(0.92);
-}
-
-.showcase-card-2.is-dealing {
-  transform: translateX(-50%) translateY(64px) scale(0.92);
-}
-
-.showcase-card-3.is-dealing {
-  transform: translateX(-50%) rotate(8deg) translateY(64px) scale(0.92);
+  transform: translateX(-50%) rotate(8deg) translateY(16px);
+  animation: deal-in-right 760ms cubic-bezier(0.34, 1.56, 0.64, 1) 120ms both;
 }
 
 @media (hover: hover) {
-  .showcase-stack:hover .showcase-card-1:not(.is-dealing) {
+  .showcase-stack:hover .showcase-card-1 {
     transform: translateX(calc(-50% - 116px)) rotate(-10deg) translateY(4px);
     box-shadow: 0 10px 22px rgba(32, 43, 34, 0.14);
   }
 
-  .showcase-stack:hover .showcase-card-2:not(.is-dealing) {
+  .showcase-stack:hover .showcase-card-2 {
     transform: translateX(-50%) translateY(-10px);
     box-shadow: 0 12px 26px rgba(32, 43, 34, 0.16);
   }
 
-  .showcase-stack:hover .showcase-card-3:not(.is-dealing) {
+  .showcase-stack:hover .showcase-card-3 {
     transform: translateX(calc(-50% + 116px)) rotate(10deg) translateY(4px);
     box-shadow: 0 10px 22px rgba(32, 43, 34, 0.14);
   }

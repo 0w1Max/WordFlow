@@ -43,7 +43,7 @@ export async function renderLanding() {
     <div class="landing-wrap">
       <section class="showcase">
         <div class="showcase-stack">
-          <div class="specimen showcase-card showcase-card-1 is-dealing" data-strength="new" aria-hidden="true">
+          <div class="specimen showcase-card showcase-card-1" data-strength="new" aria-hidden="true">
             <div class="specimen-bar"></div>
             <div class="specimen-body">
               <div class="specimen-eyebrow"><span>№ 014</span><span>·</span><span>Быт</span></div>
@@ -52,7 +52,7 @@ export async function renderLanding() {
             </div>
           </div>
 
-          <div class="specimen showcase-card showcase-card-2 is-dealing" data-strength="learning" aria-hidden="true">
+          <div class="specimen showcase-card showcase-card-2" data-strength="learning" aria-hidden="true">
             <div class="specimen-bar"></div>
             <div class="specimen-body">
               <div class="specimen-eyebrow"><span>№ 041</span><span>·</span><span>Природа</span></div>
@@ -62,7 +62,7 @@ export async function renderLanding() {
             </div>
           </div>
 
-          <div class="specimen showcase-card showcase-card-3 is-dealing" data-strength="known" aria-hidden="true">
+          <div class="specimen showcase-card showcase-card-3" data-strength="known" aria-hidden="true">
             <div class="specimen-bar"></div>
             <div class="specimen-body">
               <div class="specimen-eyebrow"><span>№ 128</span><span>·</span><span>Характер</span></div>
@@ -142,15 +142,14 @@ export async function renderLanding() {
   document.getElementById("tryFreeBtn").onclick = (e) => startTrial(e.currentTarget);
   document.getElementById("footerTryFree").onclick = (e) => startTrial(e.currentTarget);
 
-  // "Раздаём" карточки-специмены сразу после отрисовки — специально не через
-  // IntersectionObserver: секция showcase часто уже видна на экране без
-  // прокрутки на десктопе, и scroll-reveal там попросту не срабатывал
-  // (эффект не успевал произойти, потому что элемент уже был "в зоне
-  // видимости" в момент подписки на observer).
-  requestAnimationFrame(() => {
-    app.querySelectorAll(".showcase-card").forEach((card, i) => {
-      setTimeout(() => card.classList.remove("is-dealing"), 100 + i * 130);
-    });
+  // Вход карточек — чистый CSS @keyframes (см. styles.css), стартует сам,
+  // без JS-таймеров. Здесь только освобождаем transform для hover-эффекта
+  // после того, как анимация доиграла — иначе animation-fill-mode:both
+  // держал бы transform на "прикреплённом" значении и перекрывал бы hover.
+  app.querySelectorAll(".showcase-card").forEach(card => {
+    card.addEventListener("animationend", () => {
+      card.style.animation = "none";
+    }, { once: true });
   });
 
   initScrollReveal(app);
