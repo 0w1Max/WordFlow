@@ -755,18 +755,6 @@ a {
   margin: 14px 0 0;
 }
 
-.showcase {
-  display: flex;
-  justify-content: center;
-  margin: 8px 0 64px;
-  animation: rise-in 460ms var(--ease-out) both;
-}
-
-.showcase .specimen {
-  max-width: 400px;
-  width: 100%;
-}
-
 .steps {
   display: grid;
   gap: 26px;
