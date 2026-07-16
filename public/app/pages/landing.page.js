@@ -42,33 +42,31 @@ export async function renderLanding() {
 
     <div class="landing-wrap">
       <section class="showcase">
-        <div class="showcase-stack">
-          <div class="specimen showcase-card showcase-card-1" data-strength="new" aria-hidden="true">
-            <div class="specimen-bar"></div>
-            <div class="specimen-body">
-              <div class="specimen-eyebrow"><span>№ 014</span><span>·</span><span>Быт</span></div>
-              <p class="specimen-word">Сериндипность</p>
-              <p class="specimen-meaning">случайная удачная находка</p>
-            </div>
+        <div class="specimen showcase-card showcase-card-1" data-strength="new" aria-hidden="true">
+          <div class="specimen-bar"></div>
+          <div class="specimen-body">
+            <div class="specimen-eyebrow"><span>№ 014</span><span>·</span><span>Быт</span></div>
+            <p class="specimen-word">Сериндипность</p>
+            <p class="specimen-meaning">случайная удачная находка</p>
           </div>
+        </div>
 
-          <div class="specimen showcase-card showcase-card-2" data-strength="learning" aria-hidden="true">
-            <div class="specimen-bar"></div>
-            <div class="specimen-body">
-              <div class="specimen-eyebrow"><span>№ 041</span><span>·</span><span>Природа</span></div>
-              <p class="specimen-word">Петрикор</p>
-              <p class="specimen-meaning">запах земли после первого дождя</p>
-              <p class="specimen-example">«После петрикора воздух в саду стал сладким».</p>
-            </div>
+        <div class="specimen showcase-card showcase-card-2" data-strength="learning" aria-hidden="true">
+          <div class="specimen-bar"></div>
+          <div class="specimen-body">
+            <div class="specimen-eyebrow"><span>№ 041</span><span>·</span><span>Природа</span></div>
+            <p class="specimen-word">Петрикор</p>
+            <p class="specimen-meaning">запах земли после первого дождя</p>
+            <p class="specimen-example">«После петрикора воздух в саду стал сладким».</p>
           </div>
+        </div>
 
-          <div class="specimen showcase-card showcase-card-3" data-strength="known" aria-hidden="true">
-            <div class="specimen-bar"></div>
-            <div class="specimen-body">
-              <div class="specimen-eyebrow"><span>№ 128</span><span>·</span><span>Характер</span></div>
-              <p class="specimen-word">Апломб</p>
-              <p class="specimen-meaning">самоуверенная манера держаться</p>
-            </div>
+        <div class="specimen showcase-card showcase-card-3" data-strength="known" aria-hidden="true">
+          <div class="specimen-bar"></div>
+          <div class="specimen-body">
+            <div class="specimen-eyebrow"><span>№ 128</span><span>·</span><span>Характер</span></div>
+            <p class="specimen-word">Апломб</p>
+            <p class="specimen-meaning">самоуверенная манера держаться</p>
           </div>
         </div>
       </section>
@@ -142,24 +140,14 @@ export async function renderLanding() {
   document.getElementById("tryFreeBtn").onclick = (e) => startTrial(e.currentTarget);
   document.getElementById("footerTryFree").onclick = (e) => startTrial(e.currentTarget);
 
-  // Вход карточек — чистый CSS @keyframes (см. styles.css), стартует сам,
-  // без JS-таймеров. Здесь только освобождаем transform для hover-эффекта
-  // после того, как анимация доиграла — иначе animation-fill-mode:both
-  // держал бы transform на "прикреплённом" значении и перекрывал бы hover.
-  // Внутри карточки ещё играют свои анимации (проступающие строки текста) —
-  // они тоже всплывают как animationend до самой карточки, поэтому здесь
-  // сверяемся по имени конкретной анимации входа, а не берём первое
-  // попавшееся событие.
-  const entryAnimations = ["focus-in-left", "focus-in-center", "focus-in-right"];
-
+  // flip-in — чистый CSS @keyframes (см. styles.css), стартует сам при
+  // отрисовке, без JS-таймеров. После её завершения снимаем инлайновую
+  // анимацию, чтобы hover (translateY при наведении) мог спокойно менять
+  // transform — иначе animation-fill-mode:both держал бы своё значение.
   app.querySelectorAll(".showcase-card").forEach(card => {
-    function onAnimationEnd(e) {
-      if (!entryAnimations.includes(e.animationName)) return;
+    card.addEventListener("animationend", () => {
       card.style.animation = "none";
-      card.removeEventListener("animationend", onAnimationEnd);
-    }
-
-    card.addEventListener("animationend", onAnimationEnd);
+    }, { once: true });
   });
 
   initScrollReveal(app);

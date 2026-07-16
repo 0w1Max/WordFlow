@@ -968,123 +968,62 @@ a {
   border-radius: 2px;
 }
 
-/* ---------- Showcase: fanned specimen cards ---------- */
+/* ---------- Showcase: specimen cards flip into place ---------- */
 .showcase {
   display: flex;
   justify-content: center;
+  gap: 22px;
+  flex-wrap: wrap;
   padding: 56px 0 60px;
-}
-
-.showcase-stack {
-  position: relative;
-  width: 100%;
-  max-width: 420px;
-  height: 300px;
+  perspective: 1400px;
 }
 
 .showcase-card {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 290px;
-  transition: transform 260ms var(--ease-out), box-shadow 260ms var(--ease-out);
+  width: 270px;
+  transform-style: preserve-3d;
+  transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
 }
 
-/* Концепция входа: карточка — образец под лупой натуралиста. Сначала она
-   размыта и уменьшена, будто ещё не в фокусе, — затем "наводится на
-   резкость" (blur + scale) и опускается на своё место в веере. Как только
-   она сфокусирована, её собственные строки (категория → слово → значение →
-   пример) проступают одна за другой — будто запись только что вносится
-   в каталог, а не появляется всем текстом разом.
-   Тайминг строк рассчитан через --entry-delay (CSS-переменная, наследуется
-   от карточки к её содержимому) — отдельного JS для стаггера не нужно. */
-@keyframes focus-in-left {
-  0% { opacity: 0; filter: blur(9px); transform: translateX(-50%) rotate(-8deg) translateY(34px) scale(0.9); }
-  62% { filter: blur(0); }
-  100% { opacity: 1; filter: blur(0); transform: translateX(-50%) rotate(-8deg) translateY(16px) scale(1); }
-}
-
-@keyframes focus-in-center {
-  0% { opacity: 0; filter: blur(10px); transform: translateX(-50%) translateY(-26px) scale(0.88); }
-  62% { filter: blur(0); }
-  100% { opacity: 1; filter: blur(0); transform: translateX(-50%) translateY(0) scale(1); }
-}
-
-@keyframes focus-in-right {
-  0% { opacity: 0; filter: blur(9px); transform: translateX(-50%) rotate(8deg) translateY(34px) scale(0.9); }
-  62% { filter: blur(0); }
-  100% { opacity: 1; filter: blur(0); transform: translateX(-50%) rotate(8deg) translateY(16px) scale(1); }
-}
-
-@keyframes line-in {
-  from { opacity: 0; transform: translateY(7px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Каждая карточка разворачивается вокруг вертикальной оси, как страница —
+   от "ребра" (повёрнута на 90°, не видна) до обычного положения. Простая
+   flex-раскладка в ряд, без абсолютного позиционирования и наложения —
+   меньше движущихся частей, меньше способов что-то сломать. */
+@keyframes flip-in {
+  0% { opacity: 0; transform: rotateY(-85deg); }
+  100% { opacity: 1; transform: rotateY(0deg); }
 }
 
 .showcase-card-1 {
-  z-index: 1;
-  --entry-delay: 220ms;
-  transform: translateX(-50%) rotate(-8deg) translateY(16px);
-  animation: focus-in-left 640ms cubic-bezier(0.22, 1, 0.36, 1) var(--entry-delay) both;
+  animation-name: flip-in;
+  animation-duration: 640ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-delay: 0ms;
+  animation-fill-mode: both;
 }
 
 .showcase-card-2 {
-  z-index: 3;
-  --entry-delay: 0ms;
-  transform: translateX(-50%);
-  animation: focus-in-center 620ms cubic-bezier(0.22, 1, 0.36, 1) var(--entry-delay) both;
+  animation-name: flip-in;
+  animation-duration: 640ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-delay: 160ms;
+  animation-fill-mode: both;
 }
 
 .showcase-card-3 {
-  z-index: 2;
-  --entry-delay: 220ms;
-  transform: translateX(-50%) rotate(8deg) translateY(16px);
-  animation: focus-in-right 640ms cubic-bezier(0.22, 1, 0.36, 1) var(--entry-delay) both;
-}
-
-/* Строки внутри карточки наследуют --entry-delay и достраивают к нему свой
-   собственный сдвиг — каждая следующая строка проступает на ~70мс позже
-   предыдущей, уже после того как сама карточка навелась на резкость. */
-.showcase-card .specimen-eyebrow,
-.showcase-card .specimen-word,
-.showcase-card .specimen-meaning,
-.showcase-card .specimen-example {
-  opacity: 0;
-  animation: line-in 360ms var(--ease-out) both;
-}
-
-.showcase-card .specimen-eyebrow {
-  animation-delay: calc(var(--entry-delay) + 460ms);
-}
-
-.showcase-card .specimen-word {
-  animation-delay: calc(var(--entry-delay) + 530ms);
-}
-
-.showcase-card .specimen-meaning {
-  animation-delay: calc(var(--entry-delay) + 600ms);
-}
-
-.showcase-card .specimen-example {
-  animation-delay: calc(var(--entry-delay) + 670ms);
+  animation-name: flip-in;
+  animation-duration: 640ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-delay: 320ms;
+  animation-fill-mode: both;
 }
 
 @media (hover: hover) {
-  .showcase-stack:hover .showcase-card-1 {
-    transform: translateX(calc(-50% - 116px)) rotate(-10deg) translateY(4px);
-    box-shadow: 0 10px 22px rgba(32, 43, 34, 0.14);
-  }
-
-  .showcase-stack:hover .showcase-card-2 {
-    transform: translateX(-50%) translateY(-10px);
-    box-shadow: 0 12px 26px rgba(32, 43, 34, 0.16);
-  }
-
-  .showcase-stack:hover .showcase-card-3 {
-    transform: translateX(calc(-50% + 116px)) rotate(10deg) translateY(4px);
-    box-shadow: 0 10px 22px rgba(32, 43, 34, 0.14);
+  .showcase-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 14px 28px rgba(32, 43, 34, 0.16);
   }
 }
+
 
 /* ---------- Step icons ---------- */
 .step-icon {
