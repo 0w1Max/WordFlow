@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { checkAuth, post } from "../core/api.js";
-import { escapeHtml, brandMark } from "../core/dom.js";
+import { escapeHtml, brandMark, stampIcon } from "../core/dom.js";
 import { initScrollReveal } from "../core/scrollReveal.js";
 
 export async function renderLanding() {
@@ -16,6 +16,7 @@ export async function renderLanding() {
 
   app.innerHTML = `
     <div class="hero-cover">
+      <div class="hero-cover-stamp">${stampIcon(420)}</div>
       <div class="landing-wrap">
         <nav class="landing-nav">
           ${brandMark()}
@@ -25,52 +26,45 @@ export async function renderLanding() {
           </div>
         </nav>
 
-        <section class="hero">
-          <h1 class="hero-headline">Каждое слово, которое вы встретили, — <span class="headline-mark">экземпляр</span>. Соберите его, пока не забыли.</h1>
-          <p class="hero-sub">WordFlow — личный каталог слов и значений к ним с расписанием повторений, которое подстраивается под то, что вы уже помните.</p>
+        <div class="hero-grid">
+          <section class="hero">
+            <h1 class="hero-headline">Каждое слово, которое вы встретили, — <span class="headline-mark">экземпляр</span>. Соберите его, пока не забыли.</h1>
+            <p class="hero-sub">WordFlow — личный каталог слов и значений к ним с расписанием повторений, которое подстраивается под то, что вы уже помните.</p>
 
-          <div id="heroError"></div>
+            <div id="heroError"></div>
 
-          <div class="hero-actions">
-            <button id="tryFreeBtn" class="btn btn-primary">Попробовать без регистрации</button>
-            <button id="heroRegister" class="btn btn-ghost">Зарегистрироваться</button>
-          </div>
-          <p class="hero-note">Без карты и письма для подтверждения — начинаете сразу, данные сохранятся в этом браузере.</p>
-        </section>
+            <div class="hero-actions">
+              <button id="tryFreeBtn" class="btn btn-primary">Попробовать без регистрации</button>
+              <button id="heroRegister" class="btn btn-ghost">Зарегистрироваться</button>
+            </div>
+            <p class="hero-note">Без карты и письма для подтверждения — начинаете сразу, данные сохранятся в этом браузере.</p>
+          </section>
+
+          <section class="showcase">
+            <div class="specimen showcase-card" data-strength="learning" aria-hidden="true">
+              <div class="specimen-bar"></div>
+              <div class="specimen-body">
+                <div class="specimen-stamp">${stampIcon(30)}</div>
+                <div class="specimen-eyebrow">
+                  <span>Природа</span><span>·</span><span>Собрано 12 мар 2026</span>
+                </div>
+                <p class="specimen-word">Петрикор</p>
+                <p class="specimen-meaning">запах земли после первого дождя</p>
+                <p class="specimen-example">«После петрикора воздух в саду стал сладким».</p>
+                <div class="specimen-footer">
+                  <div class="specimen-progress" aria-label="Изучено 3 из 5">
+                    <span class="filled"></span><span class="filled"></span><span class="filled"></span><span></span><span></span>
+                  </div>
+                  <span class="meta-line" style="margin:0;">№ 041</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
       </div>
     </div>
 
     <div class="landing-wrap">
-      <section class="showcase">
-        <div class="specimen showcase-card showcase-card-1" data-strength="new" aria-hidden="true">
-          <div class="specimen-bar"></div>
-          <div class="specimen-body">
-            <div class="specimen-eyebrow"><span>№ 014</span><span>·</span><span>Быт</span></div>
-            <p class="specimen-word">Сериндипность</p>
-            <p class="specimen-meaning">случайная удачная находка</p>
-          </div>
-        </div>
-
-        <div class="specimen showcase-card showcase-card-2" data-strength="learning" aria-hidden="true">
-          <div class="specimen-bar"></div>
-          <div class="specimen-body">
-            <div class="specimen-eyebrow"><span>№ 041</span><span>·</span><span>Природа</span></div>
-            <p class="specimen-word">Петрикор</p>
-            <p class="specimen-meaning">запах земли после первого дождя</p>
-            <p class="specimen-example">«После петрикора воздух в саду стал сладким».</p>
-          </div>
-        </div>
-
-        <div class="specimen showcase-card showcase-card-3" data-strength="known" aria-hidden="true">
-          <div class="specimen-bar"></div>
-          <div class="specimen-body">
-            <div class="specimen-eyebrow"><span>№ 128</span><span>·</span><span>Характер</span></div>
-            <p class="specimen-word">Апломб</p>
-            <p class="specimen-meaning">самоуверенная манера держаться</p>
-          </div>
-        </div>
-      </section>
-
       <section class="steps">
         <div class="step" data-reveal style="transition-delay: 0ms;">
           <div class="step-icon">${addIcon()}</div>

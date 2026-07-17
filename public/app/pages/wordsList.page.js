@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { get, put, del } from "../core/api.js";
-import { escapeHtml, brandMark } from "../core/dom.js";
+import { escapeHtml, brandMark, stampIcon, formatShortDate, progressDotsHtml } from "../core/dom.js";
 
 export async function renderWordsList() {
   const app = document.getElementById("app");
@@ -81,7 +81,9 @@ function clearDraft(word) {
 }
 
 function render(app, state) {
-  const itemsHtml = state.words.map(word => {
+  const itemsHtml = state.words.map((word, index) => {
+    const cascadeDelay = `style="animation-delay: ${Math.min(index, 8) * 55}ms;"`;
+
     if (word.editing) {
       const text = word.draftText ?? word.text;
       const meaning = word.draftMeaning ?? word.meaning;
@@ -89,7 +91,7 @@ function render(app, state) {
       const categoryId = word.draftCategoryId !== undefined ? word.draftCategoryId : (word.categoryId ?? "");
 
       return `
-        <li class="specimen" data-id="${word.id}">
+        <li class="specimen" data-id="${word.id}" ${cascadeDelay}>
           <div class="specimen-bar"></div>
           <div class="specimen-body">
             <div class="form">
@@ -126,21 +128,27 @@ function render(app, state) {
     const due = isDue(word);
 
     return `
-      <li class="specimen" data-id="${word.id}" data-strength="${strengthOf(word)}">
+      <li class="specimen" data-id="${word.id}" data-strength="${strengthOf(word)}" ${cascadeDelay}>
         <div class="specimen-bar"></div>
         <div class="specimen-body">
+          <div class="specimen-stamp">${stampIcon(24)}</div>
           <div class="specimen-eyebrow">
             <span>${catName ? escapeHtml(catName) : "Без категории"}</span>
             <span>·</span>
-            <span>${word.reviewCount}× повторено</span>
+            <span>Собрано ${formatShortDate(word.createdAt)}</span>
             ${due ? `<span class="chip chip-due">Пора повторить</span>` : ""}
           </div>
           <p class="specimen-word">${escapeHtml(word.text)}</p>
           <p class="specimen-meaning">${escapeHtml(word.meaning)}</p>
           ${word.example ? `<p class="specimen-example">«${escapeHtml(word.example)}»</p>` : ""}
-          <div class="specimen-actions">
-            <button class="edit-btn btn-text" data-id="${word.id}">Изменить</button>
-            <button class="delete-btn btn-danger-text" data-id="${word.id}">Удалить</button>
+          <div class="specimen-footer">
+            <div class="specimen-progress" aria-label="Повторений: ${word.reviewCount}">
+              ${progressDotsHtml(word.reviewCount)}
+            </div>
+            <div class="specimen-actions">
+              <button class="edit-btn btn-text" data-id="${word.id}">Изменить</button>
+              <button class="delete-btn btn-danger-text" data-id="${word.id}">Удалить</button>
+            </div>
           </div>
         </div>
       </li>

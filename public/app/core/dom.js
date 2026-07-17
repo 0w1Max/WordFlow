@@ -6,8 +6,16 @@ export function escapeHtml(str) {
   return div.innerHTML;
 }
 
-function sprigIcon() {
-  return `<svg width="15" height="15" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.3"/><path d="M8 12V5M8 5C6.5 5 5.5 6.2 5.5 7.8M8 5C9.5 5 10.6 6.3 10.2 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>`;
+function sprigIcon(size = 15) {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.3"/><path d="M8 12V5M8 5C6.5 5 5.5 6.2 5.5 7.8M8 5C9.5 5 10.6 6.3 10.2 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>`;
+}
+
+// Фирменный штамп — используется и в бренд-марке, и как декоративный
+// оттиск в углу каждой карточки-экземпляра, и водяным знаком в hero.
+// Один и тот же мотив везде — это то самое "фирменное лицо", которого не
+// хватало: убери название "Wordflow" — штамп всё равно узнаётся.
+export function stampIcon(size = 15) {
+  return sprigIcon(size);
 }
 
 // Фирменный знак WordFlow — штамп-«клеймо» коллекционера образцов вместо
@@ -16,6 +24,37 @@ function sprigIcon() {
 export function brandMark(variant = "masthead") {
   const cls = variant === "auth" ? "auth-mark" : "masthead-mark";
   return `<span class="${cls}"><span class="brand-icon">${sprigIcon()}</span>Wordflow</span>`;
+}
+
+const MONTHS_GENITIVE = [
+  "янв", "фев", "мар", "апр", "мая", "июн",
+  "июл", "авг", "сен", "окт", "ноя", "дек"
+];
+
+// "Собрано 12 мар 2026" — использует реальную createdAt слова, ничего не
+// выдумывает. Короткий формат специально: это подпись на архивной карточке,
+// а не полная дата в календаре.
+export function formatShortDate(isoString) {
+  if (!isoString) return "";
+
+  const date = new Date(isoString);
+  if (Number.isNaN(date.getTime())) return "";
+
+  const day = date.getDate();
+  const month = MONTHS_GENITIVE[date.getMonth()];
+  const year = date.getFullYear();
+
+  return `${day} ${month} ${year}`;
+}
+
+// Пять сегментов, закрашено — сколько раз слово реально повторили
+// (reviewCount, максимум 5) — честный прогресс, не декоративная выдумка.
+export function progressDotsHtml(reviewCount, max = 5) {
+  const filled = Math.min(reviewCount, max);
+
+  return Array.from({ length: max }, (_, i) =>
+    `<span class="${i < filled ? "filled" : ""}"></span>`
+  ).join("");
 }
 
 function eyeIcon() {

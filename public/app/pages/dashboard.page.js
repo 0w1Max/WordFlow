@@ -7,7 +7,7 @@ export async function renderDashboard() {
 
   app.innerHTML = `
     <div class="page">
-      <p class="loading-line">Открываем коллекцию…</p>
+      <p class="loading-line">Открываем рабочий стол…</p>
     </div>
   `;
 
@@ -16,6 +16,11 @@ export async function renderDashboard() {
     // дальше этот код не выполнится.
     const { user } = await get("/auth/me");
     const [words, due] = await Promise.all([get("/words"), get("/words/due")]);
+
+    // Недавно добавленные — API уже отдаёт слова отсортированными по
+    // created_at DESC (см. wordRepository.getAllWords), поэтому первые
+    // несколько в списке и есть самые свежие.
+    const recent = words.slice(0, 3);
 
     app.innerHTML = `
       <div class="page">
@@ -34,8 +39,19 @@ export async function renderDashboard() {
           </div>
         ` : ""}
 
-        <h1 class="headline">Ваша коллекция</h1>
-        <p class="meta-line"><strong>${words.length}</strong> слов${wordSuffix(words.length)} собрано · <strong>${due.length}</strong> на сегодня</p>
+        <p class="desk-greeting">${greeting()}</p>
+        <h1 class="headline">Ваш рабочий стол</h1>
+
+        <div class="desk-stats">
+          <div class="desk-stat desk-stat-primary">
+            <p class="desk-stat-number">${due.length}</p>
+            <p class="desk-stat-label">К повторению сегодня</p>
+          </div>
+          <div class="desk-stat">
+            <p class="desk-stat-number">${words.length}</p>
+            <p class="desk-stat-label">Всего в коллекции</p>
+          </div>
+        </div>
 
         <div class="actions">
           <button id="reviewBtn" class="btn btn-primary" ${due.length === 0 ? "disabled" : ""}>
@@ -44,6 +60,18 @@ export async function renderDashboard() {
           <button id="addBtn" class="btn btn-ghost">Добавить слово</button>
           <button id="wordsBtn" class="btn btn-ghost">Все слова</button>
         </div>
+
+        ${recent.length > 0 ? `
+          <p class="desk-section-title">Недавно собрано</p>
+          <ul class="desk-recent-list">
+            ${recent.map(w => `
+              <li class="desk-recent-item">
+                <span class="desk-recent-word">${escapeHtml(w.text)}</span>
+                <span class="desk-recent-meaning">${escapeHtml(w.meaning)}</span>
+              </li>
+            `).join("")}
+          </ul>
+        ` : ""}
       </div>
     `;
 
@@ -70,13 +98,14 @@ export async function renderDashboard() {
   }
 }
 
-// "1 слово", "2 слова", "5 слов" — родительный/именительный падеж по числу,
-// мелочь, но именно из таких мелочей складывается ощущение, что интерфейс
-// написан для человека, а не сгенерирован.
-function wordSuffix(n) {
-  const mod10 = n % 10;
-  const mod100 = n % 100;
-  if (mod10 === 1 && mod100 !== 11) return "о";
-  if ([2, 3, 4].includes(mod10) && ![12, 13, 14].includes(mod100)) return "а";
-  return "";
+// "Доброе утро" / "Добрый день" / "Добрый вечер" / "Доброй ночи" — реальное
+// локальное время браузера, не выдумка. Мелочь, но именно она превращает
+// dashboard из "списка данных" в рабочий стол, который знает, что сейчас.
+function greeting() {
+  const hour = new Date().getHours();
+
+  if (hour < 6) return "Доброй ночи";
+  if (hour < 12) return "Доброе утро";
+  if (hour < 18) return "Добрый день";
+  return "Добрый вечер";
 }
