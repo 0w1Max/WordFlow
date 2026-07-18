@@ -7,7 +7,7 @@ export function escapeHtml(str) {
 }
 
 function tagIcon(size = 15) {
-  return `<svg width="${size}" height="${size}" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2.2 7.3 7.3 2.2a1 1 0 0 1 .7-.3H12a2 2 0 0 1 2 2v4a1 1 0 0 1-.3.7L8.7 13.8a1 1 0 0 1-1.4 0L2.2 8.7a1 1 0 0 1 0-1.4z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><circle cx="10.3" cy="5.7" r="1" fill="currentColor"/></svg>`;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4 1.4h8a1.1 1.1 0 0 1 1.1 1.1V15l-5.1-3.3L2.9 15V2.5A1.1 1.1 0 0 1 4 1.4z"/></svg>`;
 }
 
 // Фирменный штамп — используется и в бренд-марке, и как декоративный

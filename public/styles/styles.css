@@ -75,8 +75,14 @@ body {
   font-family: var(--font-body);
   background-color: var(--color-paper);
   color: var(--color-ink);
-  background-image: radial-gradient(circle at 1px 1px, rgba(37, 29, 19, 0.04) 1px, transparent 0);
-  background-size: 16px 16px;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(37, 29, 19, 0.04) 1px, transparent 0),
+    radial-gradient(ellipse 900px 600px at 12% -10%, rgba(217, 165, 61, 0.16), transparent 60%),
+    radial-gradient(ellipse 1000px 700px at 100% 0%, rgba(58, 97, 66, 0.14), transparent 55%),
+    linear-gradient(165deg, #f8f3e3 0%, #f0efdc 45%, #dfe8d2 100%);
+  background-size: 16px 16px, auto, auto, auto;
+  background-attachment: fixed, fixed, fixed, fixed;
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat;
 }
 
 a {
@@ -926,18 +932,18 @@ a {
    объект бренда, а не разовая иконка. */
 .hero-cover-stamp {
   position: absolute;
-  right: -60px;
-  top: -60px;
+  right: -50px;
+  top: -50px;
   width: 420px;
   height: 420px;
-  color: rgba(243, 236, 216, 0.05);
+  color: rgba(217, 165, 61, 0.16);
   pointer-events: none;
-  animation: stamp-breathe 16s ease-in-out infinite alternate;
+  animation: stamp-breathe 12s ease-in-out infinite alternate;
 }
 
 @keyframes stamp-breathe {
-  from { transform: rotate(-3deg) scale(1); }
-  to { transform: rotate(3deg) scale(1.03); }
+  from { transform: rotate(-10deg) scale(1) translateY(0); }
+  to { transform: rotate(8deg) scale(1.08) translateY(-14px); }
 }
 
 .hero-cover .landing-wrap {
@@ -1129,37 +1135,40 @@ a {
 }
 
 .step {
-  padding-top: 26px;
-}
-
-.step-featured {
-  background: var(--color-moss-deep);
-  color: #f4f1e4;
+  position: relative;
+  padding: 26px 20px 12px;
   border-radius: var(--radius-card);
-  padding: 28px 24px 32px;
-  margin-top: -20px;
-  box-shadow: var(--shadow-3);
 }
 
-.step-featured .step-icon {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: #f4f1e4;
-  width: 46px;
-  height: 46px;
+.step > * {
+  position: relative;
+  z-index: 1;
 }
 
-.step-featured .step-number {
-  color: rgba(244, 241, 228, 0.7);
+/* "Бегущий свет" — один и тот же keyframe на всех трёх шагах, но со сдвигом
+   по времени (animation-delay), поэтому подсветка сама переходит от шага
+   к шагу по кругу, а не стоит на месте. Мягкий градиент из латуни и мха —
+   в тон новому фону страницы, а не чужеродное тёмное пятно. */
+.step-spotlight {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-card);
+  background: linear-gradient(155deg, rgba(217, 165, 61, 0.22), rgba(58, 97, 66, 0.16));
+  box-shadow: var(--shadow-2);
+  opacity: 0;
+  z-index: 0;
+  animation-name: step-spotlight-cycle;
+  animation-duration: 9s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
 }
 
-.step-featured .step-title,
-.step-featured .step-text {
-  color: #f4f1e4;
-}
-
-.step-featured .step-text {
-  opacity: 0.85;
+@keyframes step-spotlight-cycle {
+  0% { opacity: 0; }
+  5% { opacity: 1; }
+  27% { opacity: 1; }
+  33% { opacity: 0; }
+  100% { opacity: 0; }
 }
 
 .step-icon {

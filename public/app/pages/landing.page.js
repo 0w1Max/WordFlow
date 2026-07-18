@@ -70,19 +70,22 @@ export async function renderLanding() {
       </section>
 
       <section class="steps">
-        <div class="step step-featured" data-reveal style="transition-delay: 0ms;">
+        <div class="step" data-reveal style="transition-delay: 0ms;">
+          <div class="step-spotlight" style="animation-delay: 0s;"></div>
           <div class="step-icon">${addIcon()}</div>
           <p class="step-number">01</p>
           <h3 class="step-title">Добавьте слово</h3>
           <p class="step-text">Слово, значение, пример — и категория, если нужно.</p>
         </div>
         <div class="step" data-reveal style="transition-delay: 90ms;">
+          <div class="step-spotlight" style="animation-delay: -3s;"></div>
           <div class="step-icon">${settleIcon()}</div>
           <p class="step-number">02</p>
           <h3 class="step-title">Дайте ему отстояться</h3>
           <p class="step-text">Каждое слово получает своё расписание повторений — по алгоритму, похожему на Anki.</p>
         </div>
         <div class="step" data-reveal style="transition-delay: 180ms;">
+          <div class="step-spotlight" style="animation-delay: -6s;"></div>
           <div class="step-icon">${reviewIcon()}</div>
           <p class="step-number">03</p>
           <h3 class="step-title">Повторите, когда пора</h3>
