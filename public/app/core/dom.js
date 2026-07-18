@@ -6,8 +6,16 @@ export function escapeHtml(str) {
   return div.innerHTML;
 }
 
-function tagIcon(size = 15) {
-  return `<svg width="${size}" height="${size}" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4 1.4h8a1.1 1.1 0 0 1 1.1 1.1V15l-5.1-3.3L2.9 15V2.5A1.1 1.1 0 0 1 4 1.4z"/></svg>`;
+function bookMarkIcon(size = 15) {
+  return `<svg width="${size}" height="${size * 0.8}" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 3.4C8.1 1.9 5.4 1.2 1.6 1.6v11.8c3.8-.4 6.5.3 8.4 1.8V3.4z" fill="currentColor" opacity="0.5"/><path d="M10 3.4c1.9-1.5 4.6-2.2 8.4-1.8v11.8c-3.8-.4-6.5.3-8.4 1.8V3.4z" fill="currentColor"/></svg>`;
+}
+
+// Водяной знак в hero — намеренно ДРУГОЙ мотив, не тот же значок, что в
+// лого: компас-розетка, отсылает к теме "полевого дневника / наблюдений"
+// из брифа, а асимметричная стрелка делает вращение (stamp-breathe)
+// по-настоящему заметным.
+export function compassIcon(size = 15) {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M12 12 15.5 6 9 9.5z" fill="currentColor"/><path d="M12 12 8.5 18 15 14.5z" fill="currentColor" opacity="0.45"/></svg>`;
 }
 
 // Фирменный штамп — используется и в бренд-марке, и как декоративный
@@ -25,7 +33,7 @@ export function sproutIcon() {
 }
 
 export function stampIcon(size = 15) {
-  return tagIcon(size);
+  return bookMarkIcon(size);
 }
 
 // Фирменный знак WordFlow — штамп-«клеймо» коллекционера образцов вместо
@@ -33,7 +41,7 @@ export function stampIcon(size = 15) {
 // поэтому вынесен в один переиспользуемый хелпер.
 export function brandMark(variant = "masthead") {
   const cls = variant === "auth" ? "auth-mark" : "masthead-mark";
-  return `<a href="/" class="${cls}" data-spa-link><span class="brand-icon">${tagIcon()}</span>Wordflow</a>`;
+  return `<a href="/" class="${cls}" data-spa-link><span class="brand-icon">${bookMarkIcon()}</span>Wordflow</a>`;
 }
 
 const MONTHS_GENITIVE = [

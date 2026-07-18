@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { checkAuth, post } from "../core/api.js";
-import { escapeHtml, brandMark, stampIcon } from "../core/dom.js";
+import { escapeHtml, brandMark, stampIcon, compassIcon } from "../core/dom.js";
 import { initScrollReveal } from "../core/scrollReveal.js";
 
 export async function renderLanding() {
@@ -16,7 +16,7 @@ export async function renderLanding() {
 
   app.innerHTML = `
     <div class="hero-cover">
-      <div class="hero-cover-stamp">${stampIcon(420)}</div>
+      <div class="hero-cover-stamp">${compassIcon(420)}</div>
       <div class="landing-wrap">
         <nav class="landing-nav">
           ${brandMark()}
@@ -78,14 +78,14 @@ export async function renderLanding() {
           <p class="step-text">Слово, значение, пример — и категория, если нужно.</p>
         </div>
         <div class="step" data-reveal style="transition-delay: 90ms;">
-          <div class="step-spotlight" style="animation-delay: -3s;"></div>
+          <div class="step-spotlight" style="animation-delay: 3s;"></div>
           <div class="step-icon">${settleIcon()}</div>
           <p class="step-number">02</p>
           <h3 class="step-title">Дайте ему отстояться</h3>
           <p class="step-text">Каждое слово получает своё расписание повторений — по алгоритму, похожему на Anki.</p>
         </div>
         <div class="step" data-reveal style="transition-delay: 180ms;">
-          <div class="step-spotlight" style="animation-delay: -6s;"></div>
+          <div class="step-spotlight" style="animation-delay: 6s;"></div>
           <div class="step-icon">${reviewIcon()}</div>
           <p class="step-number">03</p>
           <h3 class="step-title">Повторите, когда пора</h3>

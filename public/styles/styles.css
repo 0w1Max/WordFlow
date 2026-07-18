@@ -913,7 +913,7 @@ a {
 
 /* ---------- Hero cover (dark wood band, cinematic) ---------- */
 .hero-cover {
-  background: linear-gradient(165deg, #2b1f14 0%, #1e150d 100%);
+  background: linear-gradient(165deg, #1d3123 0%, #12201a 100%);
   color: #f3ecd8;
   position: relative;
   overflow: hidden;
