@@ -65,6 +65,10 @@ export async function renderLanding() {
     </div>
 
     <div class="landing-wrap">
+      <section class="editorial-quote" data-reveal>
+        <p>Слова, которые остаются — <span>а не те, что забываются на следующий день.</span></p>
+      </section>
+
       <section class="steps">
         <div class="step" data-reveal style="transition-delay: 0ms;">
           <div class="step-icon">${addIcon()}</div>

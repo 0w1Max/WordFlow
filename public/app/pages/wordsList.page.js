@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { get, put, del } from "../core/api.js";
-import { escapeHtml, brandMark, stampIcon, formatShortDate, progressDotsHtml } from "../core/dom.js";
+import { escapeHtml, brandMark, stampIcon, formatShortDate, progressDotsHtml, bookmarkIcon } from "../core/dom.js";
 
 export async function renderWordsList() {
   const app = document.getElementById("app");
@@ -176,6 +176,7 @@ function render(app, state) {
 
       ${state.words.length === 0 ? `
         <div class="empty-state">
+          <div class="empty-state-icon">${bookmarkIcon()}</div>
           <p>Коллекция пуста. Добавьте первое слово, чтобы начать наблюдения.</p>
           <button id="addBtn" class="btn btn-primary">Добавить слово</button>
         </div>

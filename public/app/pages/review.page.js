@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { get, post } from "../core/api.js";
-import { escapeHtml, brandMark } from "../core/dom.js";
+import { escapeHtml, brandMark, sproutIcon } from "../core/dom.js";
 
 export async function renderReview() {
   const app = document.getElementById("app");
@@ -48,6 +48,7 @@ function render(app, state) {
         ${brandMark()}
         <h1 class="headline" style="margin-top: 18px;">Повторение</h1>
         <div class="empty-state">
+          <div class="empty-state-icon">${sproutIcon()}</div>
           <p>На сегодня наблюдений нет — всё уже показано по расписанию.</p>
           <div class="actions" style="justify-content: center;">
             <button id="addBtn" class="btn btn-primary">Добавить слово</button>

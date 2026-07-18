@@ -469,7 +469,7 @@ a {
   background: var(--color-card);
   border: 1px solid var(--color-rule-soft);
   border-radius: var(--radius-card);
-  box-shadow: var(--shadow-2);
+  box-shadow: var(--shadow-2), inset 0 1px 0 rgba(255, 253, 247, 0.6);
   overflow: hidden;
   transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
   animation: cascade-in 460ms var(--ease-out) both;
@@ -477,7 +477,7 @@ a {
 
 .specimen:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow-3);
+  box-shadow: var(--shadow-3), inset 0 1px 0 rgba(255, 253, 247, 0.6);
 }
 
 .specimen-bar {
@@ -595,7 +595,7 @@ a {
   background: var(--color-card-raised);
   border: 1px solid var(--color-rule-soft);
   border-radius: 12px;
-  box-shadow: var(--shadow-3);
+  box-shadow: var(--shadow-3), inset 0 1px 0 rgba(255, 255, 255, 0.7);
   padding: 52px 30px;
   min-height: 190px;
   text-align: center;
@@ -817,7 +817,7 @@ a {
 .desk-stat-primary {
   background: var(--color-moss-deep);
   color: #f4f1e4;
-  box-shadow: var(--shadow-3);
+  box-shadow: var(--shadow-3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   border-color: var(--color-moss-deep);
 }
 
@@ -1078,6 +1078,34 @@ a {
 }
 
 /* ---------- Steps ---------- */
+.editorial-quote {
+  padding: 20px 0 76px;
+  max-width: 760px;
+}
+
+.editorial-quote p {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.7rem, 2.6vw + 1rem, 2.6rem);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.editorial-quote p span {
+  color: var(--color-ink-faint);
+}
+
+/* ---------- Empty-state line illustrations ---------- */
+.empty-state-icon {
+  color: var(--color-rule);
+  margin: 0 0 16px;
+  display: flex;
+  justify-content: center;
+}
+
 .steps {
   display: grid;
   gap: 28px;

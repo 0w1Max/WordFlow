@@ -14,6 +14,16 @@ function sprigIcon(size = 15) {
 // оттиск в углу каждой карточки-экземпляра, и водяным знаком в hero.
 // Один и тот же мотив везде — это то самое "фирменное лицо", которого не
 // хватало: убери название "Wordflow" — штамп всё равно узнаётся.
+// Минимальные линейные иллюстрации для пустых состояний — без мультяшности,
+// в одну линию, тем же языком, что и штамп-логотип.
+export function bookmarkIcon() {
+  return `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10a1 1 0 0 1 1 1v17l-6-4-6 4V4a1 1 0 0 1 1-1z"/></svg>`;
+}
+
+export function sproutIcon() {
+  return `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21V10"/><path d="M12 10C8 10 6 7 6 4c3 0 6 2 6 6z"/><path d="M12 13C16 13 18 10 18 7c-3 0-6 2-6 6z"/></svg>`;
+}
+
 export function stampIcon(size = 15) {
   return sprigIcon(size);
 }
