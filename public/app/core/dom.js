@@ -6,8 +6,8 @@ export function escapeHtml(str) {
   return div.innerHTML;
 }
 
-function sprigIcon(size = 15) {
-  return `<svg width="${size}" height="${size}" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.3"/><path d="M8 12V5M8 5C6.5 5 5.5 6.2 5.5 7.8M8 5C9.5 5 10.6 6.3 10.2 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>`;
+function tagIcon(size = 15) {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2.2 7.3 7.3 2.2a1 1 0 0 1 .7-.3H12a2 2 0 0 1 2 2v4a1 1 0 0 1-.3.7L8.7 13.8a1 1 0 0 1-1.4 0L2.2 8.7a1 1 0 0 1 0-1.4z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><circle cx="10.3" cy="5.7" r="1" fill="currentColor"/></svg>`;
 }
 
 // Фирменный штамп — используется и в бренд-марке, и как декоративный
@@ -25,7 +25,7 @@ export function sproutIcon() {
 }
 
 export function stampIcon(size = 15) {
-  return sprigIcon(size);
+  return tagIcon(size);
 }
 
 // Фирменный знак WordFlow — штамп-«клеймо» коллекционера образцов вместо
@@ -33,7 +33,7 @@ export function stampIcon(size = 15) {
 // поэтому вынесен в один переиспользуемый хелпер.
 export function brandMark(variant = "masthead") {
   const cls = variant === "auth" ? "auth-mark" : "masthead-mark";
-  return `<span class="${cls}"><span class="brand-icon">${sprigIcon()}</span>Wordflow</span>`;
+  return `<a href="/" class="${cls}" data-spa-link><span class="brand-icon">${tagIcon()}</span>Wordflow</a>`;
 }
 
 const MONTHS_GENITIVE = [
