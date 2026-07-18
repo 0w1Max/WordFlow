@@ -212,13 +212,13 @@ a {
 }
 
 .btn-primary {
-  background: var(--color-moss);
-  border-color: var(--color-moss);
+  background: linear-gradient(155deg, var(--color-moss) 0%, var(--color-moss-deep) 100%);
+  border-color: var(--color-moss-deep);
   color: #fdfbf3;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--color-moss-deep);
+  background: linear-gradient(155deg, var(--color-moss-deep) 0%, #16281c 100%);
   border-color: var(--color-moss-deep);
   box-shadow: var(--shadow-3), var(--glow-moss);
   transform: translateY(-2px);
@@ -822,7 +822,7 @@ a {
 }
 
 .desk-stat-primary {
-  background: var(--color-moss-deep);
+  background: linear-gradient(155deg, var(--color-moss-deep) 0%, #16281c 100%);
   color: #f4f1e4;
   box-shadow: var(--shadow-3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   border-color: var(--color-moss-deep);
@@ -932,6 +932,12 @@ a {
   height: 420px;
   color: rgba(243, 236, 216, 0.05);
   pointer-events: none;
+  animation: stamp-breathe 16s ease-in-out infinite alternate;
+}
+
+@keyframes stamp-breathe {
+  from { transform: rotate(-3deg) scale(1); }
+  to { transform: rotate(3deg) scale(1.03); }
 }
 
 .hero-cover .landing-wrap {
@@ -1025,11 +1031,11 @@ a {
 
 .hero-headline {
   font-family: var(--font-display);
-  font-size: clamp(2.4rem, 4.2vw + 1rem, 3.6rem);
+  font-size: clamp(2.6rem, 5.6vw + 1rem, 4.6rem);
   font-weight: 600;
-  line-height: 1.14;
-  letter-spacing: -0.015em;
-  margin: 0 0 22px;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  margin: 0 0 26px;
 }
 
 .hero-sub {
@@ -1124,6 +1130,36 @@ a {
 
 .step {
   padding-top: 26px;
+}
+
+.step-featured {
+  background: var(--color-moss-deep);
+  color: #f4f1e4;
+  border-radius: var(--radius-card);
+  padding: 28px 24px 32px;
+  margin-top: -20px;
+  box-shadow: var(--shadow-3);
+}
+
+.step-featured .step-icon {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #f4f1e4;
+  width: 46px;
+  height: 46px;
+}
+
+.step-featured .step-number {
+  color: rgba(244, 241, 228, 0.7);
+}
+
+.step-featured .step-title,
+.step-featured .step-text {
+  color: #f4f1e4;
+}
+
+.step-featured .step-text {
+  opacity: 0.85;
 }
 
 .step-icon {

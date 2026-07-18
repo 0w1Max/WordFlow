@@ -28,7 +28,7 @@ export async function renderLanding() {
 
         <div class="hero-grid">
           <section class="hero">
-            <h1 class="hero-headline">Каждое слово, которое вы встретили, — <span class="headline-mark">экземпляр</span>. Соберите его, пока не забыли.</h1>
+            <h1 class="hero-headline">Собирайте слова.<br>Наблюдайте, как они<br><span class="headline-mark">приживаются</span>.</h1>
             <p class="hero-sub">WordFlow — личный каталог слов и значений к ним с расписанием повторений, которое подстраивается под то, что вы уже помните.</p>
 
             <div id="heroError"></div>
@@ -70,7 +70,7 @@ export async function renderLanding() {
       </section>
 
       <section class="steps">
-        <div class="step" data-reveal style="transition-delay: 0ms;">
+        <div class="step step-featured" data-reveal style="transition-delay: 0ms;">
           <div class="step-icon">${addIcon()}</div>
           <p class="step-number">01</p>
           <h3 class="step-title">Добавьте слово</h3>
