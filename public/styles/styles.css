@@ -982,15 +982,57 @@ a {
   color: #faf5e6;
 }
 
+.hero-cover .hl-accent {
+  color: #a8d1a0;
+}
+
+.hero-cover .hero-headline-soft {
+  color: rgba(243, 236, 216, 0.5);
+  font-weight: 500;
+}
+
+.hero-cover .hl-underline {
+  color: #faf5e6;
+}
+
+.hero-cover .hl-underline::after {
+  background: #d9a53d;
+}
+
 .hero-cover .hero-note {
   color: rgba(243, 236, 216, 0.5);
 }
 
-.headline-mark {
-  background-color: rgba(217, 165, 61, 0.34);
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-  padding: 0.02em 0.08em;
+/* Акцентное слово №1 — просто цвет, без засечек и подчёркиваний: самый
+   тихий уровень выделения. */
+.hl-accent {
+  color: var(--color-moss-deep);
+}
+
+/* Средняя, связующая строка — специально приглушена (легче по весу и
+   цвету), чтобы создать ритм внутри заголовка, а не подавать все три
+   строки с одинаковой силой. */
+.hero-headline-soft {
+  color: var(--color-ink-faint);
+  font-weight: 500;
+}
+
+/* Акцентное слово №2 — курсив + подчёркивание латунью, самый сильный
+   уровень выделения, "результат" всей фразы. */
+.hl-underline {
+  font-style: italic;
+  position: relative;
+  display: inline-block;
+}
+
+.hl-underline::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  bottom: 0.02em;
+  height: 3px;
+  background: var(--color-brass);
   border-radius: 2px;
 }
 
@@ -1039,7 +1081,7 @@ a {
   font-family: var(--font-display);
   font-size: clamp(2.6rem, 5.6vw + 1rem, 4.6rem);
   font-weight: 600;
-  line-height: 1.04;
+  line-height: 1.1;
   letter-spacing: -0.02em;
   margin: 0 0 26px;
 }

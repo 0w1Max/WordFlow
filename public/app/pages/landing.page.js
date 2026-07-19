@@ -28,7 +28,7 @@ export async function renderLanding() {
 
         <div class="hero-grid">
           <section class="hero">
-            <h1 class="hero-headline">Собирайте слова.<br>Наблюдайте, как они<br><span class="headline-mark">приживаются</span>.</h1>
+            <h1 class="hero-headline"><span class="hl-accent">Собирайте</span> слова.<br><span class="hero-headline-soft">Смотрите, как они</span><br><span class="hl-underline">приживаются</span>.</h1>
             <p class="hero-sub">WordFlow — личный каталог слов и значений к ним с расписанием повторений, которое подстраивается под то, что вы уже помните.</p>
 
             <div id="heroError"></div>
