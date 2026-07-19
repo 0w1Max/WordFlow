@@ -982,58 +982,38 @@ a {
   color: #faf5e6;
 }
 
-.hero-cover .hl-accent {
-  color: #a8d1a0;
+.hero-cover .hl-strike {
+  color: rgba(243, 236, 216, 0.4);
 }
 
-.hero-cover .hero-headline-soft {
-  color: rgba(243, 236, 216, 0.5);
-  font-weight: 500;
-}
-
-.hero-cover .hl-underline {
-  color: #faf5e6;
-}
-
-.hero-cover .hl-underline::after {
-  background: #d9a53d;
+.hero-cover .hl-correction {
+  color: #e6b856;
 }
 
 .hero-cover .hero-note {
   color: rgba(243, 236, 216, 0.5);
 }
 
-/* Акцентное слово №1 — просто цвет, без засечек и подчёркиваний: самый
-   тихий уровень выделения. */
-.hl-accent {
-  color: var(--color-moss-deep);
-}
-
-/* Средняя, связующая строка — специально приглушена (легче по весу и
-   цвету), чтобы создать ритм внутри заголовка, а не подавать все три
-   строки с одинаковой силой. */
-.hero-headline-soft {
+/* Приём вместо "большого маркетингового заголовка": слово зачёркнуто, как
+   в черновике, и рядом — рукописная поправка. Меньше пафоса, больше
+   характера — и напрямую обыгрывает идею личных заметок натуралиста,
+   а не абстрактный слоган. */
+.hl-strike {
   color: var(--color-ink-faint);
+  text-decoration: line-through;
+  text-decoration-color: var(--color-rust);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+
+.hl-correction {
+  font-family: var(--font-mono);
+  font-style: normal;
   font-weight: 500;
-}
-
-/* Акцентное слово №2 — курсив + подчёркивание латунью, самый сильный
-   уровень выделения, "результат" всей фразы. */
-.hl-underline {
-  font-style: italic;
-  position: relative;
+  color: var(--color-brass-deep);
   display: inline-block;
-}
-
-.hl-underline::after {
-  content: "";
-  position: absolute;
-  left: 2px;
-  right: 2px;
-  bottom: 0.02em;
-  height: 3px;
-  background: var(--color-brass);
-  border-radius: 2px;
+  transform: rotate(-3deg);
+  margin-left: 6px;
 }
 
 /* ---------- Landing: asymmetric hero grid, not a centered column ---------- */
@@ -1077,13 +1057,15 @@ a {
   animation: rise-in 420ms var(--ease-out) both;
 }
 
+/* Гораздо скромнее прежнего "гигантского" размера — читается как
+   уверенная короткая фраза, а не рекламный баннер. */
 .hero-headline {
   font-family: var(--font-display);
-  font-size: clamp(2.6rem, 5.6vw + 1rem, 4.6rem);
-  font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  margin: 0 0 26px;
+  font-size: clamp(1.9rem, 2.4vw + 1.2rem, 2.7rem);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  margin: 0 0 22px;
 }
 
 .hero-sub {
