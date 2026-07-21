@@ -982,11 +982,7 @@ a {
   color: #faf5e6;
 }
 
-.hero-cover .hl-strike {
-  color: rgba(243, 236, 216, 0.4);
-}
-
-.hero-cover .hl-correction {
+.hero-cover .hl-accent {
   color: #e6b856;
 }
 
@@ -994,26 +990,12 @@ a {
   color: rgba(243, 236, 216, 0.5);
 }
 
-/* Приём вместо "большого маркетингового заголовка": слово зачёркнуто, как
-   в черновике, и рядом — рукописная поправка. Меньше пафоса, больше
-   характера — и напрямую обыгрывает идею личных заметок натуралиста,
-   а не абстрактный слоган. */
-.hl-strike {
-  color: var(--color-ink-faint);
-  text-decoration: line-through;
-  text-decoration-color: var(--color-rust);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 2px;
-}
-
-.hl-correction {
-  font-family: var(--font-mono);
-  font-style: normal;
-  font-weight: 500;
+/* Второе предложение получает акцентный цвет — без зачёркиваний и
+   рукописных поправок: приём с зачёркнутым словом быстро становится
+   штампом, простой цветовой контраст между двумя предложениями честнее
+   и увереннее держит внимание. */
+.hl-accent {
   color: var(--color-brass-deep);
-  display: inline-block;
-  transform: rotate(-3deg);
-  margin-left: 6px;
 }
 
 /* ---------- Landing: asymmetric hero grid, not a centered column ---------- */
@@ -1061,10 +1043,10 @@ a {
    уверенная короткая фраза, а не рекламный баннер. */
 .hero-headline {
   font-family: var(--font-display);
-  font-size: clamp(1.9rem, 2.4vw + 1.2rem, 2.7rem);
-  font-weight: 500;
-  line-height: 1.4;
-  letter-spacing: -0.01em;
+  font-size: clamp(2.1rem, 3.4vw + 1rem, 3.1rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
   margin: 0 0 22px;
 }
 
@@ -1266,4 +1248,87 @@ a {
 
 .landing-footer-cta .headline {
   font-size: 28px;
+}
+
+/* ---------- Footer ---------- */
+.landing-footer {
+  border-top: 1px solid var(--color-rule);
+  background: rgba(255, 253, 247, 0.35);
+}
+
+.footer-wrap {
+  padding: 48px 24px 28px;
+}
+
+.footer-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 36px;
+  padding-bottom: 32px;
+}
+
+.footer-brand {
+  max-width: 340px;
+}
+
+.footer-tagline {
+  margin: 14px 0 0;
+  font-size: 14px;
+  color: var(--color-ink-soft);
+  line-height: 1.6;
+}
+
+.footer-links {
+  display: flex;
+  gap: 56px;
+  flex-wrap: wrap;
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-col-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+  margin: 0 0 4px;
+}
+
+.footer-col a,
+.footer-link-btn {
+  font-size: 14px;
+  color: var(--color-ink-soft);
+  text-decoration: none;
+}
+
+.footer-link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
+.footer-col a:hover,
+.footer-link-btn:hover {
+  color: var(--color-moss-deep);
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 22px;
+  border-top: 1px solid var(--color-rule-soft);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--color-ink-faint);
 }

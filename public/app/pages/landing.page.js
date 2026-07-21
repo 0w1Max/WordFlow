@@ -28,16 +28,16 @@ export async function renderLanding() {
 
         <div class="hero-grid">
           <section class="hero">
-            <h1 class="hero-headline">Не <span class="hl-strike">зубрите</span> <span class="hl-correction">собирайте</span>.</h1>
-            <p class="hero-sub">WordFlow — личный каталог слов и значений к ним с расписанием повторений, которое подстраивается под то, что вы уже помните.</p>
+            <h1 class="hero-headline">Не учите больше слов.<br><span class="hl-accent">Запоминайте нужные.</span></h1>
+            <p class="hero-sub">WordFlow — личный каталог слов, который напоминает о них ровно тогда, когда вы вот-вот готовы забыть.</p>
 
             <div id="heroError"></div>
 
             <div class="hero-actions">
-              <button id="tryFreeBtn" class="btn btn-primary">Попробовать без регистрации</button>
+              <button id="tryFreeBtn" class="btn btn-primary">Начать бесплатно</button>
               <button id="heroRegister" class="btn btn-ghost">Зарегистрироваться</button>
             </div>
-            <p class="hero-note">Без карты и письма для подтверждения — начинаете сразу, данные сохранятся в этом браузере.</p>
+            <p class="hero-note">Без карты. Без подтверждения по почте. Начнёте через несколько секунд.</p>
           </section>
 
           <section class="showcase">
@@ -46,7 +46,7 @@ export async function renderLanding() {
               <div class="specimen-body">
                 <div class="specimen-stamp">${stampIcon(30)}</div>
                 <div class="specimen-eyebrow">
-                  <span>Природа</span><span>·</span><span>Собрано 12 мар 2026</span>
+                  <span>Из путешествий</span><span>·</span><span>Собрано 12 мар 2026</span>
                 </div>
                 <p class="specimen-word">Петрикор</p>
                 <p class="specimen-meaning">запах земли после первого дождя</p>
@@ -72,24 +72,24 @@ export async function renderLanding() {
       <section class="steps">
         <div class="step" data-reveal style="transition-delay: 0ms;">
           <div class="step-spotlight" style="animation-delay: 0s;"></div>
-          <div class="step-icon">${addIcon()}</div>
+          <div class="step-icon">${findIcon()}</div>
           <p class="step-number">01</p>
-          <h3 class="step-title">Добавьте слово</h3>
-          <p class="step-text">Слово, значение, пример — и категория, если нужно.</p>
+          <h3 class="step-title">Найдите слово</h3>
+          <p class="step-text">Необычное. Красивое. Или давно забытое.</p>
         </div>
         <div class="step" data-reveal style="transition-delay: 90ms;">
           <div class="step-spotlight" style="animation-delay: 3s;"></div>
-          <div class="step-icon">${settleIcon()}</div>
+          <div class="step-icon">${addIcon()}</div>
           <p class="step-number">02</p>
-          <h3 class="step-title">Дайте ему отстояться</h3>
-          <p class="step-text">Каждое слово получает своё расписание повторений — по алгоритму, похожему на Anki.</p>
+          <h3 class="step-title">Сохраните его</h3>
+          <p class="step-text">Со значением, контекстом и своими заметками.</p>
         </div>
         <div class="step" data-reveal style="transition-delay: 180ms;">
           <div class="step-spotlight" style="animation-delay: 6s;"></div>
           <div class="step-icon">${reviewIcon()}</div>
           <p class="step-number">03</p>
-          <h3 class="step-title">Повторите, когда пора</h3>
-          <p class="step-text">Приложение само подскажет, что пора повторить — не раньше и не позже.</p>
+          <h3 class="step-title">Встретьтесь снова</h3>
+          <p class="step-text">WordFlow сам напомнит о слове тогда, когда повторение действительно поможет его запомнить.</p>
         </div>
       </section>
 
@@ -99,8 +99,8 @@ export async function renderLanding() {
           <p class="value-text">Попробуйте прямо сейчас, зарегистрируетесь позже — все слова останутся на месте.</p>
         </div>
         <div data-reveal style="transition-delay: 90ms;">
-          <p class="value-eyebrow">Один cookie</p>
-          <p class="value-text">Только для входа. Никакой рекламы и слежки за вами.</p>
+          <p class="value-eyebrow">Никакой рекламы</p>
+          <p class="value-text">Мы не следим за вами и ничего не продаём вашему вниманию — всего один cookie, чтобы не выходить из аккаунта.</p>
         </div>
         <div data-reveal style="transition-delay: 180ms;">
           <p class="value-eyebrow">Ваш темп</p>
@@ -109,12 +109,40 @@ export async function renderLanding() {
       </section>
 
       <section class="landing-footer-cta" data-reveal>
-        <h2 class="headline">Начните собирать слова</h2>
+        <h2 class="headline">Слова стоят того, чтобы их сохранить.</h2>
         <div class="actions" style="justify-content: center;">
-          <button id="footerTryFree" class="btn btn-primary">Попробовать бесплатно</button>
+          <button id="footerTryFree" class="btn btn-primary">Начать бесплатно</button>
         </div>
       </section>
     </div>
+
+    <footer class="landing-footer">
+      <div class="landing-wrap footer-wrap">
+        <div class="footer-top">
+          <div class="footer-brand">
+            ${brandMark()}
+            <p class="footer-tagline">Личный гербарий слов. Откройте страницу и продолжите с того места, где остановились.</p>
+          </div>
+
+          <div class="footer-links">
+            <div class="footer-col">
+              <p class="footer-col-title">Аккаунт</p>
+              <a href="/login" data-spa-link>Вход</a>
+              <a href="/register" data-spa-link>Регистрация</a>
+            </div>
+            <div class="footer-col">
+              <p class="footer-col-title">Начать</p>
+              <button id="footerFooterTryFree" class="footer-link-btn">Без регистрации</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <span>© ${new Date().getFullYear()} WordFlow</span>
+          <span>Один cookie для входа. Никакой рекламы и слежки.</span>
+        </div>
+      </div>
+    </footer>
   `;
 
   document.getElementById("navLogin").onclick = () => navigate("/login");
@@ -140,6 +168,7 @@ export async function renderLanding() {
 
   document.getElementById("tryFreeBtn").onclick = (e) => startTrial(e.currentTarget);
   document.getElementById("footerTryFree").onclick = (e) => startTrial(e.currentTarget);
+  document.getElementById("footerFooterTryFree").onclick = (e) => startTrial(e.currentTarget);
 
   // flip-in — чистый CSS @keyframes (см. styles.css), стартует сам при
   // отрисовке, без JS-таймеров. После её завершения снимаем инлайновую
@@ -154,12 +183,12 @@ export async function renderLanding() {
   initScrollReveal(app);
 }
 
-function addIcon() {
-  return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>`;
+function findIcon() {
+  return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/></svg>`;
 }
 
-function settleIcon() {
-  return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4-1.5-7-4.5-7-9.5C5 7.5 8 4 12 2c4 2 7 5.5 7 9.5 0 5-3 8-7 9.5z"/><path d="M12 21V7"/></svg>`;
+function addIcon() {
+  return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>`;
 }
 
 function reviewIcon() {
