@@ -201,8 +201,8 @@ a {
   border-radius: var(--radius-control);
   border: 1px solid transparent;
   cursor: pointer;
-  transition: transform 180ms var(--ease-spring), box-shadow 220ms var(--ease-out),
-    background-color 180ms, border-color 180ms, opacity 180ms;
+  transition: transform 250ms var(--ease-spring), box-shadow 250ms var(--ease-out),
+    background-color 250ms, border-color 250ms, opacity 250ms;
   line-height: 1.2;
   box-shadow: var(--shadow-1);
 }
@@ -227,7 +227,7 @@ a {
   background: linear-gradient(155deg, var(--color-moss-deep) 0%, #16281c 100%);
   border-color: var(--color-moss-deep);
   box-shadow: var(--shadow-3), var(--glow-moss);
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.015);
 }
 
 .btn-ghost {
@@ -237,10 +237,10 @@ a {
 }
 
 .btn-ghost:hover:not(:disabled) {
-  border-color: var(--color-moss);
+  border-color: var(--color-brass);
   color: var(--color-moss-deep);
   box-shadow: var(--shadow-2);
-  transform: translateY(-1px);
+  transform: translateY(-1px) scale(1.015);
 }
 
 .btn-danger-text {
@@ -359,6 +359,13 @@ a {
 .empty-state p {
   margin: 0 0 18px;
   font-size: 15px;
+}
+
+.empty-state-icon {
+  color: var(--color-rule);
+  margin: 0 0 16px;
+  display: flex;
+  justify-content: center;
 }
 
 .loading-line {
@@ -1020,48 +1027,39 @@ a {
   gap: 8px;
 }
 
-.hero-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 40px;
-  align-items: center;
-  padding: 32px 0 64px;
-}
-
-@media (min-width: 860px) {
-  .hero-grid {
-    grid-template-columns: 1.1fr 0.9fr;
-    padding: 56px 0 88px;
-  }
-}
-
 .hero {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 8px 0 12px;
   animation: rise-in 420ms var(--ease-out) both;
 }
 
-/* Гораздо скромнее прежнего "гигантского" размера — читается как
-   уверенная короткая фраза, а не рекламный баннер. */
+/* Магазинный масштаб, не боится переносов строк — заголовок продаёт
+   ощущение, а не перечисляет функции. */
 .hero-headline {
   font-family: var(--font-display);
-  font-size: clamp(2.1rem, 3.4vw + 1rem, 3.1rem);
+  font-size: clamp(2.3rem, 4.4vw + 1rem, 3.6rem);
   font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.015em;
+  line-height: 1.16;
+  letter-spacing: -0.02em;
   margin: 0 0 22px;
 }
 
 .hero-sub {
-  font-size: 17.5px;
+  font-size: 17px;
   color: var(--color-ink-soft);
   max-width: 46ch;
   line-height: 1.65;
-  margin: 0 0 28px;
+  margin: 0 auto 30px;
 }
 
 .hero-actions {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 }
 
 .hero-note {
@@ -1071,183 +1069,162 @@ a {
   margin: 16px 0 0;
 }
 
-/* ---------- Showcase: herbarium sheet, flip-in ---------- */
-.showcase {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  perspective: 1400px;
-  min-height: 260px;
+/* ---------- Section bands: real color rhythm, not one flat repeating tone ---------- */
+.band-bright {
+  background: #fdfbf3;
+  padding: 76px 0;
 }
 
-.showcase-card {
-  width: 280px;
-  transform-style: preserve-3d;
-  transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
-  animation-name: flip-in;
-  animation-duration: 680ms;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-  animation-fill-mode: both;
+.band-accent {
+  background: linear-gradient(155deg, var(--color-moss-deep) 0%, #16281c 100%);
+  color: #f4f1e4;
+  padding: 80px 0;
 }
 
-@keyframes flip-in {
-  0% { opacity: 0; transform: rotateY(-85deg); }
-  100% { opacity: 1; transform: rotateY(0deg); }
+.band-quiet {
+  padding: 44px 0 8px;
 }
 
-@media (hover: hover) {
-  .showcase-card:hover {
-    transform: translateY(-8px) rotate(-1deg);
-    box-shadow: var(--shadow-4);
-  }
+.band-final {
+  background: #fdfbf3;
+  padding: 72px 0 60px;
 }
 
-/* ---------- Steps ---------- */
+.catalog-caption {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+  margin: 0 0 30px;
+}
+
+/* Карточка слова — не компонент интерфейса, а предмет из личного архива:
+   много воздуха, крупная типографика, метаданные внизу как в каталожной
+   карточке библиотеки. Лёгкое непрерывное покачивание — отсылка к самому
+   имени продукта: Flow. */
+.catalog-card {
+  max-width: 460px;
+  margin: 0 auto;
+  background: var(--color-card-raised);
+  border-top: 3px solid var(--color-ink);
+  border-bottom: 3px solid var(--color-ink);
+  padding: 52px 44px;
+  box-shadow: var(--shadow-4);
+  animation: catalog-float 7s ease-in-out infinite;
+}
+
+@keyframes catalog-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.catalog-card-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+  margin: 0 0 20px;
+}
+
+.catalog-card-word {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  font-weight: 600;
+  margin: 0 0 2px;
+  letter-spacing: -0.01em;
+}
+
+.catalog-card-pos {
+  font-family: var(--font-mono);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--color-ink-faint);
+  margin: 0 0 28px;
+}
+
+.catalog-card-meaning {
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--color-ink);
+  margin: 0 0 16px;
+}
+
+.catalog-card-example {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--color-ink-faint);
+  margin: 0 0 36px;
+}
+
+.catalog-card-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding-top: 28px;
+  border-top: 1px solid var(--color-rule-soft);
+}
+
+.catalog-card-meta-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+  margin-bottom: 4px;
+}
+
+.catalog-card-meta-value {
+  font-size: 14.5px;
+  color: var(--color-ink);
+}
+
+/* Цитата теперь живёт на тёмной акцентной полосе — контраст, а не очередная
+   бумажная секция подряд. color: inherit подхватывает светлый текст полосы. */
 .editorial-quote {
-  padding: 20px 0 76px;
   max-width: 760px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .editorial-quote p {
   font-family: var(--font-display);
   font-style: italic;
   font-weight: 500;
-  font-size: clamp(1.7rem, 2.6vw + 1rem, 2.6rem);
+  font-size: clamp(1.8rem, 3vw + 1rem, 2.7rem);
   line-height: 1.35;
   letter-spacing: -0.01em;
-  color: var(--color-ink);
+  color: inherit;
   margin: 0;
 }
 
 .editorial-quote p span {
+  opacity: 0.6;
+}
+
+/* Доверие сведено к одной тихой строке вместо трёх карточек — меньше
+   объяснений, больше уверенности. */
+.trust-line {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 13px;
   color: var(--color-ink-faint);
-}
-
-/* ---------- Empty-state line illustrations ---------- */
-.empty-state-icon {
-  color: var(--color-rule);
-  margin: 0 0 16px;
-  display: flex;
-  justify-content: center;
-}
-
-.steps {
-  display: grid;
-  gap: 28px;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  margin: 0 0 68px;
-  padding-top: 10px;
-  border-top: 1px solid var(--color-rule);
-}
-
-.step {
-  position: relative;
-  padding: 26px 20px 12px;
-  border-radius: var(--radius-card);
-}
-
-.step > * {
-  position: relative;
-  z-index: 1;
-}
-
-/* "Бегущий свет" — один и тот же keyframe на всех трёх шагах, но со сдвигом
-   по времени (animation-delay), поэтому подсветка сама переходит от шага
-   к шагу по кругу, а не стоит на месте. Мягкий градиент из латуни и мха —
-   в тон новому фону страницы, а не чужеродное тёмное пятно. */
-.step-spotlight {
-  position: absolute;
-  inset: 0;
-  border-radius: var(--radius-card);
-  background: linear-gradient(155deg, rgba(217, 165, 61, 0.22), rgba(58, 97, 66, 0.16));
-  box-shadow: var(--shadow-2);
-  opacity: 0;
-  z-index: 0;
-  animation-name: step-spotlight-cycle;
-  animation-duration: 9s;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-}
-
-@keyframes step-spotlight-cycle {
-  0% { opacity: 0; }
-  5% { opacity: 1; }
-  27% { opacity: 1; }
-  33% { opacity: 0; }
-  100% { opacity: 0; }
-}
-
-.step-icon {
-  width: 38px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--color-rule);
-  border-radius: 50%;
-  color: var(--color-moss);
-  background: var(--color-card);
-  margin-bottom: 16px;
-  box-shadow: var(--shadow-1);
-}
-
-.step-number {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--color-brass-deep);
-  letter-spacing: 0.08em;
-  margin: 0 0 10px;
-}
-
-.step-title {
-  font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0 0 8px;
-  color: var(--color-ink);
-}
-
-.step-text {
-  font-size: 14.5px;
-  color: var(--color-ink-soft);
-  line-height: 1.6;
-  margin: 0;
-}
-
-/* ---------- Value grid ---------- */
-.value-grid {
-  display: grid;
-  gap: 24px;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  margin: 0 0 68px;
-  padding: 32px 0;
-  border-top: 1px solid var(--color-rule);
-  border-bottom: 1px solid var(--color-rule);
-}
-
-.value-eyebrow {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-moss-deep);
-  margin: 0 0 6px;
-}
-
-.value-text {
-  font-size: 14px;
-  color: var(--color-ink-soft);
-  margin: 0;
-  line-height: 1.55;
+  letter-spacing: 0.02em;
+  max-width: 620px;
+  margin: 0 auto;
+  line-height: 2;
 }
 
 .landing-footer-cta {
   text-align: center;
-  padding: 8px 0 0;
 }
 
 .landing-footer-cta .headline {
-  font-size: 28px;
+  font-size: 30px;
 }
 
 /* ---------- Footer ---------- */
