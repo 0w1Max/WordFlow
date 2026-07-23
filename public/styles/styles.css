@@ -1027,11 +1027,31 @@ a {
   gap: 8px;
 }
 
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-brass-deep);
+  margin: 0 0 14px;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+  align-items: center;
+  padding: 40px 0 64px;
+}
+
+@media (min-width: 900px) {
+  .hero-grid {
+    grid-template-columns: 1fr 0.95fr;
+    padding: 56px 0 88px;
+  }
+}
+
 .hero {
-  max-width: 640px;
-  margin: 0 auto;
-  text-align: center;
-  padding: 8px 0 12px;
   animation: rise-in 420ms var(--ease-out) both;
 }
 
@@ -1039,27 +1059,26 @@ a {
    ощущение, а не перечисляет функции. */
 .hero-headline {
   font-family: var(--font-display);
-  font-size: clamp(2.3rem, 4.4vw + 1rem, 3.6rem);
+  font-size: clamp(2.2rem, 3.6vw + 1rem, 3.2rem);
   font-weight: 600;
   line-height: 1.16;
   letter-spacing: -0.02em;
-  margin: 0 0 22px;
+  margin: 0 0 20px;
 }
 
 .hero-sub {
-  font-size: 17px;
+  font-size: 16.5px;
   color: var(--color-ink-soft);
-  max-width: 46ch;
+  max-width: 48ch;
   line-height: 1.65;
-  margin: 0 auto 30px;
+  margin: 0 0 28px;
 }
 
 .hero-actions {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
 }
 
 .hero-note {
@@ -1069,50 +1088,51 @@ a {
   margin: 16px 0 0;
 }
 
-/* ---------- Section bands: real color rhythm, not one flat repeating tone ---------- */
-.band-bright {
-  background: #fdfbf3;
-  padding: 76px 0;
+/* ---------- Trust row: 3 icon items instead of one text line ---------- */
+.trust-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 26px;
+  margin: 34px 0 0;
 }
 
-.band-accent {
-  background: linear-gradient(155deg, var(--color-moss-deep) 0%, #16281c 100%);
-  color: #f4f1e4;
-  padding: 80px 0;
+.trust-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  max-width: 180px;
 }
 
-.band-quiet {
-  padding: 44px 0 8px;
+.trust-item-icon {
+  color: var(--color-moss-deep);
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
-.band-final {
-  background: #fdfbf3;
-  padding: 72px 0 60px;
+.trust-item-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0;
 }
 
-.catalog-caption {
-  text-align: center;
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
+.trust-item-sub {
+  font-size: 12.5px;
   color: var(--color-ink-faint);
-  margin: 0 0 30px;
+  margin: 2px 0 0;
 }
 
+/* ---------- Hero visual: card-stack, like a card catalog / rolodex ---------- */
 /* Карточка слова — не компонент интерфейса, а предмет из личного архива:
    много воздуха, крупная типографика, метаданные внизу как в каталожной
    карточке библиотеки. Лёгкое непрерывное покачивание — отсылка к самому
    имени продукта: Flow. */
 .catalog-card {
-  max-width: 460px;
-  margin: 0 auto;
   background: var(--color-card-raised);
   border-top: 3px solid var(--color-ink);
   border-bottom: 3px solid var(--color-ink);
-  padding: 52px 44px;
+  padding: 40px 32px;
   box-shadow: var(--shadow-4);
-  animation: catalog-float 7s ease-in-out infinite;
 }
 
 @keyframes catalog-float {
@@ -1122,16 +1142,18 @@ a {
 
 .catalog-card-label {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10.5px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-ink-faint);
-  margin: 0 0 20px;
+  margin: 0 0 18px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .catalog-card-word {
   font-family: var(--font-display);
-  font-size: clamp(2.2rem, 4vw, 3rem);
+  font-size: clamp(1.7rem, 3vw, 2.1rem);
   font-weight: 600;
   margin: 0 0 2px;
   letter-spacing: -0.01em;
@@ -1140,38 +1162,38 @@ a {
 .catalog-card-pos {
   font-family: var(--font-mono);
   font-style: italic;
-  font-size: 13px;
+  font-size: 12.5px;
   color: var(--color-ink-faint);
-  margin: 0 0 28px;
+  margin: 0 0 22px;
 }
 
 .catalog-card-meaning {
-  font-size: 20px;
+  font-size: 16px;
   line-height: 1.5;
   color: var(--color-ink);
-  margin: 0 0 16px;
+  margin: 0 0 14px;
 }
 
 .catalog-card-example {
   font-family: var(--font-display);
   font-style: italic;
-  font-size: 15px;
+  font-size: 13.5px;
   color: var(--color-ink-faint);
-  margin: 0 0 36px;
+  margin: 0 0 28px;
 }
 
 .catalog-card-meta {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  padding-top: 28px;
+  gap: 16px;
+  padding-top: 22px;
   border-top: 1px solid var(--color-rule-soft);
 }
 
 .catalog-card-meta-label {
   display: block;
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 10px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-ink-faint);
@@ -1179,52 +1201,333 @@ a {
 }
 
 .catalog-card-meta-value {
-  font-size: 14.5px;
+  font-size: 13.5px;
   color: var(--color-ink);
 }
 
-/* Цитата теперь живёт на тёмной акцентной полосе — контраст, а не очередная
-   бумажная секция подряд. color: inherit подхватывает светлый текст полосы. */
+.card-stack {
+  position: relative;
+  max-width: 400px;
+  margin: 0 auto;
+  min-height: 420px;
+}
+
+.card-stack-tab {
+  position: absolute;
+  right: 0;
+  width: 100%;
+  height: 90px;
+  background: var(--color-paper-deep);
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-1);
+}
+
+.card-stack-tab span {
+  position: absolute;
+  right: 18px;
+  top: 12px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+}
+
+.card-stack-tab-1 { top: 0; transform: rotate(-2deg) translateX(10px); z-index: 1; }
+.card-stack-tab-2 { top: 34px; transform: rotate(1.5deg) translateX(4px); z-index: 2; }
+.card-stack-tab-3 { top: 68px; transform: rotate(-1deg); z-index: 3; }
+
+.card-stack .catalog-card {
+  position: relative;
+  z-index: 4;
+  max-width: 100%;
+  margin-top: 30px;
+  animation: catalog-float 7s ease-in-out infinite;
+}
+
+/* ---------- Section bands: real color rhythm, not one flat repeating tone ---------- */
+.band-dark {
+  background: linear-gradient(155deg, var(--color-moss-deep) 0%, #16281c 100%);
+  color: #f4f1e4;
+  padding: 72px 0;
+}
+
+.band-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #d9a53d;
+  margin: 0 0 14px;
+}
+
+.band-dark .headline {
+  color: #f8f4e6;
+  font-size: clamp(1.8rem, 2.6vw + 1rem, 2.5rem);
+  max-width: 20ch;
+}
+
+.band-dark .band-sub {
+  color: rgba(244, 241, 228, 0.7);
+  font-size: 15.5px;
+  max-width: 42ch;
+  margin: 0 0 48px;
+  line-height: 1.6;
+}
+
+.steps {
+  display: grid;
+  gap: 32px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.step {
+  position: relative;
+  padding: 4px 24px 4px 0;
+}
+
+.step:not(:first-child) {
+  border-left: 1px dashed rgba(244, 241, 228, 0.2);
+  padding-left: 28px;
+}
+
+.step-icon {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(244, 241, 228, 0.25);
+  border-radius: 50%;
+  color: #d9a53d;
+  margin-bottom: 18px;
+}
+
+.step-number {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: rgba(244, 241, 228, 0.5);
+  letter-spacing: 0.08em;
+  margin: 0 0 10px;
+}
+
+.step-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: #f8f4e6;
+}
+
+.step-text {
+  font-size: 14.5px;
+  color: rgba(244, 241, 228, 0.72);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Небольшая цитата вместо целой полосы — фраза, которую хвалили отдельно,
+   получает своё место без лишней тяжеловесной секции. */
 .editorial-quote {
-  max-width: 760px;
+  max-width: 700px;
   margin: 0 auto;
   text-align: center;
+  padding: 56px 0 8px;
 }
 
 .editorial-quote p {
   font-family: var(--font-display);
   font-style: italic;
   font-weight: 500;
-  font-size: clamp(1.8rem, 3vw + 1rem, 2.7rem);
-  line-height: 1.35;
+  font-size: clamp(1.4rem, 1.8vw + 1rem, 1.9rem);
+  line-height: 1.45;
   letter-spacing: -0.01em;
-  color: inherit;
+  color: var(--color-ink);
   margin: 0;
 }
 
 .editorial-quote p span {
-  opacity: 0.6;
-}
-
-/* Доверие сведено к одной тихой строке вместо трёх карточек — меньше
-   объяснений, больше уверенности. */
-.trust-line {
-  text-align: center;
-  font-family: var(--font-mono);
-  font-size: 13px;
   color: var(--color-ink-faint);
-  letter-spacing: 0.02em;
-  max-width: 620px;
-  margin: 0 auto;
-  line-height: 2;
 }
 
-.landing-footer-cta {
-  text-align: center;
+/* ---------- Progress preview: honest metrics only ---------- */
+.progress-section {
+  padding: 64px 0 76px;
 }
 
-.landing-footer-cta .headline {
-  font-size: 30px;
+.progress-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 44px;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .progress-grid {
+    grid-template-columns: 0.85fr 1.15fr;
+  }
+}
+
+.progress-text .headline {
+  font-size: clamp(1.8rem, 2.6vw + 1rem, 2.4rem);
+  max-width: 16ch;
+  margin-bottom: 14px;
+}
+
+.progress-text .hero-sub {
+  margin-bottom: 32px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+}
+
+.stat-item-icon {
+  color: var(--color-moss-deep);
+  margin-bottom: 8px;
+}
+
+.stat-item-number {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-ink);
+  display: block;
+}
+
+.stat-item-label {
+  font-size: 12.5px;
+  color: var(--color-ink-faint);
+}
+
+/* Иллюстративный превью dashboard'а — те же поля, что и в настоящем
+   приложении (см. dashboard.page.js): без выдуманных метрик вроде
+   "процента запоминания" или "серии дней", которых продукт не считает. */
+.dashboard-preview {
+  background: var(--color-card-raised);
+  border: 1px solid var(--color-rule-soft);
+  border-radius: 12px;
+  box-shadow: var(--shadow-4);
+  padding: 28px;
+}
+
+.dashboard-preview-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 20px;
+}
+
+.dashboard-preview-greeting {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-ink-faint);
+}
+
+.dashboard-preview-stats {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.dashboard-preview-stat {
+  border-radius: var(--radius-card);
+  padding: 16px;
+}
+
+.dashboard-preview-stat.is-primary {
+  background: linear-gradient(155deg, var(--color-moss-deep) 0%, #16281c 100%);
+  color: #f4f1e4;
+}
+
+.dashboard-preview-stat.is-secondary {
+  background: var(--color-card);
+  border: 1px solid var(--color-rule-soft);
+}
+
+.dashboard-preview-stat-number {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
+  display: block;
+}
+
+.dashboard-preview-stat-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+}
+
+.dashboard-preview-list {
+  border-top: 1px solid var(--color-rule-soft);
+  padding-top: 14px;
+}
+
+.dashboard-preview-list-title {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-ink-faint);
+  margin: 0 0 10px;
+}
+
+.dashboard-preview-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 13.5px;
+  border-bottom: 1px solid var(--color-rule-soft);
+}
+
+.dashboard-preview-row:last-child {
+  border-bottom: none;
+}
+
+.dashboard-preview-row-word {
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+.dashboard-preview-row-meaning {
+  color: var(--color-ink-faint);
+  font-size: 12.5px;
+}
+
+/* ---------- Final CTA: bordered box, not a full-bleed band ---------- */
+.final-cta-box {
+  background: var(--color-card-raised);
+  border: 1px solid var(--color-rule-soft);
+  border-radius: 14px;
+  box-shadow: var(--shadow-3);
+  padding: 44px 40px;
+  margin: 0 0 64px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.final-cta-box .headline {
+  font-size: 26px;
+  max-width: 18ch;
+  margin: 0;
+}
+
+.final-cta-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 /* ---------- Footer ---------- */
