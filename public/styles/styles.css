@@ -10,38 +10,37 @@
 :root {
   /* paper & surfaces — warm aged paper, richer than plain cream, with a
      wood/brass undertone rather than a flat neutral */
-  --color-paper: #f3efe2;
-  --color-paper-deep: #e8e1cb;
-  --color-card: #fdfcf6;
-  --color-card-raised: #fffdf7;
+  --color-paper: #fbf5ec;
+  --color-paper-deep: #f1e4d0;
+  --color-card: #fffdf9;
+  --color-card-raised: #ffffff;
 
-  /* ink — warm dark brown-black, not cold near-black */
-  --color-ink: #251d13;
-  --color-ink-soft: #5c4e3a;
-  --color-ink-faint: #8c7c62;
+  /* ink — deep plum-black, not brown */
+  --color-ink: #221c2e;
+  --color-ink-soft: #5a5266;
+  --color-ink-faint: #8d8496;
 
-  /* botanical accent — deepened moss, still muted, not bright eco-green */
-  --color-moss: #3a6142;
-  --color-moss-deep: #223c29;
-  --color-moss-pale: #cddbc2;
-  --color-moss-mid: #77a06f;
+  /* primary accent — deep, vivid teal instead of muted moss */
+  --color-moss: #146b62;
+  --color-moss-deep: #0d4a44;
+  --color-moss-pale: #cdeae4;
+  --color-moss-mid: #4fa89b;
 
-  /* aged brass — signature "stamp" metal, used for due-states and accents */
-  --color-brass: #a9791f;
-  --color-brass-deep: #7c5714;
-  --color-brass-bg: #f1e3bc;
+  /* secondary accent — warm coral instead of brass/gold */
+  --color-brass: #e0703c;
+  --color-brass-deep: #b34f22;
+  --color-brass-bg: #fbdcc3;
 
-  /* dark wood — reserved for high-contrast decorative elements only
-     (hero cover, stamps) — never body text */
-  --color-wood: #3c2a1a;
+  /* dark band — deep indigo-plum, not brown wood */
+  --color-wood: #241a35;
 
-  /* errors — distinct hue family from brass (red-rust, not orange) */
-  --color-rust: #92392a;
-  --color-rust-bg: #f2e0d6;
+  /* errors */
+  --color-rust: #ab3b3b;
+  --color-rust-bg: #f5dede;
 
   /* hairlines — warm, not cool grey */
-  --color-rule: #c9bb95;
-  --color-rule-soft: #ddd0ab;
+  --color-rule: #d9c7ab;
+  --color-rule-soft: #ecdfc8;
 
   --radius-card: 8px;
   --radius-control: 7px;
@@ -76,10 +75,10 @@ body {
   background-color: var(--color-paper);
   color: var(--color-ink);
   background-image:
-    radial-gradient(circle at 1px 1px, rgba(37, 29, 19, 0.04) 1px, transparent 0),
-    radial-gradient(ellipse 900px 600px at 12% -10%, rgba(217, 165, 61, 0.16), transparent 60%),
-    radial-gradient(ellipse 1000px 700px at 100% 0%, rgba(58, 97, 66, 0.14), transparent 55%),
-    linear-gradient(165deg, #f8f3e3 0%, #f0efdc 45%, #dfe8d2 100%);
+    radial-gradient(circle at 1px 1px, rgba(34, 28, 46, 0.04) 1px, transparent 0),
+    radial-gradient(ellipse 900px 600px at 12% -10%, rgba(224, 112, 60, 0.14), transparent 60%),
+    radial-gradient(ellipse 1000px 700px at 100% 0%, rgba(20, 107, 98, 0.14), transparent 55%),
+    linear-gradient(165deg, #fdf7ec 0%, #f6ecd9 45%, #dcece6 100%);
   background-size: 16px 16px, auto, auto, auto;
   background-attachment: fixed, fixed, fixed, fixed;
   background-repeat: repeat, no-repeat, no-repeat, no-repeat;
@@ -224,7 +223,7 @@ a {
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(155deg, var(--color-moss-deep) 0%, #16281c 100%);
+  background: linear-gradient(155deg, var(--color-moss-deep) 0%, var(--color-wood) 100%);
   border-color: var(--color-moss-deep);
   box-shadow: var(--shadow-3), var(--glow-moss);
   transform: translateY(-2px) scale(1.015);
@@ -835,7 +834,7 @@ a {
 }
 
 .desk-stat-primary {
-  background: linear-gradient(155deg, var(--color-moss-deep) 0%, #16281c 100%);
+  background: linear-gradient(155deg, var(--color-moss-deep) 0%, var(--color-wood) 100%);
   color: #f4f1e4;
   box-shadow: var(--shadow-3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   border-color: var(--color-moss-deep);
@@ -916,93 +915,6 @@ a {
 [data-reveal].is-visible {
   opacity: 1;
   transform: translateY(0);
-}
-
-/* ---------- Hero cover (dark wood band, cinematic) ---------- */
-.hero-cover {
-  background: linear-gradient(165deg, #1d3123 0%, #12201a 100%);
-  color: #f3ecd8;
-  position: relative;
-  overflow: hidden;
-}
-
-.hero-cover::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.06) 1px, transparent 0);
-  background-size: 16px 16px;
-  pointer-events: none;
-}
-
-/* Огромный, едва заметный штамп-водяной знак на фоне hero — фирменный
-   объект бренда, а не разовая иконка. */
-.hero-cover-stamp {
-  position: absolute;
-  right: -50px;
-  top: -50px;
-  width: 420px;
-  height: 420px;
-  color: rgba(217, 165, 61, 0.16);
-  pointer-events: none;
-  animation: stamp-breathe 12s ease-in-out infinite alternate;
-}
-
-@keyframes stamp-breathe {
-  from { transform: rotate(-10deg) scale(1) translateY(0); }
-  to { transform: rotate(8deg) scale(1.08) translateY(-14px); }
-}
-
-.hero-cover .landing-wrap {
-  position: relative;
-  z-index: 1;
-}
-
-.hero-cover .masthead-mark {
-  color: #f3ecd8;
-}
-
-.hero-cover .brand-icon {
-  color: #d9a53d;
-}
-
-.hero-cover .btn-text {
-  color: #f3ecd8;
-}
-
-.hero-cover .btn-ghost {
-  background: transparent;
-  border-color: rgba(243, 236, 216, 0.32);
-  color: #f3ecd8;
-}
-
-.hero-cover .btn-ghost:hover:not(:disabled) {
-  border-color: #f3ecd8;
-  color: #ffffff;
-}
-
-.hero-cover .hero-sub {
-  color: rgba(243, 236, 216, 0.78);
-}
-
-.hero-cover .hero-headline {
-  color: #faf5e6;
-}
-
-.hero-cover .hl-accent {
-  color: #e6b856;
-}
-
-.hero-cover .hero-note {
-  color: rgba(243, 236, 216, 0.5);
-}
-
-/* Второе предложение получает акцентный цвет — без зачёркиваний и
-   рукописных поправок: приём с зачёркнутым словом быстро становится
-   штампом, простой цветовой контраст между двумя предложениями честнее
-   и увереннее держит внимание. */
-.hl-accent {
-  color: var(--color-brass-deep);
 }
 
 /* ---------- Landing: asymmetric hero grid, not a centered column ---------- */
@@ -1122,133 +1034,117 @@ a {
   margin: 2px 0 0;
 }
 
-/* ---------- Hero visual: card-stack, like a card catalog / rolodex ---------- */
-/* Карточка слова — не компонент интерфейса, а предмет из личного архива:
-   много воздуха, крупная типографика, метаданные внизу как в каталожной
-   карточке библиотеки. Лёгкое непрерывное покачивание — отсылка к самому
-   имени продукта: Flow. */
-.catalog-card {
+/* ---------- Hero visual: three small cards, each floating on its own
+   rhythm — a nod to the product's name, Flow, and more alive than one
+   single synced float. ---------- */
+.card-stack {
+  position: relative;
+  max-width: 380px;
+  margin: 0 auto;
+  height: 300px;
+}
+
+.mini-card {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  width: 210px;
   background: var(--color-card-raised);
-  border-top: 3px solid var(--color-ink);
-  border-bottom: 3px solid var(--color-ink);
-  padding: 40px 32px;
-  box-shadow: var(--shadow-4);
+  border-top: 2px solid var(--color-ink);
+  border-bottom: 2px solid var(--color-ink);
+  padding: 20px 18px;
+  box-shadow: var(--shadow-3);
 }
 
-@keyframes catalog-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-
-.catalog-card-label {
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-ink-faint);
-  margin: 0 0 18px;
-  display: flex;
-  justify-content: space-between;
-}
-
-.catalog-card-word {
-  font-family: var(--font-display);
-  font-size: clamp(1.7rem, 3vw, 2.1rem);
-  font-weight: 600;
-  margin: 0 0 2px;
-  letter-spacing: -0.01em;
-}
-
-.catalog-card-pos {
-  font-family: var(--font-mono);
-  font-style: italic;
-  font-size: 12.5px;
-  color: var(--color-ink-faint);
-  margin: 0 0 22px;
-}
-
-.catalog-card-meaning {
-  font-size: 16px;
-  line-height: 1.5;
-  color: var(--color-ink);
-  margin: 0 0 14px;
-}
-
-.catalog-card-example {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 13.5px;
-  color: var(--color-ink-faint);
-  margin: 0 0 28px;
-}
-
-.catalog-card-meta {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding-top: 22px;
-  border-top: 1px solid var(--color-rule-soft);
-}
-
-.catalog-card-meta-label {
-  display: block;
+.mini-card-label {
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-ink-faint);
-  margin-bottom: 4px;
+  margin: 0 0 10px;
 }
 
-.catalog-card-meta-value {
-  font-size: 13.5px;
+.mini-card-word {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+  margin: 0 0 6px;
   color: var(--color-ink);
 }
 
-.card-stack {
-  position: relative;
-  max-width: 400px;
-  margin: 0 auto;
-  min-height: 420px;
+.mini-card-meaning {
+  font-size: 12.5px;
+  color: var(--color-ink-soft);
+  line-height: 1.4;
+  margin: 0;
 }
 
-.card-stack-tab {
-  position: absolute;
-  right: 0;
-  width: 100%;
-  height: 90px;
-  background: var(--color-paper-deep);
-  border: 1px solid var(--color-rule);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-1);
+@keyframes mini-float-1 {
+  0%, 100% { transform: translateX(-50%) rotate(-8deg) translateY(30px); }
+  50% { transform: translateX(-50%) rotate(-8deg) translateY(12px); }
 }
 
-.card-stack-tab span {
-  position: absolute;
-  right: 18px;
-  top: 12px;
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-ink-faint);
+@keyframes mini-float-2 {
+  0%, 100% { transform: translateX(-50%) translateY(-8px); }
+  50% { transform: translateX(-50%) translateY(-26px); }
 }
 
-.card-stack-tab-1 { top: 0; transform: rotate(-2deg) translateX(10px); z-index: 1; }
-.card-stack-tab-2 { top: 34px; transform: rotate(1.5deg) translateX(4px); z-index: 2; }
-.card-stack-tab-3 { top: 68px; transform: rotate(-1deg); z-index: 3; }
+@keyframes mini-float-3 {
+  0%, 100% { transform: translateX(-50%) rotate(8deg) translateY(30px); }
+  50% { transform: translateX(-50%) rotate(8deg) translateY(12px); }
+}
 
-.card-stack .catalog-card {
-  position: relative;
-  z-index: 4;
-  max-width: 100%;
-  margin-top: 30px;
-  animation: catalog-float 7s ease-in-out infinite;
+.mini-card-1 {
+  z-index: 1;
+  animation: mini-float-1 6s ease-in-out infinite;
+}
+
+.mini-card-2 {
+  z-index: 3;
+  animation: mini-float-2 7s ease-in-out infinite;
+}
+
+.mini-card-3 {
+  z-index: 2;
+  animation: mini-float-3 6.5s ease-in-out infinite;
+}
+
+/* Смартфоны и небольшие экраны — уже колонка, поэтому карточки уже, веер
+   уже, чтобы ничего не вылезало за пределы экрана по ширине. */
+@media (max-width: 480px) {
+  .card-stack {
+    max-width: 300px;
+    height: 260px;
+  }
+
+  .mini-card {
+    width: 172px;
+    padding: 16px 14px;
+  }
+
+  .mini-card-word {
+    font-size: 16px;
+  }
+
+  .mini-card-meaning {
+    font-size: 11.5px;
+  }
+
+  @keyframes mini-float-1 {
+    0%, 100% { transform: translateX(-50%) rotate(-5deg) translateY(24px); }
+    50% { transform: translateX(-50%) rotate(-5deg) translateY(10px); }
+  }
+
+  @keyframes mini-float-3 {
+    0%, 100% { transform: translateX(-50%) rotate(5deg) translateY(24px); }
+    50% { transform: translateX(-50%) rotate(5deg) translateY(10px); }
+  }
 }
 
 /* ---------- Section bands: real color rhythm, not one flat repeating tone ---------- */
 .band-dark {
-  background: linear-gradient(155deg, var(--color-moss-deep) 0%, #16281c 100%);
+  background: linear-gradient(155deg, var(--color-moss-deep) 0%, var(--color-wood) 100%);
   color: #f4f1e4;
   padding: 72px 0;
 }
@@ -1258,7 +1154,7 @@ a {
   font-size: 11.5px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #d9a53d;
+  color: var(--color-brass);
   margin: 0 0 14px;
 }
 
@@ -1300,7 +1196,7 @@ a {
   justify-content: center;
   border: 1px solid rgba(244, 241, 228, 0.25);
   border-radius: 50%;
-  color: #d9a53d;
+  color: var(--color-brass);
   margin-bottom: 18px;
 }
 
@@ -1442,7 +1338,7 @@ a {
 }
 
 .dashboard-preview-stat.is-primary {
-  background: linear-gradient(155deg, var(--color-moss-deep) 0%, #16281c 100%);
+  background: linear-gradient(155deg, var(--color-moss-deep) 0%, var(--color-wood) 100%);
   color: #f4f1e4;
 }
 
@@ -1528,6 +1424,34 @@ a {
   flex-direction: column;
   align-items: flex-start;
   gap: 10px;
+}
+
+.account-benefits {
+  max-width: 480px;
+  margin: 0 auto 56px;
+  text-align: center;
+}
+
+.account-benefits-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0 0 12px;
+}
+
+.account-benefits-list {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.account-benefits-list li {
+  font-size: 13.5px;
+  color: var(--color-ink-soft);
+  line-height: 1.5;
 }
 
 /* ---------- Footer ---------- */

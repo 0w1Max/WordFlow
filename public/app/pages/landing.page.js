@@ -25,7 +25,7 @@ export async function renderLanding() {
         ${brandMark()}
         <div class="landing-nav-actions">
           <button id="navLogin" class="btn-text">Войти</button>
-          <button id="navRegister" class="btn btn-primary">Начать бесплатно</button>
+          <button id="navRegister" class="btn btn-ghost">Регистрация</button>
         </div>
       </nav>
 
@@ -68,26 +68,20 @@ export async function renderLanding() {
         </section>
 
         <div class="card-stack" data-reveal>
-          <div class="card-stack-tab card-stack-tab-1"><span>Слова</span></div>
-          <div class="card-stack-tab card-stack-tab-2"><span>Категории</span></div>
-          <div class="card-stack-tab card-stack-tab-3"><span>Повторения</span></div>
-
-          <div class="catalog-card">
-            <p class="catalog-card-label"><span>№ 041</span><span>Собрано 12 мар 2026</span></p>
-            <p class="catalog-card-word">Петрикор</p>
-            <p class="catalog-card-pos">существительное</p>
-            <p class="catalog-card-meaning">Запах земли после первого дождя.</p>
-            <p class="catalog-card-example">«После петрикора воздух в саду стал сладким».</p>
-            <div class="catalog-card-meta">
-              <div>
-                <span class="catalog-card-meta-label">Коллекция</span>
-                <span class="catalog-card-meta-value">Из путешествий</span>
-              </div>
-              <div>
-                <span class="catalog-card-meta-label">Повторить через</span>
-                <span class="catalog-card-meta-value">3 дня</span>
-              </div>
-            </div>
+          <div class="mini-card mini-card-1">
+            <p class="mini-card-label">№ 014</p>
+            <p class="mini-card-word">Сериндипность</p>
+            <p class="mini-card-meaning">случайная удачная находка</p>
+          </div>
+          <div class="mini-card mini-card-2">
+            <p class="mini-card-label">№ 041</p>
+            <p class="mini-card-word">Петрикор</p>
+            <p class="mini-card-meaning">запах земли после первого дождя</p>
+          </div>
+          <div class="mini-card mini-card-3">
+            <p class="mini-card-label">№ 128</p>
+            <p class="mini-card-word">Апломб</p>
+            <p class="mini-card-meaning">самоуверенная манера держаться</p>
           </div>
         </div>
       </div>
@@ -201,6 +195,16 @@ export async function renderLanding() {
           <p class="hero-note" style="margin: 0;">Без карты. Без подтверждения. Начните прямо сейчас.</p>
         </div>
       </div>
+
+      <div class="account-benefits" data-reveal>
+        <p class="account-benefits-title">Регистрация — тоже бесплатно. Она даёт больше:</p>
+        <ul class="account-benefits-list">
+          <li>Слова сохраняются навсегда, а не только в этом браузере</li>
+          <li>Доступ с любого устройства — телефон, ноутбук, другой браузер</li>
+          <li>Восстановление доступа по email, если забудете пароль</li>
+        </ul>
+        <button id="benefitsRegisterBtn" class="btn-text">Зарегистрироваться →</button>
+      </div>
     </div>
 
     <footer class="landing-footer">
@@ -234,6 +238,7 @@ export async function renderLanding() {
 
   document.getElementById("navLogin").onclick = () => navigate("/login");
   document.getElementById("navRegister").onclick = () => navigate("/register");
+  document.getElementById("benefitsRegisterBtn").onclick = () => navigate("/register");
 
   document.getElementById("howItWorksBtn").onclick = () => {
     document.getElementById("how-it-works").scrollIntoView({ behavior: "smooth", block: "start" });
