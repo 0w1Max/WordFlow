@@ -41,6 +41,7 @@ export async function renderLanding() {
             <button id="tryFreeBtn" class="btn btn-primary">Начать бесплатно →</button>
             <button id="howItWorksBtn" class="btn btn-ghost">Как это работает</button>
           </div>
+          <p class="hero-register-note">Регистрация — тоже бесплатно: <a href="/register" data-spa-link id="heroRegisterLink">зарегистрируйтесь</a>, чтобы слова остались с вами на любом устройстве.</p>
 
           <div class="trust-row">
             <div class="trust-item">

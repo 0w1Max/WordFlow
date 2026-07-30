@@ -10,37 +10,39 @@
 :root {
   /* paper & surfaces — warm aged paper, richer than plain cream, with a
      wood/brass undertone rather than a flat neutral */
-  --color-paper: #fbf5ec;
-  --color-paper-deep: #f1e4d0;
-  --color-card: #fffdf9;
+  --color-paper: #fdf1e4;
+  --color-paper-deep: #f7e2c8;
+  --color-card: #fffbf3;
   --color-card-raised: #ffffff;
 
-  /* ink — deep plum-black, not brown */
-  --color-ink: #221c2e;
-  --color-ink-soft: #5a5266;
-  --color-ink-faint: #8d8496;
+  /* ink — a real, visible plum, not "dark enough to look black". This is
+     the color of almost all text on the site, so if it reads as black,
+     the whole page reads as colorless no matter what the accents are. */
+  --color-ink: #4a2f5c;
+  --color-ink-soft: #7c6690;
+  --color-ink-faint: #a999b8;
 
-  /* primary accent — deep, vivid teal instead of muted moss */
-  --color-moss: #146b62;
-  --color-moss-deep: #0d4a44;
-  --color-moss-pale: #cdeae4;
-  --color-moss-mid: #4fa89b;
+  /* primary accent — vivid emerald-teal, pushed brighter/more saturated */
+  --color-moss: #0e9384;
+  --color-moss-deep: #0b6459;
+  --color-moss-pale: #c9f0e6;
+  --color-moss-mid: #4fbdac;
 
-  /* secondary accent — warm coral instead of brass/gold */
-  --color-brass: #e0703c;
-  --color-brass-deep: #b34f22;
-  --color-brass-bg: #fbdcc3;
+  /* secondary accent — bold tangerine-coral, brighter than before */
+  --color-brass: #ff7a45;
+  --color-brass-deep: #d1551f;
+  --color-brass-bg: #ffe1cc;
 
-  /* dark band — deep indigo-plum, not brown wood */
-  --color-wood: #241a35;
+  /* dark band — rich plum-magenta, not brown, not near-black-anything */
+  --color-wood: #3a1f47;
 
   /* errors */
-  --color-rust: #ab3b3b;
-  --color-rust-bg: #f5dede;
+  --color-rust: #c23f4d;
+  --color-rust-bg: #fbdfe2;
 
-  /* hairlines — warm, not cool grey */
-  --color-rule: #d9c7ab;
-  --color-rule-soft: #ecdfc8;
+  /* hairlines — warm, tinted toward the new palette */
+  --color-rule: #e8c9a3;
+  --color-rule-soft: #f3ddbd;
 
   --radius-card: 8px;
   --radius-control: 7px;
@@ -75,10 +77,10 @@ body {
   background-color: var(--color-paper);
   color: var(--color-ink);
   background-image:
-    radial-gradient(circle at 1px 1px, rgba(34, 28, 46, 0.04) 1px, transparent 0),
-    radial-gradient(ellipse 900px 600px at 12% -10%, rgba(224, 112, 60, 0.14), transparent 60%),
-    radial-gradient(ellipse 1000px 700px at 100% 0%, rgba(20, 107, 98, 0.14), transparent 55%),
-    linear-gradient(165deg, #fdf7ec 0%, #f6ecd9 45%, #dcece6 100%);
+    radial-gradient(circle at 1px 1px, rgba(74, 47, 92, 0.05) 1px, transparent 0),
+    radial-gradient(ellipse 900px 600px at 12% -10%, rgba(255, 122, 69, 0.20), transparent 60%),
+    radial-gradient(ellipse 1000px 700px at 100% 0%, rgba(14, 147, 132, 0.20), transparent 55%),
+    linear-gradient(165deg, #fef6ea 0%, #fbe9d4 45%, #e2f0e9 100%);
   background-size: 16px 16px, auto, auto, auto;
   background-attachment: fixed, fixed, fixed, fixed;
   background-repeat: repeat, no-repeat, no-repeat, no-repeat;
@@ -1000,6 +1002,17 @@ a {
   margin: 16px 0 0;
 }
 
+.hero-register-note {
+  font-size: 13.5px;
+  color: var(--color-ink-soft);
+  margin: 14px 0 0;
+}
+
+.hero-register-note a {
+  color: var(--color-moss-deep);
+  font-weight: 600;
+}
+
 /* ---------- Trust row: 3 icon items instead of one text line ---------- */
 .trust-row {
   display: flex;
@@ -1034,25 +1047,27 @@ a {
   margin: 2px 0 0;
 }
 
-/* ---------- Hero visual: three small cards, each floating on its own
-   rhythm — a nod to the product's name, Flow, and more alive than one
-   single synced float. ---------- */
+/* ---------- Hero visual: three small cards in a row, each floating on
+   its own rhythm — a nod to the product's name, Flow. No overlap, no
+   dark borders — colored top/bottom rules instead. ---------- */
 .card-stack {
-  position: relative;
-  max-width: 380px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 18px;
+  max-width: 420px;
   margin: 0 auto;
-  height: 300px;
+  padding: 20px 0;
 }
 
 .mini-card {
-  position: absolute;
-  top: 40px;
-  left: 50%;
-  width: 210px;
+  width: 150px;
   background: var(--color-card-raised);
-  border-top: 2px solid var(--color-ink);
-  border-bottom: 2px solid var(--color-ink);
-  padding: 20px 18px;
+  border-top: 3px solid var(--color-moss);
+  border-bottom: 3px solid var(--color-brass);
+  border-radius: 6px;
+  padding: 18px 16px;
   box-shadow: var(--shadow-3);
 }
 
@@ -1067,78 +1082,65 @@ a {
 
 .mini-card-word {
   font-family: var(--font-display);
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 600;
   margin: 0 0 6px;
   color: var(--color-ink);
 }
 
 .mini-card-meaning {
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--color-ink-soft);
   line-height: 1.4;
   margin: 0;
 }
 
-@keyframes mini-float-1 {
-  0%, 100% { transform: translateX(-50%) rotate(-8deg) translateY(30px); }
-  50% { transform: translateX(-50%) rotate(-8deg) translateY(12px); }
-}
-
-@keyframes mini-float-2 {
-  0%, 100% { transform: translateX(-50%) translateY(-8px); }
-  50% { transform: translateX(-50%) translateY(-26px); }
-}
-
-@keyframes mini-float-3 {
-  0%, 100% { transform: translateX(-50%) rotate(8deg) translateY(30px); }
-  50% { transform: translateX(-50%) rotate(8deg) translateY(12px); }
+@keyframes mini-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
 }
 
 .mini-card-1 {
-  z-index: 1;
-  animation: mini-float-1 6s ease-in-out infinite;
+  animation: mini-float 6s ease-in-out infinite;
+  margin-top: 26px;
 }
 
 .mini-card-2 {
-  z-index: 3;
-  animation: mini-float-2 7s ease-in-out infinite;
+  animation: mini-float 7s ease-in-out infinite;
+  animation-delay: -2.3s;
 }
 
 .mini-card-3 {
-  z-index: 2;
-  animation: mini-float-3 6.5s ease-in-out infinite;
+  animation: mini-float 6.5s ease-in-out infinite;
+  animation-delay: -4.6s;
+  margin-top: 26px;
 }
 
-/* Смартфоны и небольшие экраны — уже колонка, поэтому карточки уже, веер
-   уже, чтобы ничего не вылезало за пределы экрана по ширине. */
+/* Смартфоны и небольшие экраны — карточки уже сами переносятся по строкам
+   (flex-wrap), здесь только уменьшаем размер, чтобы всё оставалось
+   аккуратным и не растягивало страницу по ширине. */
 @media (max-width: 480px) {
   .card-stack {
     max-width: 300px;
-    height: 260px;
+    gap: 14px;
   }
 
   .mini-card {
-    width: 172px;
-    padding: 16px 14px;
+    width: 130px;
+    padding: 14px 12px;
   }
 
   .mini-card-word {
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .mini-card-meaning {
-    font-size: 11.5px;
+    font-size: 11px;
   }
 
-  @keyframes mini-float-1 {
-    0%, 100% { transform: translateX(-50%) rotate(-5deg) translateY(24px); }
-    50% { transform: translateX(-50%) rotate(-5deg) translateY(10px); }
-  }
-
-  @keyframes mini-float-3 {
-    0%, 100% { transform: translateX(-50%) rotate(5deg) translateY(24px); }
-    50% { transform: translateX(-50%) rotate(5deg) translateY(10px); }
+  .mini-card-1,
+  .mini-card-3 {
+    margin-top: 18px;
   }
 }
 
