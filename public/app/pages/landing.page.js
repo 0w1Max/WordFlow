@@ -69,17 +69,17 @@ export async function renderLanding() {
         </section>
 
         <div class="card-stack" data-reveal>
-          <div class="mini-card mini-card-1">
+          <div class="mini-card mini-card-1" data-strength="new">
             <p class="mini-card-label">№ 014</p>
             <p class="mini-card-word">Сериндипность</p>
             <p class="mini-card-meaning">случайная удачная находка</p>
           </div>
-          <div class="mini-card mini-card-2">
+          <div class="mini-card mini-card-2" data-strength="learning">
             <p class="mini-card-label">№ 041</p>
             <p class="mini-card-word">Петрикор</p>
             <p class="mini-card-meaning">запах земли после первого дождя</p>
           </div>
-          <div class="mini-card mini-card-3">
+          <div class="mini-card mini-card-3" data-strength="known">
             <p class="mini-card-label">№ 128</p>
             <p class="mini-card-word">Апломб</p>
             <p class="mini-card-meaning">самоуверенная манера держаться</p>
