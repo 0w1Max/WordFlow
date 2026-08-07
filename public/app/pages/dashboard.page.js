@@ -34,7 +34,7 @@ export async function renderDashboard() {
 
         ${user.isGuest ? `
           <div class="guest-banner">
-            <span>Вы пробуете WordFlow как гость — данные сохранены в этом браузере. Зарегистрируйтесь, чтобы не потерять их при смене устройства.</span>
+            <span>Вы пробуете WordFlow как гость — слова привязаны к этой сессии в браузере и будут потеряны, если выйти без сохранения прогресса.</span>
             <button id="saveProgressBtn" class="btn btn-ghost">Сохранить прогресс</button>
           </div>
         ` : ""}
@@ -81,6 +81,35 @@ export async function renderDashboard() {
     document.getElementById("saveProgressBtn")?.addEventListener("click", () => navigate("/save-progress"));
 
     document.getElementById("logoutBtn").onclick = async () => {
+      // ВАЖНО: гостевой аккаунт не имеет email/пароля — это просто обычная
+      // запись в users со случайным сгенерированным email (см.
+      // createGuestSession в services/authService.js). Сессионная cookie —
+      // единственное, что связывает браузер с этим аккаунтом. Если её
+      // очистить (что и делает logout), вернуться к тем же словам будет
+      // нечем: следующий клик "Продолжить как гость" создаст новый, пустой
+      // аккаунт. Раньше это происходило молча — человек терял слова, даже
+      // не подозревая, что "выйти" для гостя необратимо. Теперь явно
+      // предупреждаем и подсказываем путь к "Сохранить прогресс" — то есть
+      // к authService.claimAccount, который привязывает email/пароль к
+      // ЭТОМУ ЖЕ аккаунту, не создавая новый.
+      if (user.isGuest) {
+        const wantsToSave = window.confirm(
+          "Вы вошли как гость. Слова привязаны только к этой сессии в браузере — если выйти сейчас, не сохранив прогресс, вернуть их будет невозможно.\n\n" +
+          "Нажмите «ОК», чтобы сначала сохранить прогресс (указать email и пароль), или «Отмена», чтобы посмотреть другие варианты."
+        );
+
+        if (wantsToSave) {
+          navigate("/save-progress");
+          return;
+        }
+
+        const confirmedLoss = window.confirm(
+          "Точно выйти без сохранения? Все слова, собранные в этой гостевой сессии, будут потеряны безвозвратно."
+        );
+
+        if (!confirmedLoss) return;
+      }
+
       try {
         await post("/auth/logout");
       } finally {
