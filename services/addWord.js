@@ -3,15 +3,16 @@ const wordRepository = require('../data/wordRepository');
 const { validateWordInput } = require('../validators/wordValidator');
 const appEvents = require('../events/emitter');
 
-async function addWord({ text, meaning, example, categoryId } = {}, userId) {
+async function addWord({ text, meaning, example, categoryId, stressIndex } = {}, userId) {
   // Валидация — только здесь. Репозиторий больше не дублирует эти проверки.
-  validateWordInput({ text, meaning });
+  validateWordInput({ text, meaning, stressIndex });
 
   const word = createWord({
     text,
     meaning,
     example,
     categoryId: categoryId || null,
+    stressIndex,
     userId
   });
 

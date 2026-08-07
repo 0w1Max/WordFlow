@@ -29,6 +29,33 @@ test('validateWordInput: требует непустое "Значение" и �
   }
 });
 
+test('validateWordInput: пропускает корректный stressIndex', () => {
+  // "Слово" — индекс 3 указывает на "в", валидная гласная в пределах строки
+  assert.doesNotThrow(() => validateWordInput({ text: 'Слово', meaning: 'Значение', stressIndex: 3 }));
+});
+
+test('validateWordInput: пропускает отсутствие stressIndex (undefined/null)', () => {
+  assert.doesNotThrow(() => validateWordInput({ text: 'Слово', meaning: 'Значение' }));
+  assert.doesNotThrow(() => validateWordInput({ text: 'Слово', meaning: 'Значение', stressIndex: null }));
+});
+
+test('validateWordInput: отклоняет stressIndex вне границ текста и указывает field: "stressIndex"', () => {
+  try {
+    validateWordInput({ text: 'Слово', meaning: 'Значение', stressIndex: 99 });
+    assert.fail('ожидали, что бросит ValidationError');
+  } catch (err) {
+    assert.ok(err instanceof ValidationError);
+    assert.equal(err.field, 'stressIndex');
+  }
+
+  assert.throws(() => validateWordInput({ text: 'Слово', meaning: 'Значение', stressIndex: -1 }), ValidationError);
+});
+
+test('validateWordInput: отклоняет нецелый stressIndex', () => {
+  assert.throws(() => validateWordInput({ text: 'Слово', meaning: 'Значение', stressIndex: 1.5 }), ValidationError);
+  assert.throws(() => validateWordInput({ text: 'Слово', meaning: 'Значение', stressIndex: 'два' }), ValidationError);
+});
+
 test('validateCredentials: пропускает корректный email и пароль от 8 символов', () => {
   assert.doesNotThrow(() => validateCredentials({ email: 'user@example.com', password: 'password123' }));
 });

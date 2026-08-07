@@ -3,8 +3,8 @@ const { getWordsForReview, markWordReviewed } = require('../services/reviewWords
 const wordsService = require('../services/wordsService');
 
 async function addWordController(req, res) {
-  const { text, meaning, example, categoryId } = req.body;
-  const word = await addWord({ text, meaning, example, categoryId }, req.user.id);
+  const { text, meaning, example, categoryId, stressIndex } = req.body;
+  const word = await addWord({ text, meaning, example, categoryId, stressIndex }, req.user.id);
 
   res.status(201).json(word);
 }
@@ -31,9 +31,9 @@ async function reviewWordController(req, res) {
 
 async function updateWordController(req, res) {
   const { id } = req.params;
-  const { text, meaning, example, categoryId } = req.body;
+  const { text, meaning, example, categoryId, stressIndex } = req.body;
   const word = await wordsService.updateWord(Number(id), req.user.id, {
-    text, meaning, example, categoryId
+    text, meaning, example, categoryId, stressIndex
   });
 
   res.json(word);

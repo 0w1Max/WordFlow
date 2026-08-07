@@ -17,6 +17,84 @@ export function fieldErrorHtml(name, errorField, errorMessage) {
   return `<p class="field-error-text">${escapeHtml(errorMessage)}</p>`;
 }
 
+// ---------- Ударение (см. миграцию stress_index в db/db.js) ----------
+//
+// Индекс считается по конкретному символу в исходной, ещё не обрезанной
+// строке (см. normalizeStressIndex в models/word.js на бэкенде — там же
+// подробно объяснено, зачем именно "исходной, не обрезанной").
+
+// Гласные, на которые может физически падать ударение — заглавные и
+// строчные. Используется, чтобы в интерактивном выборе (stressPickerHtml)
+// кликабельными были только они: согласная или пробел не могут быть
+// ударными, и незачем позволять по ним промахнуться кликом.
+export const STRESSABLE_LETTERS = "аеёиоуыэюяАЕЁИОУЫЭЮЯ";
+
+// Показ уже сохранённого слова с ударением — вставляем настоящий
+// комбинированный акут (U+0301), это корректный типографский способ
+// показать ударение (как в словарях), а не имитация жирным/подчёркиванием.
+// Дополнительно оборачиваем именно ударную букву в span с акцентным цветом
+// бренда — сам по себе комбинированный акут слишком тонкий штрих, чтобы
+// быть заметным в мелком кегле карточки, а span делает акцент читаемым.
+export function wordWithStressHtml(text, stressIndex) {
+  if (
+    stressIndex === null ||
+    stressIndex === undefined ||
+    stressIndex < 0 ||
+    stressIndex >= text.length
+  ) {
+    return escapeHtml(text);
+  }
+
+  const before = text.slice(0, stressIndex);
+  const letter = text[stressIndex];
+  const after = text.slice(stressIndex + 1);
+
+  return `${escapeHtml(before)}<span class="stress-mark">${escapeHtml(letter)}\u0301</span>${escapeHtml(after)}`;
+}
+
+// Интерактивный выбор ударения при вводе/редактировании слова: каждая
+// гласная буква — кликабельная кнопка; выбранная буква сразу показывается
+// с тем же акутом и тем же цветом, что и в финальном рендере (см.
+// wordWithStressHtml выше) — то, что человек видит при выборе, это уже
+// живое превью того, как слово будет выглядеть в коллекции.
+export function stressPickerHtml(text, stressIndex) {
+  if (!text) {
+    return `<p class="stress-picker-hint">Начните вводить слово, чтобы отметить ударение</p>`;
+  }
+
+  const letters = [...text]
+    .map((char, i) => {
+      const isVowel = STRESSABLE_LETTERS.includes(char);
+      const isSelected = i === stressIndex;
+      const display = isSelected ? `${escapeHtml(char)}\u0301` : escapeHtml(char);
+
+      if (!isVowel) {
+        return `<span class="stress-picker-letter is-inert">${escapeHtml(char)}</span>`;
+      }
+
+      return `<button type="button" class="stress-picker-letter${isSelected ? " is-selected" : ""}" data-index="${i}" aria-pressed="${isSelected}" aria-label="Отметить ударение на букве ${escapeHtml(char)}">${display}</button>`;
+    })
+    .join("");
+
+  return `
+    <p class="stress-picker-hint">Отметьте ударение — необязательно, но карточка будет понятнее</p>
+    <div class="stress-picker">${letters}</div>
+  `;
+}
+
+// Навешивает обработчик клика на кнопки stressPickerHtml внутри containerEl.
+// onSelect(index) получает индекс выбранной буквы; повторный клик по уже
+// выбранной букве снимает отметку (передаёт null) — чтобы можно было
+// передумать, не перепечатывая всё слово заново.
+export function attachStressPicker(containerEl, currentIndex, onSelect) {
+  containerEl.querySelectorAll(".stress-picker-letter[data-index]").forEach((btn) => {
+    btn.onclick = () => {
+      const index = Number(btn.dataset.index);
+      onSelect(index === currentIndex ? null : index);
+    };
+  });
+}
+
 // Мелкая, но используется в нескольких страницах (addWord, review) —
 // вынесено сюда, чтобы не дублировать одну и ту же функцию в двух файлах.
 export function escapeHtml(str) {

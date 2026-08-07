@@ -229,6 +229,66 @@
   margin: 0;
 }
 
+/* ---------- Ударение ---------- */
+/* Показ на уже сохранённом слове (карточка, флэшкарта, "недавно собрано" —
+   см. wordWithStressHtml в core/dom.js). Сама диакритика (U+0301) рисует
+   тонкую засечку над буквой средствами шрифта; span поверх неё даёт
+   акцентный цвет бренда, чтобы засечка не терялась в мелком кегле. */
+.stress-mark {
+  color: var(--color-brass-deep);
+}
+
+/* Интерактивный выбор ударения при вводе/редактировании слова
+   (stressPickerHtml + attachStressPicker в core/dom.js). Буквы идут в ряд
+   без переносов внутри слова — это одно слово, а не текст, который нужно
+   переносить по ширине контейнера. */
+.stress-picker-hint {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-ink-faint);
+  margin: 6px 0 6px;
+}
+
+.stress-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-bottom: 4px;
+}
+
+.stress-picker-letter {
+  font-family: var(--font-display);
+  font-size: 18px;
+  line-height: 1;
+  padding: 6px 3px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-ink);
+}
+
+/* Согласные/пробелы — не кнопка, просто буква-заполнитель, чтобы слово
+   не "разваливалось" по буквам визуально. Курсор остаётся обычным: кликнуть
+   по ним всё равно ничего не даст, наводить палец незачем. */
+span.stress-picker-letter.is-inert {
+  color: var(--color-ink-soft);
+}
+
+button.stress-picker-letter {
+  cursor: pointer;
+  transition: background-color 150ms var(--ease-out), color 150ms var(--ease-out);
+}
+
+button.stress-picker-letter:hover {
+  background: var(--color-moss-pale);
+}
+
+button.stress-picker-letter.is-selected {
+  background: var(--color-brass-bg);
+  color: var(--color-brass-deep);
+  font-weight: 600;
+}
+
 /* ---------- Messages ---------- */
 .error-banner {
   font-size: 14px;

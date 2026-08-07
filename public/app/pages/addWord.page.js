@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { get, post } from "../core/api.js";
-import { escapeHtml, brandMark, fieldWrapClass, fieldErrorHtml } from "../core/dom.js";
+import { escapeHtml, brandMark, fieldWrapClass, fieldErrorHtml, stressPickerHtml, attachStressPicker } from "../core/dom.js";
 
 export async function renderAddWord() {
   const app = document.getElementById("app");
@@ -40,6 +40,7 @@ function renderForm(app, categories) {
         <div class="field" id="textField">
           <label class="field-label" for="text">Слово *</label>
           <input type="text" id="text" required autocomplete="off" />
+          <div id="stressPicker"></div>
         </div>
 
         <div class="field" id="meaningField">
@@ -80,6 +81,34 @@ function renderForm(app, categories) {
   document.getElementById("back").onclick = () => {
     navigate("/dashboard");
   };
+
+  // Ударение — необязательное поле (см. миграцию stress_index в db/db.js).
+  // stressIndex здесь хранит индекс буквы, выбранной кликом по превью, а не
+  // просто DOM-состояние: на submit его нужно явно прочитать и отправить.
+  //
+  // ВАЖНО: при любом изменении текста слова индекс сбрасывается в null, а
+  // не пересчитывается "на глаз" — буквы могли полностью перетасоваться
+  // (например, слово стёрли и напечатали другое), и молчаливое сохранение
+  // старого индекса указало бы на случайную букву нового слова. Явный сброс
+  // безопаснее: в худшем случае человек просто отметит ударение заново.
+  let stressIndex = null;
+  const textInput = document.getElementById("text");
+  const stressPicker = document.getElementById("stressPicker");
+
+  function renderStressPicker() {
+    stressPicker.innerHTML = stressPickerHtml(textInput.value, stressIndex);
+    attachStressPicker(stressPicker, stressIndex, (index) => {
+      stressIndex = index;
+      renderStressPicker();
+    });
+  }
+
+  textInput.addEventListener("input", () => {
+    stressIndex = null;
+    renderStressPicker();
+  });
+
+  renderStressPicker();
 
   // ВАЖНО: создание категории раньше вызывало полную перерисовку формы
   // (renderForm(...)), которая стирала уже введённые слово/значение/пример —
@@ -130,7 +159,8 @@ function renderForm(app, categories) {
         text,
         meaning,
         example: example || null,
-        categoryId: categoryId ? Number(categoryId) : null
+        categoryId: categoryId ? Number(categoryId) : null,
+        stressIndex
       });
 
       navigate("/dashboard");
@@ -155,9 +185,17 @@ const WORD_FIELD_IDS = ["text", "meaning"];
 // выше) — снимаем прошлую подсветку со всех полей и, если ошибка привязана
 // к конкретному полю, подсвечиваем только его; иначе показываем общий
 // баннер сверху формы, как раньше.
+//
+// stressIndex сюда намеренно не входит: у него нет своего .field-блока
+// (это дополнение внутри textField, см. renderForm выше), и в норме такая
+// ошибка вообще не должна долетать до сервера — форма сама сбрасывает
+// stressIndex в null при любой правке текста. Если она всё же пришла
+// (WORD_FIELD_IDS.includes(field) === false), считаем её "не привязанной
+// к конкретному видимому полю" и показываем обычным баннером сверху.
 function showFormError(message, field = null) {
   const formError = document.getElementById("formError");
-  formError.innerHTML = (message && !field) ? `<p class="error-banner">${escapeHtml(message)}</p>` : "";
+  const showBanner = message && !WORD_FIELD_IDS.includes(field);
+  formError.innerHTML = showBanner ? `<p class="error-banner">${escapeHtml(message)}</p>` : "";
 
   WORD_FIELD_IDS.forEach((id) => {
     const wrap = document.getElementById(`${id}Field`);

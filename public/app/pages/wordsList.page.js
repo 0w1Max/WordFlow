@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { get, put, del } from "../core/api.js";
-import { escapeHtml, brandMark, stampIcon, formatShortDate, progressDotsHtml, bookmarkIcon, fieldWrapClass, fieldErrorHtml } from "../core/dom.js";
+import { escapeHtml, brandMark, stampIcon, formatShortDate, progressDotsHtml, bookmarkIcon, fieldWrapClass, fieldErrorHtml, stressPickerHtml, attachStressPicker, wordWithStressHtml } from "../core/dom.js";
 
 export async function renderWordsList() {
   const app = document.getElementById("app");
@@ -82,6 +82,14 @@ function clearDraft(word) {
   delete word.draftMeaning;
   delete word.draftExample;
   delete word.draftCategoryId;
+  delete word.draftStressIndex;
+}
+
+// Текущее значение ударения для редактируемого слова: черновик, если он
+// уже есть (человек кликнул по букве или стёр текст в этой же сессии
+// редактирования), иначе — то, что реально сохранено на сервере.
+function currentStressIndex(word) {
+  return word.draftStressIndex !== undefined ? word.draftStressIndex : (word.stressIndex ?? null);
 }
 
 function render(app, state) {
@@ -103,6 +111,7 @@ function render(app, state) {
                 <label class="field-label">Слово</label>
                 <input type="text" class="edit-text" value="${escapeHtml(text)}" />
                 ${fieldErrorHtml("text", state.errorField, state.error)}
+                <div class="stress-picker-wrap">${stressPickerHtml(text, currentStressIndex(word))}</div>
               </div>
               <div class="${fieldWrapClass("meaning", state.errorField)}">
                 <label class="field-label">Значение</label>
@@ -144,7 +153,7 @@ function render(app, state) {
             <span>Собрано ${formatShortDate(word.createdAt)}</span>
             ${due ? `<span class="chip chip-due">Пора повторить</span>` : ""}
           </div>
-          <p class="specimen-word">${escapeHtml(word.text)}</p>
+          <p class="specimen-word">${wordWithStressHtml(word.text, word.stressIndex)}</p>
           <p class="specimen-meaning">${escapeHtml(word.meaning)}</p>
           ${word.example ? `<p class="specimen-example">«${escapeHtml(word.example)}»</p>` : ""}
           <div class="specimen-footer">
@@ -167,7 +176,7 @@ function render(app, state) {
       <h1 class="headline" style="margin-top: 18px;">Все слова</h1>
       <p class="meta-line">${state.words.length} слов${state.words.length === 1 ? "о" : ""} в коллекции</p>
 
-      ${state.error && !state.errorField ? `<p class="error-banner">${escapeHtml(state.error)}</p>` : ""}
+      ${state.error && !["text", "meaning"].includes(state.errorField) ? `<p class="error-banner">${escapeHtml(state.error)}</p>` : ""}
 
       ${state.categories.length > 0 ? `
         <div class="chip-row">
@@ -197,6 +206,36 @@ function render(app, state) {
 
   document.getElementById("addBtn")?.addEventListener("click", () => navigate("/add"));
   document.getElementById("back").onclick = () => navigate("/dashboard");
+
+  // Живой пикер ударения внутри открытой карточки редактирования (если
+  // такая есть). draftStressIndex мутируется прямо на объекте слова в
+  // state.words — в отличие от text/meaning/example, его не нужно отдельно
+  // "собирать" из DOM в captureEditingDraft(): к моменту следующего
+  // render() он уже на месте.
+  const editingWord = state.words.find(w => w.editing);
+  if (editingWord) {
+    const card = app.querySelector(`li[data-id="${editingWord.id}"]`);
+    const textInput = card?.querySelector(".edit-text");
+    const stressContainer = card?.querySelector(".stress-picker-wrap");
+
+    if (textInput && stressContainer) {
+      const renderStress = () => {
+        stressContainer.innerHTML = stressPickerHtml(textInput.value, currentStressIndex(editingWord));
+        attachStressPicker(stressContainer, currentStressIndex(editingWord), (index) => {
+          editingWord.draftStressIndex = index;
+          renderStress();
+        });
+      };
+
+      // Текст изменился — прошлый индекс мог указывать уже на другую
+      // букву (или на несуществующую позицию), сбрасываем и просим
+      // отметить ударение заново, а не гадаем, куда он "переехал".
+      textInput.addEventListener("input", () => {
+        editingWord.draftStressIndex = null;
+        renderStress();
+      });
+    }
+  }
 
   app.querySelectorAll(".delete-category-btn").forEach(btn => {
     btn.onclick = async () => {
@@ -257,18 +296,21 @@ function render(app, state) {
     btn.onclick = async () => {
       const id = Number(btn.dataset.id);
       const card = app.querySelector(`li[data-id="${id}"]`);
+      const word = state.words.find(w => w.id === id);
 
       const text = card.querySelector(".edit-text").value.trim();
       const meaning = card.querySelector(".edit-meaning").value.trim();
       const example = card.querySelector(".edit-example").value.trim();
       const categoryId = card.querySelector(".edit-category").value || null;
+      const stressIndex = currentStressIndex(word);
 
       try {
         const updated = await put(`/words/${id}`, {
           text,
           meaning,
           example: example || null,
-          categoryId: categoryId ? Number(categoryId) : null
+          categoryId: categoryId ? Number(categoryId) : null,
+          stressIndex
         });
 
         state.words = state.words.map(w => w.id === id ? { ...updated, editing: false } : w);

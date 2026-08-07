@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { get, post } from "../core/api.js";
-import { escapeHtml, brandMark } from "../core/dom.js";
+import { escapeHtml, brandMark, wordWithStressHtml } from "../core/dom.js";
 
 export async function renderDashboard() {
   const app = document.getElementById("app");
@@ -66,7 +66,7 @@ export async function renderDashboard() {
           <ul class="desk-recent-list">
             ${recent.map(w => `
               <li class="desk-recent-item">
-                <span class="desk-recent-word">${escapeHtml(w.text)}</span>
+                <span class="desk-recent-word">${wordWithStressHtml(w.text, w.stressIndex)}</span>
                 <span class="desk-recent-meaning">${escapeHtml(w.meaning)}</span>
               </li>
             `).join("")}

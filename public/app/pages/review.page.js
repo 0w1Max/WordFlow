@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { get, post } from "../core/api.js";
-import { escapeHtml, brandMark, sproutIcon } from "../core/dom.js";
+import { escapeHtml, brandMark, sproutIcon, wordWithStressHtml } from "../core/dom.js";
 
 export async function renderReview() {
   const app = document.getElementById("app");
@@ -83,7 +83,7 @@ function render(app, state) {
       <p class="flashcard-progress" style="margin-top: 18px;">Слово ${index + 1} из ${words.length}</p>
 
       <div class="flashcard">
-        <p class="flashcard-word">${escapeHtml(word.text)}</p>
+        <p class="flashcard-word">${wordWithStressHtml(word.text, word.stressIndex)}</p>
 
         ${state.revealed ? `
           <div class="flashcard-answer">
