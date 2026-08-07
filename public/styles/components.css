@@ -284,7 +284,8 @@ button.stress-picker-letter:hover {
 }
 
 button.stress-picker-letter.is-selected {
-  background: var(--color-brass-bg);
+  padding: 0;
+  background: transparent;
   color: var(--color-brass-deep);
   font-weight: 600;
 }
