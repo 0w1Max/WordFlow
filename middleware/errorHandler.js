@@ -8,7 +8,14 @@ async function errorHandler(err, req, res, next) { // eslint-disable-line no-unu
     // Ожидаемые ошибки (валидация, "не найдено" и т.п.) не шлём в Sentry —
     // это не баги, а нормальная часть работы приложения, незачем тратить
     // на них лимит бесплатного плана.
-    return res.status(err.statusCode).json({ error: err.message });
+    //
+    // field (если задан у ValidationError) добавляется в ответ отдельным
+    // полем — фронтенд использует его, чтобы подсветить конкретное поле
+    // формы, а не только показать общий баннер сверху.
+    const body = { error: err.message };
+    if (err.field) body.field = err.field;
+
+    return res.status(err.statusCode).json(body);
   }
 
   // Неожиданная ошибка — не показываем стектрейс клиенту, только логируем.

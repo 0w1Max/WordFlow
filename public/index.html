@@ -4,14 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>WordFlow — коллекция слов</title>
-    <meta name="theme-color" content="#e7ebdd">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='9' fill='%233f6b4a'/%3E%3C/svg%3E">
+    <meta name="description" content="WordFlow — личный каталог слов и значений с расписанием повторений, которое подстраивается под то, что вы уже помните. Начните бесплатно, без регистрации.">
+    <meta name="theme-color" content="#fdf1e4">
+
+    <!-- Open Graph / соцсети -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="WordFlow">
+    <meta property="og:title" content="WordFlow — коллекция слов">
+    <meta property="og:description" content="Личный каталог слов и значений с расписанием повторений, которое подстраивается под то, что вы уже помните.">
+    <meta property="og:image" content="/og-image.png">
+    <meta property="og:locale" content="ru_RU">
+    <!-- og:url лучше указать абсолютным после деплоя, например:
+         <meta property="og:url" content="https://your-domain.com/"> -->
+
+    <!-- Twitter/X Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="WordFlow — коллекция слов">
+    <meta name="twitter:description" content="Личный каталог слов и значений с расписанием повторений, которое подстраивается под то, что вы уже помните.">
+    <meta name="twitter:image" content="/og-image.png">
+    <!-- Тот же bookmark-штамп, что в лого (см. bookMarkIcon в public/app/core/dom.js),
+         и тот же акцентный цвет, что у .brand-icon (--color-brass) — фавикон
+         на вкладке браузера теперь совпадает с бренд-маркой в интерфейсе. -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 16'%3E%3Cpath d='M10 3.4C8.1 1.9 5.4 1.2 1.6 1.6v11.8c3.8-.4 6.5.3 8.4 1.8V3.4z' fill='%23ff7a45' fill-opacity='0.55'/%3E%3Cpath d='M10 3.4c1.9-1.5 4.6-2.2 8.4-1.8v11.8c-3.8-.4-6.5.3-8.4 1.8V3.4z' fill='%23ff7a45'/%3E%3C/svg%3E">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="/styles/styles.css?v=25">
+    <link rel="stylesheet" href="/styles/styles.css?v=27">
   </head>
   <body>
     <div id="app"></div>

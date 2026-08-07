@@ -19,6 +19,11 @@ export async function renderLanding() {
   // намеренно ограничены тем, что приложение реально умеет считать сейчас
   // (слова, категории, к повторению) — без выдуманных метрик вроде
   // "% запоминания" или "серии дней", которых в продукте нет.
+  //
+  // Числа сознательно скромные (128 слов, а не 1 248) и подписаны прямо в
+  // интерфейсе как "Пример" — раньше крупные "внушительные" цифры рядом с
+  // живым превью дашборда читались как соцдоказательство масштаба всей
+  // платформы, чего у нового продукта на самом деле ещё нет.
   app.innerHTML = `
     <div class="landing-wrap">
       <nav class="landing-nav">
@@ -131,25 +136,26 @@ export async function renderLanding() {
             <h2 class="headline">Видите результат. Чувствуете уверенность.</h2>
             <p class="hero-sub">Каждое собранное слово, каждая категория, каждое повторение — часть одной растущей коллекции.</p>
 
+            <p class="hero-note" style="margin: 0 0 18px;">Пример: так может выглядеть ваша коллекция через пару месяцев</p>
             <div class="stat-row">
               <div>
                 <div class="stat-item-icon">${bookIconSvg()}</div>
-                <span class="stat-item-number">1 248</span>
+                <span class="stat-item-number">128</span>
                 <span class="stat-item-label">слов в коллекции</span>
               </div>
               <div>
                 <div class="stat-item-icon">${folderIcon()}</div>
-                <span class="stat-item-number">14</span>
+                <span class="stat-item-number">6</span>
                 <span class="stat-item-label">категорий</span>
               </div>
               <div>
                 <div class="stat-item-icon">${targetIcon()}</div>
-                <span class="stat-item-number">12</span>
+                <span class="stat-item-number">3</span>
                 <span class="stat-item-label">к повторению сегодня</span>
               </div>
               <div>
                 <div class="stat-item-icon">${refreshIcon()}</div>
-                <span class="stat-item-number">4 302</span>
+                <span class="stat-item-number">214</span>
                 <span class="stat-item-label">повторений всего</span>
               </div>
             </div>
@@ -163,11 +169,11 @@ export async function renderLanding() {
               </div>
               <div class="dashboard-preview-stats">
                 <div class="dashboard-preview-stat is-primary">
-                  <span class="dashboard-preview-stat-number">12</span>
+                  <span class="dashboard-preview-stat-number">3</span>
                   <span class="dashboard-preview-stat-label">К повторению сегодня</span>
                 </div>
                 <div class="dashboard-preview-stat is-secondary">
-                  <span class="dashboard-preview-stat-number">1 248</span>
+                  <span class="dashboard-preview-stat-number">128</span>
                   <span class="dashboard-preview-stat-label">Всего в коллекции</span>
                 </div>
               </div>
@@ -269,42 +275,46 @@ export async function renderLanding() {
   initScrollReveal(app);
 }
 
+// Единый визуальный язык для всех иконок лендинга: один stroke-width (1.6),
+// один размер (20x20 — как во всех иконках core/dom.js) и aria-hidden,
+// поскольку каждая иконка здесь всегда сопровождается подписью рядом
+// и сама по себе смысловой нагрузки для скринридера не несёт.
 function lockIcon() {
-  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="1.5"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="9" rx="1.5"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
 }
 
 function shieldIcon() {
-  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5 4 5.5v6c0 5 3.4 8.3 8 10 4.6-1.7 8-5 8-10v-6z"/></svg>`;
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5 4 5.5v6c0 5 3.4 8.3 8 10 4.6-1.7 8-5 8-10v-6z"/></svg>`;
 }
 
 function clockIcon() {
-  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 7v5l3.2 2"/></svg>`;
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 7v5l3.2 2"/></svg>`;
 }
 
 function findIcon() {
-  return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/></svg>`;
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/></svg>`;
 }
 
 function addIcon() {
-  return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>`;
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>`;
 }
 
 function reviewIcon() {
-  return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>`;
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>`;
 }
 
 function bookIconSvg() {
-  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5C6 3.3 9 3 12 4v16c-3-1-6-.7-8 .5z"/><path d="M12 4c2-1 5-1.3 8 0v16.5c-2-1.2-5-1.5-8-.5z"/></svg>`;
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4.5C6 3.3 9 3 12 4v16c-3-1-6-.7-8 .5z"/><path d="M12 4c2-1 5-1.3 8 0v16.5c-2-1.2-5-1.5-8-.5z"/></svg>`;
 }
 
 function folderIcon() {
-  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h4l2 2.5h9A1.5 1.5 0 0 1 21 9v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18z"/></svg>`;
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h4l2 2.5h9A1.5 1.5 0 0 1 21 9v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18z"/></svg>`;
 }
 
 function targetIcon() {
-  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>`;
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>`;
 }
 
 function refreshIcon() {
-  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11a9 9 0 0 1 15.3-5.8L21 8"/><path d="M21 3v5h-5"/><path d="M21 13a9 9 0 0 1-15.3 5.8L3 16"/><path d="M3 21v-5h5"/></svg>`;
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11a9 9 0 0 1 15.3-5.8L21 8"/><path d="M21 3v5h-5"/><path d="M21 13a9 9 0 0 1-15.3 5.8L3 16"/><path d="M3 21v-5h5"/></svg>`;
 }

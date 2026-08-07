@@ -1,0 +1,119 @@
+/* =============================================================
+   WORDFLOW — DESIGN SYSTEM v2
+   Concept: a personal herbarium of words. Every word is a specimen —
+   collected, dated, observed over time. The card carries visible marks
+   of how well it's known (SM-2 progress), not just decoration.
+   Editorial minimalism + premium product, not generic "minimal SaaS".
+   ============================================================= */
+
+/* ---------- Tokens ---------- */
+:root {
+  /* paper & surfaces — warm aged paper, richer than plain cream, with a
+     wood/brass undertone rather than a flat neutral */
+  --color-paper: #fdf1e4;
+  --color-paper-deep: #f7e2c8;
+  --color-card: #fffbf3;
+  --color-card-raised: #ffffff;
+
+  /* ink — a real, visible plum, not "dark enough to look black". This is
+     the color of almost all text on the site, so if it reads as black,
+     the whole page reads as colorless no matter what the accents are. */
+  --color-ink: #4a2f5c;
+  --color-ink-soft: #7c6690;
+  --color-ink-faint: #a999b8;
+
+  /* primary accent — vivid emerald-teal, pushed brighter/more saturated */
+  --color-moss: #0e9384;
+  --color-moss-deep: #0b6459;
+  --color-moss-pale: #c9f0e6;
+  --color-moss-mid: #4fbdac;
+
+  /* secondary accent — bold tangerine-coral, brighter than before */
+  --color-brass: #ff7a45;
+  --color-brass-deep: #d1551f;
+  --color-brass-bg: #ffe1cc;
+
+  /* dark band — rich plum-magenta, not brown, not near-black-anything */
+  --color-wood: #3a1f47;
+
+  /* errors */
+  --color-rust: #c23f4d;
+  --color-rust-bg: #fbdfe2;
+
+  /* hairlines — warm, tinted toward the new palette */
+  --color-rule: #e8c9a3;
+  --color-rule-soft: #f3ddbd;
+
+  --radius-card: 8px;
+  --radius-control: 7px;
+  --radius-pill: 999px;
+
+  /* elevation ladder — background < section < card < raised card < CTA.
+     Each step up gets measurably more shadow and a touch more lift,
+     not just a slightly darker box. */
+  --shadow-1: 0 1px 2px rgba(37, 29, 19, 0.06);
+  --shadow-2: 0 2px 6px rgba(37, 29, 19, 0.09), 0 1px 2px rgba(37, 29, 19, 0.05);
+  --shadow-3: 0 10px 26px rgba(37, 29, 19, 0.16), 0 2px 8px rgba(37, 29, 19, 0.08);
+  --shadow-4: 0 18px 40px rgba(37, 29, 19, 0.20), 0 4px 12px rgba(37, 29, 19, 0.10);
+  --glow-brass: 0 0 0 4px rgba(169, 121, 31, 0.16);
+  --glow-moss: 0 0 0 4px rgba(58, 97, 66, 0.14);
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Work Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.44, 1);
+}
+
+/* ---------- Reset & base ---------- */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(74, 47, 92, 0.05) 1px, transparent 0),
+    radial-gradient(ellipse 900px 600px at 12% -10%, rgba(255, 122, 69, 0.20), transparent 60%),
+    radial-gradient(ellipse 1000px 700px at 100% 0%, rgba(14, 147, 132, 0.20), transparent 55%),
+    linear-gradient(165deg, #fef6ea 0%, #fbe9d4 45%, #e2f0e9 100%);
+  background-size: 16px 16px, auto, auto, auto;
+  background-attachment: fixed, fixed, fixed, fixed;
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat;
+}
+
+a {
+  color: var(--color-moss-deep);
+}
+
+::selection {
+  background: var(--color-moss-pale);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-moss);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cascade-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+

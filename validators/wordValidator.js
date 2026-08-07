@@ -6,11 +6,11 @@ const { ValidationError } = require('../errors/AppError');
 // сложность и т.д.) это быстро начало бы расходиться.
 function validateWordInput({ text, meaning }) {
   if (!text || typeof text !== 'string' || text.trim() === '') {
-    throw new ValidationError('Поле "Слово" обязательно');
+    throw new ValidationError('Поле "Слово" обязательно', 'text');
   }
 
   if (!meaning || typeof meaning !== 'string' || meaning.trim() === '') {
-    throw new ValidationError('Поле "Значение" обязательно');
+    throw new ValidationError('Поле "Значение" обязательно', 'meaning');
   }
 }
 

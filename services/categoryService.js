@@ -3,7 +3,7 @@ const { ValidationError, NotFoundError } = require('../errors/AppError');
 
 async function addCategory(name, userId) {
   if (!name || typeof name !== 'string' || name.trim() === '') {
-    throw new ValidationError('Поле "Название категории" обязательно');
+    throw new ValidationError('Поле "Название категории" обязательно', 'name');
   }
 
   return categoryRepository.addCategory({ name: name.trim(), userId });

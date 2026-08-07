@@ -1,3 +1,22 @@
+// Подсветка конкретного поля формы, к которому относится ошибка валидации
+// (см. err.field в core/api.js и ValidationError.field на бэкенде).
+// Раньше любая ошибка формы показывалась только общим баннером сверху —
+// человек должен был сам догадываться, какое поле не понравилось серверу.
+//
+// fieldWrapClass — класс на обёртку .field: добавляет "has-error", если имя
+// поля совпадает с полем ошибки (красная линия под инпутом, см. CSS).
+export function fieldWrapClass(name, errorField) {
+  return errorField === name ? "field has-error" : "field";
+}
+
+// fieldErrorHtml — подпись под конкретным инпутом с текстом ошибки, только
+// если ошибка относится именно к этому полю. Для ошибок без привязки к полю
+// (например, "такой email уже занят") остаётся общий баннер сверху формы.
+export function fieldErrorHtml(name, errorField, errorMessage) {
+  if (errorField !== name || !errorMessage) return "";
+  return `<p class="field-error-text">${escapeHtml(errorMessage)}</p>`;
+}
+
 // Мелкая, но используется в нескольких страницах (addWord, review) —
 // вынесено сюда, чтобы не дублировать одну и ту же функцию в двух файлах.
 export function escapeHtml(str) {
@@ -8,14 +27,6 @@ export function escapeHtml(str) {
 
 function bookMarkIcon(size = 15) {
   return `<svg width="${size}" height="${size * 0.8}" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 3.4C8.1 1.9 5.4 1.2 1.6 1.6v11.8c3.8-.4 6.5.3 8.4 1.8V3.4z" fill="currentColor" opacity="0.5"/><path d="M10 3.4c1.9-1.5 4.6-2.2 8.4-1.8v11.8c-3.8-.4-6.5.3-8.4 1.8V3.4z" fill="currentColor"/></svg>`;
-}
-
-// Водяной знак в hero — намеренно ДРУГОЙ мотив, не тот же значок, что в
-// лого: компас-розетка, отсылает к теме "полевого дневника / наблюдений"
-// из брифа, а асимметричная стрелка делает вращение (stamp-breathe)
-// по-настоящему заметным.
-export function compassIcon(size = 15) {
-  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M12 12 15.5 6 9 9.5z" fill="currentColor"/><path d="M12 12 8.5 18 15 14.5z" fill="currentColor" opacity="0.45"/></svg>`;
 }
 
 // Фирменный штамп — используется и в бренд-марке, и как декоративный
@@ -87,9 +98,15 @@ function eyeOffIcon() {
 // регистрации, сбросе пароля и сохранении гостевого прогресса. Возвращает
 // готовую разметку; после вставки в DOM нужно один раз вызвать
 // attachPasswordToggles(), чтобы повесить обработчик клика на глазок.
-export function passwordFieldHtml(id, labelText, extraAttrs = "") {
+//
+// errorMessage (необязательный) — если ошибка сервера относится именно
+// к паролю (err.field === "password"), подсвечиваем поле красным и
+// показываем текст под ним — так же, как у обычных текстовых полей.
+export function passwordFieldHtml(id, labelText, extraAttrs = "", errorMessage = "") {
+  const hasError = Boolean(errorMessage);
+
   return `
-    <div class="field">
+    <div class="field${hasError ? " has-error" : ""}">
       <label class="field-label" for="${id}">${labelText}</label>
       <div class="password-field">
         <input type="password" id="${id}" ${extraAttrs} />
@@ -97,6 +114,7 @@ export function passwordFieldHtml(id, labelText, extraAttrs = "") {
           ${eyeIcon()}
         </button>
       </div>
+      ${hasError ? `<p class="field-error-text">${escapeHtml(errorMessage)}</p>` : ""}
     </div>
   `;
 }

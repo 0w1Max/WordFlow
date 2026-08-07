@@ -12,8 +12,13 @@ class AppError extends Error {
 }
 
 class ValidationError extends AppError {
-  constructor(message) {
+  // field — необязательное имя конкретного поля формы, к которому относится
+  // ошибка (например, "email" или "text"). Позволяет фронтенду подсветить
+  // именно то поле, где проблема, а не только показать общий баннер сверху —
+  // раньше это различие терялось на пути к клиенту.
+  constructor(message, field = null) {
     super(message, 400);
+    this.field = field;
   }
 }
 

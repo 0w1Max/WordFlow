@@ -1,0 +1,103 @@
+/* ---------- Dashboard: the desk ---------- */
+.desk-greeting {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+  margin: 0 0 4px;
+}
+
+.desk-stats {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 14px;
+  margin: 22px 0 26px;
+}
+
+@media (max-width: 480px) {
+  .desk-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+.desk-stat {
+  background: var(--color-card);
+  border: 1px solid var(--color-rule-soft);
+  border-radius: var(--radius-card);
+  padding: 20px;
+  box-shadow: var(--shadow-1);
+}
+
+.desk-stat-primary {
+  background: linear-gradient(155deg, var(--color-moss-deep) 0%, var(--color-wood) 100%);
+  color: #f4f1e4;
+  box-shadow: var(--shadow-3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border-color: var(--color-moss-deep);
+}
+
+.desk-stat-number {
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1;
+  margin: 0 0 6px;
+}
+
+.desk-stat-label {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  opacity: 0.75;
+  margin: 0;
+}
+
+.desk-section-title {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+  margin: 30px 0 14px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-rule);
+}
+
+.desk-recent-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.desk-recent-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--color-card);
+  border: 1px solid var(--color-rule-soft);
+  border-radius: var(--radius-control);
+  font-size: 14.5px;
+}
+
+.desk-recent-word {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.desk-recent-meaning {
+  color: var(--color-ink-soft);
+  font-size: 13.5px;
+  flex: 1;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+

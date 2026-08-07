@@ -1,27 +1,28 @@
 import { navigate } from "../core/router.js";
 import { post } from "../core/api.js";
-import { escapeHtml, brandMark } from "../core/dom.js";
+import { escapeHtml, brandMark, fieldWrapClass, fieldErrorHtml } from "../core/dom.js";
 
 export function renderForgotPassword() {
   const app = document.getElementById("app");
-  render(app, "", "", "");
+  render(app, "", "", null, "");
 }
 
-function render(app, message, errorMessage, emailValue) {
+function render(app, message, errorMessage, errorField, emailValue) {
   app.innerHTML = `
     <div class="auth-shell">
       <div class="auth-card">
         ${brandMark("auth")}
         <h1 class="headline">Восстановление пароля</h1>
 
-        ${errorMessage ? `<p class="error-banner">${escapeHtml(errorMessage)}</p>` : ""}
+        ${errorMessage && !errorField ? `<p class="error-banner">${escapeHtml(errorMessage)}</p>` : ""}
         ${message ? `<p class="notice-banner">${escapeHtml(message)}</p>` : ""}
 
         ${!message ? `
           <form id="forgotForm" class="form">
-            <div class="field">
+            <div class="${fieldWrapClass("email", errorField)}">
               <label class="field-label" for="email">Email</label>
               <input type="email" id="email" required autocomplete="email" value="${escapeHtml(emailValue)}" />
+              ${fieldErrorHtml("email", errorField, errorMessage)}
             </div>
 
             <div class="actions">
@@ -58,9 +59,9 @@ function render(app, message, errorMessage, emailValue) {
       const res = await post("/auth/forgot-password", { email });
       // Бэкенд намеренно отвечает одинаково успешно независимо от того,
       // существует такой email или нет — это защита от перебора адресов.
-      render(app, res.message, "", email);
+      render(app, res.message, "", null, email);
     } catch (err) {
-      render(app, "", err.message, email);
+      render(app, "", err.message, err.field, email);
     }
   };
 }

@@ -20,17 +20,27 @@ export async function request(url, options = {}) {
     // "Поле \"Слово\" обязательно") — теперь бэкенд всегда отвечает JSON
     // вида { error: "..." }, и мы читаем именно его.
     let message = "API error";
+    let field = null;
 
     try {
       const body = await res.json();
       if (body && body.error) {
         message = body.error;
       }
+      // field — имя конкретного поля формы, к которому относится ошибка
+      // валидации (см. errors/AppError.js на бэкенде). Кладём на сам Error,
+      // чтобы страница могла подсветить нужный input, а не только показать
+      // общий баннер сверху.
+      if (body && body.field) {
+        field = body.field;
+      }
     } catch {
       // тело не JSON — оставляем сообщение по умолчанию
     }
 
-    throw new Error(message);
+    const err = new Error(message);
+    err.field = field;
+    throw err;
   }
 
   if (res.status === 204) {

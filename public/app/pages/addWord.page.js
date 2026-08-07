@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { get, post } from "../core/api.js";
-import { escapeHtml, brandMark } from "../core/dom.js";
+import { escapeHtml, brandMark, fieldWrapClass, fieldErrorHtml } from "../core/dom.js";
 
 export async function renderAddWord() {
   const app = document.getElementById("app");
@@ -37,12 +37,12 @@ function renderForm(app, categories) {
       <div id="formError"></div>
 
       <form id="addWordForm" class="form">
-        <div class="field">
+        <div class="field" id="textField">
           <label class="field-label" for="text">Слово *</label>
           <input type="text" id="text" required autocomplete="off" />
         </div>
 
-        <div class="field">
+        <div class="field" id="meaningField">
           <label class="field-label" for="meaning">Значение *</label>
           <input type="text" id="meaning" required autocomplete="off" />
         </div>
@@ -137,16 +137,38 @@ function renderForm(app, categories) {
     } catch (err) {
       // ВАЖНО: раньше ошибка валидации перерисовывала всю форму заново —
       // человек, опечатавшийся в одном поле, терял и все остальные.
-      // Теперь баннер ошибки просто вставляется/обновляется на месте,
+      // Теперь и баннер, и подсветка конкретного поля (err.field —
+      // "text" или "meaning") просто вставляются/обновляются на месте,
       // сама форма и всё, что в неё введено, не трогается.
-      showFormError(err.message);
+      showFormError(err.message, err.field);
       submitBtn.disabled = false;
       submitBtn.textContent = "Сохранить слово";
     }
   };
 }
 
-function showFormError(message) {
-  document.getElementById("formError").innerHTML =
-    `<p class="error-banner">${escapeHtml(message)}</p>`;
+// Поля формы, у которых сервер может указать конкретную ошибку
+// (validators/wordValidator.js: field "text" или "meaning").
+const WORD_FIELD_IDS = ["text", "meaning"];
+
+// Точечная подсветка без re-render всей формы (см. комментарий в onsubmit
+// выше) — снимаем прошлую подсветку со всех полей и, если ошибка привязана
+// к конкретному полю, подсвечиваем только его; иначе показываем общий
+// баннер сверху формы, как раньше.
+function showFormError(message, field = null) {
+  const formError = document.getElementById("formError");
+  formError.innerHTML = (message && !field) ? `<p class="error-banner">${escapeHtml(message)}</p>` : "";
+
+  WORD_FIELD_IDS.forEach((id) => {
+    const wrap = document.getElementById(`${id}Field`);
+    if (!wrap) return;
+
+    wrap.classList.remove("has-error");
+    wrap.querySelector(".field-error-text")?.remove();
+
+    if (id === field) {
+      wrap.classList.add("has-error");
+      wrap.insertAdjacentHTML("beforeend", `<p class="field-error-text">${escapeHtml(message)}</p>`);
+    }
+  });
 }

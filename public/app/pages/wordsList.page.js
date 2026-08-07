@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { get, put, del } from "../core/api.js";
-import { escapeHtml, brandMark, stampIcon, formatShortDate, progressDotsHtml, bookmarkIcon } from "../core/dom.js";
+import { escapeHtml, brandMark, stampIcon, formatShortDate, progressDotsHtml, bookmarkIcon, fieldWrapClass, fieldErrorHtml } from "../core/dom.js";
 
 export async function renderWordsList() {
   const app = document.getElementById("app");
@@ -30,7 +30,11 @@ function startList(app, words, categories) {
   const state = {
     words: words.map(w => ({ ...w, editing: false })),
     categories,
-    error: ""
+    error: "",
+    // errorField — если сервер указал конкретное поле (validators/
+    // wordValidator.js: "text"/"meaning"), подсвечиваем именно его в
+    // открытой карточке редактирования, а не только общий баннер сверху.
+    errorField: null
   };
 
   render(app, state);
@@ -95,13 +99,15 @@ function render(app, state) {
           <div class="specimen-bar"></div>
           <div class="specimen-body">
             <div class="form">
-              <div class="field">
+              <div class="${fieldWrapClass("text", state.errorField)}">
                 <label class="field-label">Слово</label>
                 <input type="text" class="edit-text" value="${escapeHtml(text)}" />
+                ${fieldErrorHtml("text", state.errorField, state.error)}
               </div>
-              <div class="field">
+              <div class="${fieldWrapClass("meaning", state.errorField)}">
                 <label class="field-label">Значение</label>
                 <input type="text" class="edit-meaning" value="${escapeHtml(meaning)}" />
+                ${fieldErrorHtml("meaning", state.errorField, state.error)}
               </div>
               <div class="field">
                 <label class="field-label">Пример</label>
@@ -161,7 +167,7 @@ function render(app, state) {
       <h1 class="headline" style="margin-top: 18px;">Все слова</h1>
       <p class="meta-line">${state.words.length} слов${state.words.length === 1 ? "о" : ""} в коллекции</p>
 
-      ${state.error ? `<p class="error-banner">${escapeHtml(state.error)}</p>` : ""}
+      ${state.error && !state.errorField ? `<p class="error-banner">${escapeHtml(state.error)}</p>` : ""}
 
       ${state.categories.length > 0 ? `
         <div class="chip-row">
@@ -209,8 +215,10 @@ function render(app, state) {
         // категории обнуляем categoryId, не дожидаясь перезагрузки списка.
         state.words = state.words.map(w => w.categoryId === id ? { ...w, categoryId: null } : w);
         state.error = "";
+        state.errorField = null;
       } catch (err) {
         state.error = err.message;
+        state.errorField = err.field ?? null;
       }
 
       render(app, state);
@@ -222,6 +230,10 @@ function render(app, state) {
       captureEditingDraft(app, state);
       const id = Number(btn.dataset.id);
       state.words = state.words.map(w => ({ ...w, editing: w.id === id }));
+      // Открываем редактирование другой карточки — старая ошибка сохранения
+      // (если была) больше не относится ни к одному открытому полю.
+      state.error = "";
+      state.errorField = null;
       render(app, state);
     };
   });
@@ -235,6 +247,8 @@ function render(app, state) {
         clearDraft(cleared);
         return cleared;
       });
+      state.error = "";
+      state.errorField = null;
       render(app, state);
     };
   });
@@ -259,8 +273,20 @@ function render(app, state) {
 
         state.words = state.words.map(w => w.id === id ? { ...updated, editing: false } : w);
         state.error = "";
+        state.errorField = null;
       } catch (err) {
+        // ВАЖНО: раньше здесь просто выставлялся state.error и вызывался
+        // render() — но render() отрисовывает поля по word.draftText/
+        // draftMeaning/..., которые в этом хендлере ничем не обновлялись.
+        // В результате при ошибке валидации (например, пустое "Значение")
+        // только что введённый текст пропадал при перерисовке. Теперь
+        // сохраняем ровно то, что человек напечатал, как черновик — и
+        // дополнительно подсвечиваем конкретное поле через err.field.
+        state.words = state.words.map(w => w.id === id
+          ? { ...w, draftText: text, draftMeaning: meaning, draftExample: example, draftCategoryId: categoryId ?? "" }
+          : w);
         state.error = err.message;
+        state.errorField = err.field ?? null;
       }
 
       render(app, state);

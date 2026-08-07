@@ -43,8 +43,15 @@ async function register({ email, password }) {
 }
 
 async function login({ email, password }) {
-  if (!email || !password) {
-    throw new ValidationError('Укажите email и пароль');
+  // Разделяем на два отдельных случая (а не общее "укажите email и
+  // пароль"), чтобы фронтенд мог подсветить именно то поле, которое
+  // пустое, а не оба сразу.
+  if (!email) {
+    throw new ValidationError('Укажите email', 'email');
+  }
+
+  if (!password) {
+    throw new ValidationError('Укажите пароль', 'password');
   }
 
   const normalizedEmail = email.trim().toLowerCase();
@@ -72,7 +79,7 @@ async function login({ email, password }) {
 // не хардкодить домен и корректно работать и на превью-деплоях Vercel.
 async function requestPasswordReset(email, baseUrl) {
   if (!email || typeof email !== 'string') {
-    throw new ValidationError('Укажите email');
+    throw new ValidationError('Укажите email', 'email');
   }
 
   const normalizedEmail = email.trim().toLowerCase();
@@ -102,7 +109,7 @@ async function resetPassword(token, newPassword) {
   }
 
   if (!newPassword || typeof newPassword !== 'string' || newPassword.length < 8) {
-    throw new ValidationError('Пароль должен быть не короче 8 символов');
+    throw new ValidationError('Пароль должен быть не короче 8 символов', 'password');
   }
 
   const tokenHash = hashToken(token);

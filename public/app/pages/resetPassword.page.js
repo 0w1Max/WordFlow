@@ -28,20 +28,23 @@ export function renderResetPassword() {
     return;
   }
 
-  render(app, token, "");
+  render(app, token, "", null);
 }
 
-function render(app, token, errorMessage) {
+// errorField — "пароль короче 8 символов" приходит с field: "password" и
+// подсвечивает сам инпут; "ссылка недействительна/устарела" — без field,
+// остаётся общим баннером сверху (это не проблема введённого пароля).
+function render(app, token, errorMessage, errorField) {
   app.innerHTML = `
     <div class="auth-shell">
       <div class="auth-card">
         ${brandMark("auth")}
         <h1 class="headline">Новый пароль</h1>
 
-        ${errorMessage ? `<p class="error-banner">${escapeHtml(errorMessage)}</p>` : ""}
+        ${errorMessage && !errorField ? `<p class="error-banner">${escapeHtml(errorMessage)}</p>` : ""}
 
         <form id="resetForm" class="form">
-          ${passwordFieldHtml("password", "Новый пароль (минимум 8 символов)", 'required minlength="8" autocomplete="new-password"')}
+          ${passwordFieldHtml("password", "Новый пароль (минимум 8 символов)", 'required minlength="8" autocomplete="new-password"', errorField === "password" ? errorMessage : "")}
 
           <div class="actions">
             <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%;">Сохранить пароль</button>
@@ -66,7 +69,7 @@ function render(app, token, errorMessage) {
       await post("/auth/reset-password", { token, password });
       navigate("/login");
     } catch (err) {
-      render(app, token, err.message);
+      render(app, token, err.message, err.field);
     }
   };
 }
