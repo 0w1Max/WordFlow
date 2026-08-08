@@ -29,12 +29,18 @@ export function fieldErrorHtml(name, errorField, errorMessage) {
 // ударными, и незачем позволять по ним промахнуться кликом.
 export const STRESSABLE_LETTERS = "аеёиоуыэюяАЕЁИОУЫЭЮЯ";
 
-// Показ уже сохранённого слова с ударением — вставляем настоящий
-// комбинированный акут (U+0301), это корректный типографский способ
-// показать ударение (как в словарях), а не имитация жирным/подчёркиванием.
-// Дополнительно оборачиваем именно ударную букву в span с акцентным цветом
-// бренда — сам по себе комбинированный акут слишком тонкий штрих, чтобы
-// быть заметным в мелком кегле карточки, а span делает акцент читаемым.
+// Показ уже сохранённого слова с ударением. ВАЖНО: раньше здесь вставлялся
+// настоящий юникодовский комбинированный акут (U+0301) сразу после буквы —
+// корректный типографский приём в теории, но в части браузеров/шрифтов он
+// не "садится" на предыдущую букву, а получает свою собственную ширину,
+// из-за чего справа от ударной буквы визуально появлялся лишний пробел.
+// Комбинирующие символы полагаются на поддержку конкретным шрифтом
+// отрисовки диакритики поверх буквы, а это не гарантировано. Поэтому
+// засечка теперь рисуется самим CSS (.stress-mark::after, см.
+// components.css) — абсолютно спозиционированный элемент не занимает
+// места в потоке текста и никогда не раздвигает соседние буквы, независимо
+// от шрифта и браузера. Здесь остаётся только оборачивание буквы в span —
+// сам штрих полностью на стороне CSS.
 export function wordWithStressHtml(text, stressIndex) {
   if (
     stressIndex === null ||
@@ -49,14 +55,15 @@ export function wordWithStressHtml(text, stressIndex) {
   const letter = text[stressIndex];
   const after = text.slice(stressIndex + 1);
 
-  return `${escapeHtml(before)}<span class="stress-mark">${escapeHtml(letter)}\u0301</span>${escapeHtml(after)}`;
+  return `${escapeHtml(before)}<span class="stress-mark">${escapeHtml(letter)}</span>${escapeHtml(after)}`;
 }
 
 // Интерактивный выбор ударения при вводе/редактировании слова: каждая
-// гласная буква — кликабельная кнопка; выбранная буква сразу показывается
-// с тем же акутом и тем же цветом, что и в финальном рендере (см.
-// wordWithStressHtml выше) — то, что человек видит при выборе, это уже
-// живое превью того, как слово будет выглядеть в коллекции.
+// гласная буква — кликабельная кнопка; выбранная буква сразу подсвечивается
+// тем же CSS-штрихом и тем же цветом, что и в финальном рендере (см.
+// wordWithStressHtml выше и .stress-picker-letter.is-selected::after в
+// components.css) — то, что человек видит при выборе, это уже живое
+// превью того, как слово будет выглядеть в коллекции.
 export function stressPickerHtml(text, stressIndex) {
   if (!text) {
     return `<p class="stress-picker-hint">Начните вводить слово, чтобы отметить ударение</p>`;
@@ -66,13 +73,12 @@ export function stressPickerHtml(text, stressIndex) {
     .map((char, i) => {
       const isVowel = STRESSABLE_LETTERS.includes(char);
       const isSelected = i === stressIndex;
-      const display = isSelected ? `${escapeHtml(char)}\u0301` : escapeHtml(char);
 
       if (!isVowel) {
         return `<span class="stress-picker-letter is-inert">${escapeHtml(char)}</span>`;
       }
 
-      return `<button type="button" class="stress-picker-letter${isSelected ? " is-selected" : ""}" data-index="${i}" aria-pressed="${isSelected}" aria-label="Отметить ударение на букве ${escapeHtml(char)}">${display}</button>`;
+      return `<button type="button" class="stress-picker-letter${isSelected ? " is-selected" : ""}" data-index="${i}" aria-pressed="${isSelected}" aria-label="Отметить ударение на букве ${escapeHtml(char)}">${escapeHtml(char)}</button>`;
     })
     .join("");
 

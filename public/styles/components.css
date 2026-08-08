@@ -231,11 +231,33 @@
 
 /* ---------- Ударение ---------- */
 /* Показ на уже сохранённом слове (карточка, флэшкарта, "недавно собрано" —
-   см. wordWithStressHtml в core/dom.js). Сама диакритика (U+0301) рисует
-   тонкую засечку над буквой средствами шрифта; span поверх неё даёт
-   акцентный цвет бренда, чтобы засечка не терялась в мелком кегле. */
+   см. wordWithStressHtml в core/dom.js).
+   ВАЖНО: раньше засечка рисовалась настоящим юникодовским комбинированным
+   акутом (U+0301) сразу после буквы. В части браузеров/шрифтов он не
+   "садится" на предыдущую букву, а получает свою собственную ширину —
+   визуально это читалось как лишний пробел справа от ударной буквы.
+   Комбинирующие символы полагаются на поддержку шрифтом отрисовки
+   диакритики поверх конкретной буквы, а не на универсальное поведение
+   браузера, так что полагаться на них не будем.
+   Сейчас засечка нарисована самим CSS (::after, position: absolute) —
+   абсолютно спозиционированный элемент не занимает места в потоке текста,
+   поэтому гарантированно не раздвигает соседние буквы ни в одном шрифте
+   или браузере. */
 .stress-mark {
+  position: relative;
   color: var(--color-brass-deep);
+}
+
+.stress-mark::after {
+  content: "";
+  position: absolute;
+  top: -0.6em;
+  left: 50%;
+  width: 0.55em;
+  height: 2px;
+  background: var(--color-brass-deep);
+  border-radius: 1px;
+  transform: translateX(-50%) rotate(-35deg);
 }
 
 /* Интерактивный выбор ударения при вводе/редактировании слова
@@ -284,10 +306,26 @@ button.stress-picker-letter:hover {
 }
 
 button.stress-picker-letter.is-selected {
+  position: relative;
   padding: 0;
   background: transparent;
   color: var(--color-brass-deep);
   font-weight: 600;
+}
+
+/* Тот же CSS-рисованный акцент, что и в финальном рендере (.stress-mark
+   выше) — то, что человек видит при выборе буквы, уже буквально
+   превью того, как слово будет выглядеть в коллекции. */
+button.stress-picker-letter.is-selected::after {
+  content: "";
+  position: absolute;
+  top: -0.6em;
+  left: 50%;
+  width: 0.5em;
+  height: 2px;
+  background: var(--color-brass-deep);
+  border-radius: 1px;
+  transform: translateX(-50%) rotate(-35deg);
 }
 
 /* ---------- Messages ---------- */
