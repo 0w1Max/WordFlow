@@ -256,7 +256,14 @@
    21px) засечка выглядела длиной в целую букву и заметно оторванной от
    слова. Сейчас размер и отступ уменьшены (0.3em/1.5px/-0.28em) —
    пропорции подобраны и перепроверены рендером именно на этих трёх
-   реальных размерах шрифта, а не в изоляции на произвольном font-size. */
+   реальных размерах шрифта, а не в изоляции на произвольном font-size.
+   ВАЖНО (итерация 4): по просьбе — засечка ещё ближе к букве (top:
+   -0.14em вместо -0.28em) и выровнена по правому краю буквы (right:
+   -0.04em) вместо центрирования (left: 50% + translateX(-50%)). Реальное
+   ударение в кириллической типографике визуально смещено к правому краю
+   буквы, а не строго по центру — так оно и читается привычнее. Небольшой
+   отрицательный right специально даёт лёгкий заход за правый край буквы,
+   не вылезая на соседнюю букву целиком. */
 .stress-mark {
   position: relative;
   display: inline-block;
@@ -266,13 +273,14 @@
 .stress-mark::after {
   content: "";
   position: absolute;
-  top: -0.28em;
-  left: 50%;
+  top: -0.14em;
+  left: auto;
+  right: -0.04em;
   width: 0.3em;
   height: 1.5px;
   background: var(--color-brass-deep);
   border-radius: 1px;
-  transform: translateX(-50%) rotate(-35deg);
+  transform: rotate(-35deg);
 }
 
 /* Интерактивный выбор ударения при вводе/редактировании слова
@@ -335,13 +343,14 @@ button.stress-picker-letter.is-selected {
 button.stress-picker-letter.is-selected::after {
   content: "";
   position: absolute;
-  top: -0.28em;
-  left: 50%;
+  top: -0.14em;
+  left: auto;
+  right: -0.04em;
   width: 0.3em;
   height: 1.5px;
   background: var(--color-brass-deep);
   border-radius: 1px;
-  transform: translateX(-50%) rotate(-35deg);
+  transform: rotate(-35deg);
 }
 
 /* ---------- Messages ---------- */
