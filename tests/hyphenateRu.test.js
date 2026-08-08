@@ -89,3 +89,25 @@ test('wordWithStressHtml: переносит части слова до и по�
   assert.equal(hyphenateRu(before), 'Серен');
   assert.equal(hyphenateRu(after), 'ность');
 });
+
+test('findHyphenationBreakpoints: у "Серендипность" все 3 точки переноса доступны, а не только первая', async () => {
+  const { findHyphenationBreakpoints } = await domModulePromise;
+
+  // Раньше wordWithStressHtml считал переносы отдельно для текста ДО и
+  // ПОСЛЕ ударной буквы — обрезая слово ровно на ней, терялась граница
+  // слога, соседнего с ударным (например, "Серен-" — граница между "рен"
+  // и "ди", где "и" как раз ударная буква). В результате оставалась
+  // только первая, самая ранняя точка переноса, и слово рвалось в первом
+  // попавшемся месте, даже если ширины хватало на больше текста.
+  // Теперь переносы считаются на ПОЛНОМ слове — все три границы слогов
+  // должны быть на месте: "Се-", "Серен-", "Серендип-".
+  const breakpoints = findHyphenationBreakpoints('Серендипность');
+
+  assert.deepEqual(breakpoints, [2, 5, 8]);
+});
+
+test('findHyphenationBreakpoints: у "Петрикор" обе точки переноса доступны', async () => {
+  const { findHyphenationBreakpoints } = await domModulePromise;
+
+  assert.deepEqual(findHyphenationBreakpoints('Петрикор'), [3, 5]);
+});

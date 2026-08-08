@@ -62,7 +62,11 @@ const RU_NEVER_START_LINE = "ьъйЬЪЙ";
 // строка начиналась с ъ/ь/й, и не оставляем меньше 2 символов по обе
 // стороны от разрыва (одна буква на строке выглядит некрасиво и плохо
 // читается, даже если формально это валидный слог).
-function findHyphenationBreakpoints(text) {
+// Экспортируется отдельно от hyphenateRu — нужна и там (для простого
+// случая без ударения), и в wordWithStressHtml ниже (где переносы нужно
+// посчитать на ПОЛНОМ слове, до вырезания ударной буквы, см. комментарий
+// там).
+export function findHyphenationBreakpoints(text) {
   const vowelIndexes = [];
   for (let i = 0; i < text.length; i++) {
     if (RU_VOWELS.includes(text[i])) vowelIndexes.push(i);
@@ -141,9 +145,42 @@ export function wordWithStressHtml(text, stressIndex) {
     return escapeHtml(hyphenateRu(text));
   }
 
-  const before = text.slice(0, stressIndex);
-  const letter = text[stressIndex];
-  const after = text.slice(stressIndex + 1);
+  // ВАЖНО (нашлось после первого прогона на реальных словах): раньше
+  // переносы считались отдельно для "before" (текст до ударной буквы) и
+  // "after" — но часть слоговых границ проходит ИМЕННО между соседним
+  // слогом и слогом ударной буквы. Например, в "Серендипность" (ударная
+  // "и", индекс 6) граница "Серен-дипность" — это стык слогов "рен" и
+  // "ди", а "и" здесь и есть ударная буква; при подсчёте на одном лишь
+  // "before" = "Серенд" эта пара просто не видна целиком, и остаётся
+  // только самая ранняя точка переноса. Из-за этого слово рвалось в первом
+  // попавшемся месте, даже если ширины хватало показать больше текста —
+  // потому что для остальных мест переноса просто не оставалось.
+  //
+  // Правильный порядок: считаем переносы на ПОЛНОМ исходном слове (со
+  // всеми слогами, включая тот, что несёт ударную гласную), и только потом
+  // отбрасываем те точки, что попали бы вплотную к самой ударной букве —
+  // такая пара всё равно склеена в один nowrap-фрагмент чуть ниже, и
+  // переносить непосредственно там незачем (и нельзя: полученный
+  // мягкий перенос иначе окажется внутри этого фрагмента и собьёт разбор
+  // "буква до / ударная буква / буква после").
+  const rawBreakpoints = text.length < 6 ? [] : findHyphenationBreakpoints(text);
+  const breakpoints = rawBreakpoints.filter((bp) => bp !== stressIndex && bp !== stressIndex + 1);
+
+  let hyphenated = "";
+  let lastCut = 0;
+  let shiftedStressIndex = stressIndex;
+  for (const bp of breakpoints) {
+    hyphenated += text.slice(lastCut, bp) + "\u00AD";
+    // Каждый перенос, вставленный ДО ударной буквы, сдвигает её позицию
+    // в уже собранной строке на один символ вправо.
+    if (bp <= stressIndex) shiftedStressIndex += 1;
+    lastCut = bp;
+  }
+  hyphenated += text.slice(lastCut);
+
+  const before = hyphenated.slice(0, shiftedStressIndex);
+  const letter = hyphenated[shiftedStressIndex];
+  const after = hyphenated.slice(shiftedStressIndex + 1);
 
   // ВАЖНО: изначально пробовали просто "до" + span + "после", потом
   // добавили \u2060 (WORD JOINER, символ нулевой ширины, единственное
@@ -159,22 +196,12 @@ export function wordWithStressHtml(text, stressIndex) {
   // физически лишить браузер возможности разорвать строку рядом со span —
   // склеить span вместе с ОДНИМ символом до и ОДНИМ символом после в один
   // white-space: nowrap фрагмент (.stress-mark-unit, см. components.css).
-  //
-  // ВАЖНО: перенос по слогам (hyphenateRu) считается на ПОЛНЫХ before/after
-  // ДО того, как мы отрежем от них крайний символ для nowrap-фрагмента —
-  // если считать перенос уже НА обрезанной строке, короткие остатки часто
-  // проваливаются ниже минимальной длины для переноса (6 букв) и теряют
-  // все точки разрыва, хотя в полном слове они были. Обрезать после —
-  // безопасно: findHyphenationBreakpoints никогда не ставит точку разрыва
-  // ближе 2 символов к любому краю строки, так что ровно один крайний
-  // символ гарантированно "чистый" — без мягкого переноса рядом с ним.
-  const hyphenatedBefore = hyphenateRu(before);
-  const hyphenatedAfter = hyphenateRu(after);
-
-  const lastOfBefore = hyphenatedBefore.slice(-1);
-  const restOfBefore = hyphenatedBefore.slice(0, -1);
-  const firstOfAfter = hyphenatedAfter.slice(0, 1);
-  const restOfAfter = hyphenatedAfter.slice(1);
+  // Благодаря фильтру выше эти крайние символы гарантированно настоящие
+  // буквы, а не случайно попавший сюда мягкий перенос.
+  const lastOfBefore = before.slice(-1);
+  const restOfBefore = before.slice(0, -1);
+  const firstOfAfter = after.slice(0, 1);
+  const restOfAfter = after.slice(1);
 
   return (
     `${escapeHtml(restOfBefore)}` +
