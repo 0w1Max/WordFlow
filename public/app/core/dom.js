@@ -29,6 +29,96 @@ export function fieldErrorHtml(name, errorField, errorMessage) {
 // ударными, и незачем позволять по ним промахнуться кликом.
 export const STRESSABLE_LETTERS = "аеёиоуыэюяАЕЁИОУЫЭЮЯ";
 
+// ---------- Перенос длинных слов по слогам ----------
+//
+// Раньше перенос был отдан браузеру целиком: overflow-wrap: break-word
+// рвёт слово по ЛЮБОЙ границе символов, где не хватает места в строке, без
+// учёта слогов и без видимого знака переноса — отсюда и разрывы вроде
+// "Серенди" / "пность" без дефиса, в произвольном месте. hyphens: auto
+// тоже не спасает: словарная поддержка переноса для кириллицы в браузерах
+// ненадёжна и местами вовсе отсутствует.
+//
+// Вместо этого сами расставляем мягкие переносы (\u00AD, soft hyphen) по
+// слоговым границам. Мягкий перенос ничего не показывает, пока строка не
+// разрывается ИМЕННО в этом месте — и тогда браузер сам подставляет "-".
+// Работает одинаково во всех браузерах, в отличие от hyphens: auto.
+
+const RU_VOWELS = "аеёиоуыэюяАЕЁИОУЫЭЮЯ";
+
+// Никогда не переносим так, чтобы ъ/ь/й оказались в начале новой строки —
+// это как раз то, что запрещают правила русской орфографии.
+const RU_NEVER_START_LINE = "ьъйЬЪЙ";
+
+// Возвращает индексы (в исходной строке), перед которыми можно поставить
+// мягкий перенос — то есть границы слогов.
+//
+// Правило (стандартное для русского переноса, упрощённое до одной фразы):
+// одиночный согласный между гласными целиком уходит следующему слогу
+// (открытый слог — "во-ро-на", не "вор-она"); если согласных между
+// гласными двое и больше, первый остаётся с предыдущим слогом, а
+// остальные уходят следующему ("пет-ри-кор", "ап-ломб").
+//
+// Плюс две типографские подстраховки: не переносим так, чтобы новая
+// строка начиналась с ъ/ь/й, и не оставляем меньше 2 символов по обе
+// стороны от разрыва (одна буква на строке выглядит некрасиво и плохо
+// читается, даже если формально это валидный слог).
+function findHyphenationBreakpoints(text) {
+  const vowelIndexes = [];
+  for (let i = 0; i < text.length; i++) {
+    if (RU_VOWELS.includes(text[i])) vowelIndexes.push(i);
+  }
+
+  // Меньше двух гласных — переносить нечего, слово из одного слога.
+  if (vowelIndexes.length < 2) return [];
+
+  const breakpoints = [];
+
+  for (let k = 0; k < vowelIndexes.length - 1; k++) {
+    const vowelA = vowelIndexes[k];
+    const vowelB = vowelIndexes[k + 1];
+    const consonantsBetween = vowelB - vowelA - 1;
+
+    // 0 или 1 согласный между гласными — граница сразу после первой
+    // гласной (согласный, если он есть, целиком уходит следующему слогу).
+    // 2+ согласных — один остаётся с предыдущим слогом, граница после него.
+    let index = consonantsBetween <= 1 ? vowelA : vowelA + 1;
+
+    // Сдвигаем точку разрыва вправо, если следующая буква — ъ/ь/й: она не
+    // может начинать новую строку, пусть остаётся с предыдущим слогом.
+    while (index + 1 < text.length && RU_NEVER_START_LINE.includes(text[index + 1])) {
+      index += 1;
+    }
+
+    const breakPosition = index + 1; // вставляем перенос ПЕРЕД этим индексом
+
+    if (breakPosition >= 2 && text.length - breakPosition >= 2) {
+      breakpoints.push(breakPosition);
+    }
+  }
+
+  return [...new Set(breakpoints)].sort((a, b) => a - b);
+}
+
+// Короткие слова (короче 6 букв) не переносим вовсе — типографски на них
+// разрыв смотрится плохо, даже если формально возможен, а надобности в
+// нём почти никогда нет.
+export function hyphenateRu(text) {
+  if (!text || text.length < 6) return text;
+
+  const breakpoints = findHyphenationBreakpoints(text);
+  if (breakpoints.length === 0) return text;
+
+  let result = "";
+  let last = 0;
+  for (const breakPosition of breakpoints) {
+    result += text.slice(last, breakPosition) + "\u00AD";
+    last = breakPosition;
+  }
+  result += text.slice(last);
+
+  return result;
+}
+
 // Показ уже сохранённого слова с ударением. ВАЖНО: раньше здесь вставлялся
 // настоящий юникодовский комбинированный акут (U+0301) сразу после буквы —
 // корректный типографский приём в теории, но в части браузеров/шрифтов он
@@ -48,14 +138,49 @@ export function wordWithStressHtml(text, stressIndex) {
     stressIndex < 0 ||
     stressIndex >= text.length
   ) {
-    return escapeHtml(text);
+    return escapeHtml(hyphenateRu(text));
   }
 
   const before = text.slice(0, stressIndex);
   const letter = text[stressIndex];
   const after = text.slice(stressIndex + 1);
 
-  return `${escapeHtml(before)}<span class="stress-mark">${escapeHtml(letter)}</span>${escapeHtml(after)}`;
+  // ВАЖНО: изначально пробовали просто "до" + span + "после", потом
+  // добавили \u2060 (WORD JOINER, символ нулевой ширины, единственное
+  // назначение которого — запретить перенос строки в этой точке) по обе
+  // стороны от span. Проверка в настоящем Chromium (не только в
+  // устаревшем wkhtmltoimage) показала: это не помогает. .stress-mark —
+  // inline-block (нужно для корректного позиционирования засечки, см.
+  // components.css), а граница инлайн-блока — это атомарная точка
+  // переноса на уровне алгоритма разбиения строк, и WORD JOINER на
+  // соседних символах её не отменяет.
+  //
+  // Рабочее решение: не полагаться на "символ, запрещающий перенос", а
+  // физически лишить браузер возможности разорвать строку рядом со span —
+  // склеить span вместе с ОДНИМ символом до и ОДНИМ символом после в один
+  // white-space: nowrap фрагмент (.stress-mark-unit, см. components.css).
+  //
+  // ВАЖНО: перенос по слогам (hyphenateRu) считается на ПОЛНЫХ before/after
+  // ДО того, как мы отрежем от них крайний символ для nowrap-фрагмента —
+  // если считать перенос уже НА обрезанной строке, короткие остатки часто
+  // проваливаются ниже минимальной длины для переноса (6 букв) и теряют
+  // все точки разрыва, хотя в полном слове они были. Обрезать после —
+  // безопасно: findHyphenationBreakpoints никогда не ставит точку разрыва
+  // ближе 2 символов к любому краю строки, так что ровно один крайний
+  // символ гарантированно "чистый" — без мягкого переноса рядом с ним.
+  const hyphenatedBefore = hyphenateRu(before);
+  const hyphenatedAfter = hyphenateRu(after);
+
+  const lastOfBefore = hyphenatedBefore.slice(-1);
+  const restOfBefore = hyphenatedBefore.slice(0, -1);
+  const firstOfAfter = hyphenatedAfter.slice(0, 1);
+  const restOfAfter = hyphenatedAfter.slice(1);
+
+  return (
+    `${escapeHtml(restOfBefore)}` +
+    `<span class="stress-mark-unit">${escapeHtml(lastOfBefore)}<span class="stress-mark">${escapeHtml(letter)}</span>${escapeHtml(firstOfAfter)}</span>` +
+    `${escapeHtml(restOfAfter)}`
+  );
 }
 
 // Интерактивный выбор ударения при вводе/редактировании слова: каждая
