@@ -249,7 +249,14 @@
    ровно одна "коробка" размером точно с содержимое (саму букву), поэтому
    containing block для ::after однозначен и не зависит от переносов
    строк, ширины родителя или браузера — засечка гарантированно центрируется
-   именно над этой буквой. */
+   именно над этой буквой.
+   ВАЖНО (итерация 3): исходные width/height/top (0.55em/2px/-0.6em) были
+   рассчитаны "на глаз" и оказались велики — на реальных размерах шрифта
+   приложения (specimen-word 23px, flashcard-word 34px, mini-card-word
+   21px) засечка выглядела длиной в целую букву и заметно оторванной от
+   слова. Сейчас размер и отступ уменьшены (0.3em/1.5px/-0.28em) —
+   пропорции подобраны и перепроверены рендером именно на этих трёх
+   реальных размерах шрифта, а не в изоляции на произвольном font-size. */
 .stress-mark {
   position: relative;
   display: inline-block;
@@ -259,10 +266,10 @@
 .stress-mark::after {
   content: "";
   position: absolute;
-  top: -0.6em;
+  top: -0.28em;
   left: 50%;
-  width: 0.55em;
-  height: 2px;
+  width: 0.3em;
+  height: 1.5px;
   background: var(--color-brass-deep);
   border-radius: 1px;
   transform: translateX(-50%) rotate(-35deg);
@@ -328,10 +335,10 @@ button.stress-picker-letter.is-selected {
 button.stress-picker-letter.is-selected::after {
   content: "";
   position: absolute;
-  top: -0.6em;
+  top: -0.28em;
   left: 50%;
-  width: 0.5em;
-  height: 2px;
+  width: 0.3em;
+  height: 1.5px;
   background: var(--color-brass-deep);
   border-radius: 1px;
   transform: translateX(-50%) rotate(-35deg);
