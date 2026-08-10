@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { checkAuth, post } from "../core/api.js";
-import { escapeHtml, brandMark, wordWithStressHtml } from "../core/dom.js";
+import { escapeHtml, brandMark, wordWithAccentHtml } from "../core/dom.js";
 import { initScrollReveal } from "../core/scrollReveal.js";
 
 export async function renderLanding() {
@@ -76,17 +76,17 @@ export async function renderLanding() {
         <div class="card-stack" data-reveal>
           <div class="mini-card mini-card-1" data-strength="new">
             <p class="mini-card-label">№ 014</p>
-            <p class="mini-card-word">${wordWithStressHtml("Серендипность", 6)}</p>
+            <p class="mini-card-word">${wordWithAccentHtml("Серендипность", 6)}</p>
             <p class="mini-card-meaning">случайная удачная находка</p>
           </div>
           <div class="mini-card mini-card-2" data-strength="learning">
             <p class="mini-card-label">№ 041</p>
-            <p class="mini-card-word">${wordWithStressHtml("Петрикор", 6)}</p>
+            <p class="mini-card-word">${wordWithAccentHtml("Петрикор", 6)}</p>
             <p class="mini-card-meaning">запах земли после первого дождя</p>
           </div>
           <div class="mini-card mini-card-3" data-strength="known">
             <p class="mini-card-label">№ 128</p>
-            <p class="mini-card-word">${wordWithStressHtml("Апломб", 3)}</p>
+            <p class="mini-card-word">${wordWithAccentHtml("Апломб", 3)}</p>
             <p class="mini-card-meaning">самоуверенная манера держаться</p>
           </div>
         </div>
@@ -180,12 +180,12 @@ export async function renderLanding() {
               <div class="dashboard-preview-list">
                 <p class="dashboard-preview-list-title">Недавно собрано</p>
                 <div class="dashboard-preview-row">
-                  <span class="dashboard-preview-row-word">luminous</span>
-                  <span class="dashboard-preview-row-meaning">светящийся, лучистый</span>
+                  <span class="dashboard-preview-row-word">${wordWithAccentHtml("Лучезарный", 5)}</span>
+                  <span class="dashboard-preview-row-meaning">сияющий, светящийся изнутри</span>
                 </div>
                 <div class="dashboard-preview-row">
-                  <span class="dashboard-preview-row-word">ephemeral</span>
-                  <span class="dashboard-preview-row-meaning">мимолётный</span>
+                  <span class="dashboard-preview-row-word">${wordWithAccentHtml("Эфемерность", 4)}</span>
+                  <span class="dashboard-preview-row-meaning">мимолётность, быстротечность</span>
                 </div>
               </div>
             </div>

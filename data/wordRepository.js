@@ -14,7 +14,7 @@ function mapWordRow(row) {
     text: row.text,
     meaning: row.meaning,
     example: row.example,
-    stressIndex: row.stress_index === undefined ? null : row.stress_index,
+    accentIndex: row.accent_index === undefined ? null : row.accent_index,
     createdAt: row.created_at,
     lastReview: row.last_review,
     reviewCount: row.review_count,
@@ -29,10 +29,10 @@ async function addWord(word) {
 
   const result = await client.execute({
     sql: `
-      INSERT INTO words (user_id, category_id, text, meaning, example, stress_index)
+      INSERT INTO words (user_id, category_id, text, meaning, example, accent_index)
       VALUES (?, ?, ?, ?, ?, ?)
     `,
-    args: [word.userId, word.categoryId, word.text, word.meaning, word.example, word.stressIndex ?? null]
+    args: [word.userId, word.categoryId, word.text, word.meaning, word.example, word.accentIndex ?? null]
   });
 
   // lastInsertRowid приходит как BigInt — приводим к Number, id в этом
@@ -106,16 +106,16 @@ async function markReviewed(id, userId, { intervalDays, easeFactor, nextReviewAt
   return getWordById(id, userId);
 }
 
-async function updateWord(id, userId, { text, meaning, example, categoryId, stressIndex }) {
+async function updateWord(id, userId, { text, meaning, example, categoryId, accentIndex }) {
   await ensureReady();
 
   const result = await client.execute({
     sql: `
       UPDATE words
-      SET text = ?, meaning = ?, example = ?, category_id = ?, stress_index = ?
+      SET text = ?, meaning = ?, example = ?, category_id = ?, accent_index = ?
       WHERE id = ? AND user_id = ?
     `,
-    args: [text, meaning, example, categoryId, stressIndex ?? null, id, userId]
+    args: [text, meaning, example, categoryId, accentIndex ?? null, id, userId]
   });
 
   if (result.rowsAffected === 0) {

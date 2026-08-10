@@ -17,17 +17,17 @@ export function fieldErrorHtml(name, errorField, errorMessage) {
   return `<p class="field-error-text">${escapeHtml(errorMessage)}</p>`;
 }
 
-// ---------- Ударение (см. миграцию stress_index в db/db.js) ----------
+// ---------- Ударение (см. миграцию accent_index в db/db.js) ----------
 //
 // Индекс считается по конкретному символу в исходной, ещё не обрезанной
-// строке (см. normalizeStressIndex в models/word.js на бэкенде — там же
+// строке (см. normalizeAccentIndex в models/word.js на бэкенде — там же
 // подробно объяснено, зачем именно "исходной, не обрезанной").
 
 // Гласные, на которые может физически падать ударение — заглавные и
-// строчные. Используется, чтобы в интерактивном выборе (stressPickerHtml)
+// строчные. Используется, чтобы в интерактивном выборе (accentPickerHtml)
 // кликабельными были только они: согласная или пробел не могут быть
 // ударными, и незачем позволять по ним промахнуться кликом.
-export const STRESSABLE_LETTERS = "аеёиоуыэюяАЕЁИОУЫЭЮЯ";
+export const ACCENTABLE_LETTERS = "аеёиоуыэюяАЕЁИОУЫЭЮЯ";
 
 // ---------- Перенос длинных слов по слогам ----------
 //
@@ -63,7 +63,7 @@ const RU_NEVER_START_LINE = "ьъйЬЪЙ";
 // стороны от разрыва (одна буква на строке выглядит некрасиво и плохо
 // читается, даже если формально это валидный слог).
 // Экспортируется отдельно от hyphenateRu — нужна и там (для простого
-// случая без ударения), и в wordWithStressHtml ниже (где переносы нужно
+// случая без ударения), и в wordWithAccentHtml ниже (где переносы нужно
 // посчитать на ПОЛНОМ слове, до вырезания ударной буквы, см. комментарий
 // там).
 export function findHyphenationBreakpoints(text) {
@@ -130,17 +130,17 @@ export function hyphenateRu(text) {
 // из-за чего справа от ударной буквы визуально появлялся лишний пробел.
 // Комбинирующие символы полагаются на поддержку конкретным шрифтом
 // отрисовки диакритики поверх буквы, а это не гарантировано. Поэтому
-// засечка теперь рисуется самим CSS (.stress-mark::after, см.
+// засечка теперь рисуется самим CSS (.accent-mark::after, см.
 // components.css) — абсолютно спозиционированный элемент не занимает
 // места в потоке текста и никогда не раздвигает соседние буквы, независимо
 // от шрифта и браузера. Здесь остаётся только оборачивание буквы в span —
 // сам штрих полностью на стороне CSS.
-export function wordWithStressHtml(text, stressIndex) {
+export function wordWithAccentHtml(text, accentIndex) {
   if (
-    stressIndex === null ||
-    stressIndex === undefined ||
-    stressIndex < 0 ||
-    stressIndex >= text.length
+    accentIndex === null ||
+    accentIndex === undefined ||
+    accentIndex < 0 ||
+    accentIndex >= text.length
   ) {
     return escapeHtml(hyphenateRu(text));
   }
@@ -164,29 +164,29 @@ export function wordWithStressHtml(text, stressIndex) {
   // мягкий перенос иначе окажется внутри этого фрагмента и собьёт разбор
   // "буква до / ударная буква / буква после").
   const rawBreakpoints = text.length < 6 ? [] : findHyphenationBreakpoints(text);
-  const breakpoints = rawBreakpoints.filter((bp) => bp !== stressIndex && bp !== stressIndex + 1);
+  const breakpoints = rawBreakpoints.filter((bp) => bp !== accentIndex && bp !== accentIndex + 1);
 
   let hyphenated = "";
   let lastCut = 0;
-  let shiftedStressIndex = stressIndex;
+  let shiftedAccentIndex = accentIndex;
   for (const bp of breakpoints) {
     hyphenated += text.slice(lastCut, bp) + "\u00AD";
     // Каждый перенос, вставленный ДО ударной буквы, сдвигает её позицию
     // в уже собранной строке на один символ вправо.
-    if (bp <= stressIndex) shiftedStressIndex += 1;
+    if (bp <= accentIndex) shiftedAccentIndex += 1;
     lastCut = bp;
   }
   hyphenated += text.slice(lastCut);
 
-  const before = hyphenated.slice(0, shiftedStressIndex);
-  const letter = hyphenated[shiftedStressIndex];
-  const after = hyphenated.slice(shiftedStressIndex + 1);
+  const before = hyphenated.slice(0, shiftedAccentIndex);
+  const letter = hyphenated[shiftedAccentIndex];
+  const after = hyphenated.slice(shiftedAccentIndex + 1);
 
   // ВАЖНО: изначально пробовали просто "до" + span + "после", потом
   // добавили \u2060 (WORD JOINER, символ нулевой ширины, единственное
   // назначение которого — запретить перенос строки в этой точке) по обе
   // стороны от span. Проверка в настоящем Chromium (не только в
-  // устаревшем wkhtmltoimage) показала: это не помогает. .stress-mark —
+  // устаревшем wkhtmltoimage) показала: это не помогает. .accent-mark —
   // inline-block (нужно для корректного позиционирования засечки, см.
   // components.css), а граница инлайн-блока — это атомарная точка
   // переноса на уровне алгоритма разбиения строк, и WORD JOINER на
@@ -195,7 +195,7 @@ export function wordWithStressHtml(text, stressIndex) {
   // Рабочее решение: не полагаться на "символ, запрещающий перенос", а
   // физически лишить браузер возможности разорвать строку рядом со span —
   // склеить span вместе с ОДНИМ символом до и ОДНИМ символом после в один
-  // white-space: nowrap фрагмент (.stress-mark-unit, см. components.css).
+  // white-space: nowrap фрагмент (.accent-mark-unit, см. components.css).
   // Благодаря фильтру выше эти крайние символы гарантированно настоящие
   // буквы, а не случайно попавший сюда мягкий перенос.
   const lastOfBefore = before.slice(-1);
@@ -205,7 +205,7 @@ export function wordWithStressHtml(text, stressIndex) {
 
   return (
     `${escapeHtml(restOfBefore)}` +
-    `<span class="stress-mark-unit">${escapeHtml(lastOfBefore)}<span class="stress-mark">${escapeHtml(letter)}</span>${escapeHtml(firstOfAfter)}</span>` +
+    `<span class="accent-mark-unit">${escapeHtml(lastOfBefore)}<span class="accent-mark">${escapeHtml(letter)}</span>${escapeHtml(firstOfAfter)}</span>` +
     `${escapeHtml(restOfAfter)}`
   );
 }
@@ -213,39 +213,39 @@ export function wordWithStressHtml(text, stressIndex) {
 // Интерактивный выбор ударения при вводе/редактировании слова: каждая
 // гласная буква — кликабельная кнопка; выбранная буква сразу подсвечивается
 // тем же CSS-штрихом и тем же цветом, что и в финальном рендере (см.
-// wordWithStressHtml выше и .stress-picker-letter.is-selected::after в
+// wordWithAccentHtml выше и .accent-picker-letter.is-selected::after в
 // components.css) — то, что человек видит при выборе, это уже живое
 // превью того, как слово будет выглядеть в коллекции.
-export function stressPickerHtml(text, stressIndex) {
+export function accentPickerHtml(text, accentIndex) {
   if (!text) {
-    return `<p class="stress-picker-hint">Начните вводить слово, чтобы отметить ударение</p>`;
+    return `<p class="accent-picker-hint">Начните вводить слово, чтобы отметить ударение</p>`;
   }
 
   const letters = [...text]
     .map((char, i) => {
-      const isVowel = STRESSABLE_LETTERS.includes(char);
-      const isSelected = i === stressIndex;
+      const isVowel = ACCENTABLE_LETTERS.includes(char);
+      const isSelected = i === accentIndex;
 
       if (!isVowel) {
-        return `<span class="stress-picker-letter is-inert">${escapeHtml(char)}</span>`;
+        return `<span class="accent-picker-letter is-inert">${escapeHtml(char)}</span>`;
       }
 
-      return `<button type="button" class="stress-picker-letter${isSelected ? " is-selected" : ""}" data-index="${i}" aria-pressed="${isSelected}" aria-label="Отметить ударение на букве ${escapeHtml(char)}">${escapeHtml(char)}</button>`;
+      return `<button type="button" class="accent-picker-letter${isSelected ? " is-selected" : ""}" data-index="${i}" aria-pressed="${isSelected}" aria-label="Отметить ударение на букве ${escapeHtml(char)}">${escapeHtml(char)}</button>`;
     })
     .join("");
 
   return `
-    <p class="stress-picker-hint">Отметьте ударение — необязательно, но карточка будет понятнее</p>
-    <div class="stress-picker">${letters}</div>
+    <p class="accent-picker-hint">Отметьте ударение — необязательно, но карточка будет понятнее</p>
+    <div class="accent-picker">${letters}</div>
   `;
 }
 
-// Навешивает обработчик клика на кнопки stressPickerHtml внутри containerEl.
+// Навешивает обработчик клика на кнопки accentPickerHtml внутри containerEl.
 // onSelect(index) получает индекс выбранной буквы; повторный клик по уже
 // выбранной букве снимает отметку (передаёт null) — чтобы можно было
 // передумать, не перепечатывая всё слово заново.
-export function attachStressPicker(containerEl, currentIndex, onSelect) {
-  containerEl.querySelectorAll(".stress-picker-letter[data-index]").forEach((btn) => {
+export function attachAccentPicker(containerEl, currentIndex, onSelect) {
+  containerEl.querySelectorAll(".accent-picker-letter[data-index]").forEach((btn) => {
     btn.onclick = () => {
       const index = Number(btn.dataset.index);
       onSelect(index === currentIndex ? null : index);

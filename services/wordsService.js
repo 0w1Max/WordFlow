@@ -1,14 +1,14 @@
 const wordRepository = require('../data/wordRepository');
 const { validateWordInput } = require('../validators/wordValidator');
-const { normalizeStressIndex } = require('../models/word');
+const { normalizeAccentIndex } = require('../models/word');
 const { NotFoundError } = require('../errors/AppError');
 
 async function getAllWords(userId) {
   return wordRepository.getAllWords(userId);
 }
 
-async function updateWord(id, userId, { text, meaning, example, categoryId, stressIndex }) {
-  validateWordInput({ text, meaning, stressIndex });
+async function updateWord(id, userId, { text, meaning, example, categoryId, accentIndex }) {
+  validateWordInput({ text, meaning, accentIndex });
 
   const updated = await wordRepository.updateWord(id, userId, {
     text: text.trim(),
@@ -18,7 +18,7 @@ async function updateWord(id, userId, { text, meaning, example, categoryId, stre
     // См. подробный комментарий в models/word.js: индекс приходит от
     // фронтенда посчитанным по ещё не обрезанной строке, здесь та же
     // логика пересчёта/отбрасывания, что и при создании слова.
-    stressIndex: normalizeStressIndex(stressIndex, text)
+    accentIndex: normalizeAccentIndex(accentIndex, text)
   });
 
   if (!updated) {

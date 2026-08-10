@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { get, post } from "../core/api.js";
-import { escapeHtml, brandMark, fieldWrapClass, fieldErrorHtml, stressPickerHtml, attachStressPicker } from "../core/dom.js";
+import { escapeHtml, brandMark, fieldWrapClass, fieldErrorHtml, accentPickerHtml, attachAccentPicker } from "../core/dom.js";
 
 export async function renderAddWord() {
   const app = document.getElementById("app");
@@ -40,7 +40,7 @@ function renderForm(app, categories) {
         <div class="field" id="textField">
           <label class="field-label" for="text">Слово *</label>
           <input type="text" id="text" required autocomplete="off" />
-          <div id="stressPicker"></div>
+          <div id="accentPicker"></div>
         </div>
 
         <div class="field" id="meaningField">
@@ -82,8 +82,8 @@ function renderForm(app, categories) {
     navigate("/dashboard");
   };
 
-  // Ударение — необязательное поле (см. миграцию stress_index в db/db.js).
-  // stressIndex здесь хранит индекс буквы, выбранной кликом по превью, а не
+  // Ударение — необязательное поле (см. миграцию accent_index в db/db.js).
+  // accentIndex здесь хранит индекс буквы, выбранной кликом по превью, а не
   // просто DOM-состояние: на submit его нужно явно прочитать и отправить.
   //
   // ВАЖНО: при любом изменении текста слова индекс сбрасывается в null, а
@@ -91,24 +91,24 @@ function renderForm(app, categories) {
   // (например, слово стёрли и напечатали другое), и молчаливое сохранение
   // старого индекса указало бы на случайную букву нового слова. Явный сброс
   // безопаснее: в худшем случае человек просто отметит ударение заново.
-  let stressIndex = null;
+  let accentIndex = null;
   const textInput = document.getElementById("text");
-  const stressPicker = document.getElementById("stressPicker");
+  const accentPicker = document.getElementById("accentPicker");
 
-  function renderStressPicker() {
-    stressPicker.innerHTML = stressPickerHtml(textInput.value, stressIndex);
-    attachStressPicker(stressPicker, stressIndex, (index) => {
-      stressIndex = index;
-      renderStressPicker();
+  function renderAccentPicker() {
+    accentPicker.innerHTML = accentPickerHtml(textInput.value, accentIndex);
+    attachAccentPicker(accentPicker, accentIndex, (index) => {
+      accentIndex = index;
+      renderAccentPicker();
     });
   }
 
   textInput.addEventListener("input", () => {
-    stressIndex = null;
-    renderStressPicker();
+    accentIndex = null;
+    renderAccentPicker();
   });
 
-  renderStressPicker();
+  renderAccentPicker();
 
   // ВАЖНО: создание категории раньше вызывало полную перерисовку формы
   // (renderForm(...)), которая стирала уже введённые слово/значение/пример —
@@ -160,7 +160,7 @@ function renderForm(app, categories) {
         meaning,
         example: example || null,
         categoryId: categoryId ? Number(categoryId) : null,
-        stressIndex
+        accentIndex
       });
 
       navigate("/dashboard");
@@ -186,10 +186,10 @@ const WORD_FIELD_IDS = ["text", "meaning"];
 // к конкретному полю, подсвечиваем только его; иначе показываем общий
 // баннер сверху формы, как раньше.
 //
-// stressIndex сюда намеренно не входит: у него нет своего .field-блока
+// accentIndex сюда намеренно не входит: у него нет своего .field-блока
 // (это дополнение внутри textField, см. renderForm выше), и в норме такая
 // ошибка вообще не должна долетать до сервера — форма сама сбрасывает
-// stressIndex в null при любой правке текста. Если она всё же пришла
+// accentIndex в null при любой правке текста. Если она всё же пришла
 // (WORD_FIELD_IDS.includes(field) === false), считаем её "не привязанной
 // к конкретному видимому полю" и показываем обычным баннером сверху.
 function showFormError(message, field = null) {

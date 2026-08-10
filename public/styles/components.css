@@ -231,7 +231,7 @@
 
 /* ---------- Ударение ---------- */
 /* Показ на уже сохранённом слове (карточка, флэшкарта, "недавно собрано" —
-   см. wordWithStressHtml в core/dom.js).
+   см. wordWithAccentHtml в core/dom.js).
    ВАЖНО (итерация 1): раньше засечка рисовалась настоящим юникодовским
    комбинированным акутом (U+0301) сразу после буквы — в части
    браузеров/шрифтов он получал свою собственную ширину вместо того, чтобы
@@ -245,7 +245,7 @@
    (при переносах строк, при разной ширине контейнера карточки/флэшкарты)
    это давало непредсказуемое смещение: засечка оказывалась не над своей
    буквой, а в произвольном месте слова.
-   Решение: .stress-mark — display: inline-block. У inline-block всегда
+   Решение: .accent-mark — display: inline-block. У inline-block всегда
    ровно одна "коробка" размером точно с содержимое (саму букву), поэтому
    containing block для ::after однозначен и не зависит от переносов
    строк, ширины родителя или браузера — засечка гарантированно центрируется
@@ -264,27 +264,27 @@
    буквы, а не строго по центру — так оно и читается привычнее. Небольшой
    отрицательный right специально даёт лёгкий заход за правый край буквы,
    не вылезая на соседнюю букву целиком. */
-.stress-mark {
+.accent-mark {
   position: relative;
   display: inline-block;
   color: var(--color-brass-deep);
 }
 
-/* .stress-mark — inline-block, а граница инлайн-блока в браузерах — сама
+/* .accent-mark — inline-block, а граница инлайн-блока в браузерах — сама
    по себе допустимая точка переноса строки (это подтвердилось даже в
    настоящем Chromium, не только в старых движках), независимо от того,
    есть ли рядом пробел. Без этого правила строка могла разорваться прямо
    на границе ударной буквы, без всякого дефиса — та же ошибка, которую
    чинит весь этот модуль. white-space: nowrap на обёртке из трёх символов
-   (один до + ударная буква + один после, см. wordWithStressHtml в
+   (один до + ударная буква + один после, см. wordWithAccentHtml в
    core/dom.js) физически не даёт браузеру разорвать строку в этом месте;
    перенос по слогам (hyphenateRu) по-прежнему работает в остальной части
    слова снаружи этой обёртки. */
-.stress-mark-unit {
+.accent-mark-unit {
   white-space: nowrap;
 }
 
-.stress-mark::after {
+.accent-mark::after {
   content: "";
   position: absolute;
   top: -0.14em;
@@ -298,24 +298,24 @@
 }
 
 /* Интерактивный выбор ударения при вводе/редактировании слова
-   (stressPickerHtml + attachStressPicker в core/dom.js). Буквы идут в ряд
+   (accentPickerHtml + attachAccentPicker в core/dom.js). Буквы идут в ряд
    без переносов внутри слова — это одно слово, а не текст, который нужно
    переносить по ширине контейнера. */
-.stress-picker-hint {
+.accent-picker-hint {
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--color-ink-faint);
   margin: 6px 0 6px;
 }
 
-.stress-picker {
+.accent-picker {
   display: flex;
   flex-wrap: wrap;
   gap: 2px;
   margin-bottom: 4px;
 }
 
-.stress-picker-letter {
+.accent-picker-letter {
   font-family: var(--font-display);
   font-size: 18px;
   line-height: 1;
@@ -329,20 +329,20 @@
 /* Согласные/пробелы — не кнопка, просто буква-заполнитель, чтобы слово
    не "разваливалось" по буквам визуально. Курсор остаётся обычным: кликнуть
    по ним всё равно ничего не даст, наводить палец незачем. */
-span.stress-picker-letter.is-inert {
+span.accent-picker-letter.is-inert {
   color: var(--color-ink-soft);
 }
 
-button.stress-picker-letter {
+button.accent-picker-letter {
   cursor: pointer;
   transition: background-color 150ms var(--ease-out), color 150ms var(--ease-out);
 }
 
-button.stress-picker-letter:hover {
+button.accent-picker-letter:hover {
   background: var(--color-moss-pale);
 }
 
-button.stress-picker-letter.is-selected {
+button.accent-picker-letter.is-selected {
   position: relative;
   display: inline-block;
   padding: 0;
@@ -351,10 +351,10 @@ button.stress-picker-letter.is-selected {
   font-weight: 600;
 }
 
-/* Тот же CSS-рисованный акцент, что и в финальном рендере (.stress-mark
+/* Тот же CSS-рисованный акцент, что и в финальном рендере (.accent-mark
    выше) — то, что человек видит при выборе буквы, уже буквально
    превью того, как слово будет выглядеть в коллекции. */
-button.stress-picker-letter.is-selected::after {
+button.accent-picker-letter.is-selected::after {
   content: "";
   position: absolute;
   top: -0.14em;

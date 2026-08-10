@@ -29,31 +29,31 @@ test('validateWordInput: требует непустое "Значение" и �
   }
 });
 
-test('validateWordInput: пропускает корректный stressIndex', () => {
+test('validateWordInput: пропускает корректный accentIndex', () => {
   // "Слово" — индекс 3 указывает на "в", валидная гласная в пределах строки
-  assert.doesNotThrow(() => validateWordInput({ text: 'Слово', meaning: 'Значение', stressIndex: 3 }));
+  assert.doesNotThrow(() => validateWordInput({ text: 'Слово', meaning: 'Значение', accentIndex: 3 }));
 });
 
-test('validateWordInput: пропускает отсутствие stressIndex (undefined/null)', () => {
+test('validateWordInput: пропускает отсутствие accentIndex (undefined/null)', () => {
   assert.doesNotThrow(() => validateWordInput({ text: 'Слово', meaning: 'Значение' }));
-  assert.doesNotThrow(() => validateWordInput({ text: 'Слово', meaning: 'Значение', stressIndex: null }));
+  assert.doesNotThrow(() => validateWordInput({ text: 'Слово', meaning: 'Значение', accentIndex: null }));
 });
 
-test('validateWordInput: отклоняет stressIndex вне границ текста и указывает field: "stressIndex"', () => {
+test('validateWordInput: отклоняет accentIndex вне границ текста и указывает field: "accentIndex"', () => {
   try {
-    validateWordInput({ text: 'Слово', meaning: 'Значение', stressIndex: 99 });
+    validateWordInput({ text: 'Слово', meaning: 'Значение', accentIndex: 99 });
     assert.fail('ожидали, что бросит ValidationError');
   } catch (err) {
     assert.ok(err instanceof ValidationError);
-    assert.equal(err.field, 'stressIndex');
+    assert.equal(err.field, 'accentIndex');
   }
 
-  assert.throws(() => validateWordInput({ text: 'Слово', meaning: 'Значение', stressIndex: -1 }), ValidationError);
+  assert.throws(() => validateWordInput({ text: 'Слово', meaning: 'Значение', accentIndex: -1 }), ValidationError);
 });
 
-test('validateWordInput: отклоняет нецелый stressIndex', () => {
-  assert.throws(() => validateWordInput({ text: 'Слово', meaning: 'Значение', stressIndex: 1.5 }), ValidationError);
-  assert.throws(() => validateWordInput({ text: 'Слово', meaning: 'Значение', stressIndex: 'два' }), ValidationError);
+test('validateWordInput: отклоняет нецелый accentIndex', () => {
+  assert.throws(() => validateWordInput({ text: 'Слово', meaning: 'Значение', accentIndex: 1.5 }), ValidationError);
+  assert.throws(() => validateWordInput({ text: 'Слово', meaning: 'Значение', accentIndex: 'два' }), ValidationError);
 });
 
 test('validateCredentials: пропускает корректный email и пароль от 8 символов', () => {

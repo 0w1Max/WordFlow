@@ -76,10 +76,10 @@ test('hyphenateRu: слово без гласных (или с < 2 гласны�
   assert.equal(hyphenateRu('ммм-ммм-ммм'), 'ммм-ммм-ммм');
 });
 
-test('wordWithStressHtml: переносит части слова до и после ударной буквы независимо', async () => {
+test('wordWithAccentHtml: переносит части слова до и после ударной буквы независимо', async () => {
   const { hyphenateRu } = await domModulePromise;
 
-  // Сама проверка полного wordWithStressHtml требует document (escapeHtml),
+  // Сама проверка полного wordWithAccentHtml требует document (escapeHtml),
   // которого нет в Node — здесь проверяем именно то, что использует эта
   // функция внутри: hyphenateRu применяется к "before" и "after" по
   // отдельности и не пытается перенести саму ударную букву.
@@ -93,7 +93,7 @@ test('wordWithStressHtml: переносит части слова до и по�
 test('findHyphenationBreakpoints: у "Серендипность" все 3 точки переноса доступны, а не только первая', async () => {
   const { findHyphenationBreakpoints } = await domModulePromise;
 
-  // Раньше wordWithStressHtml считал переносы отдельно для текста ДО и
+  // Раньше wordWithAccentHtml считал переносы отдельно для текста ДО и
   // ПОСЛЕ ударной буквы — обрезая слово ровно на ней, терялась граница
   // слога, соседнего с ударным (например, "Серен-" — граница между "рен"
   // и "ди", где "и" как раз ударная буква). В результате оставалась

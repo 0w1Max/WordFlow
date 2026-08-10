@@ -39,7 +39,7 @@ const CREATE_WORDS_TABLE = `
     text TEXT NOT NULL,
     meaning TEXT NOT NULL,
     example TEXT,
-    stress_index INTEGER,
+    accent_index INTEGER,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     last_review DATETIME,
     review_count INTEGER DEFAULT 0,
@@ -68,11 +68,11 @@ const SOFT_MIGRATIONS = [
   'ALTER TABLE users ADD COLUMN reset_token_hash TEXT',
   'ALTER TABLE users ADD COLUMN reset_token_expires_at DATETIME',
   'ALTER TABLE users ADD COLUMN is_guest INTEGER NOT NULL DEFAULT 0',
-  // stress_index — позиция (0-based) ударной буквы в TEXT-е слова, считая
+  // accent_index — позиция (0-based) ударной буквы в TEXT-е слова, считая
   // от исходного (ещё не обрезанного) ввода. NULL означает "ударение не
   // отмечено" — старые слова, добавленные до этой фичи, так и останутся
   // без разметки, что абсолютно нормально: это необязательное поле.
-  'ALTER TABLE words ADD COLUMN stress_index INTEGER',
+  'ALTER TABLE words ADD COLUMN accent_index INTEGER',
   // Раньше не было пользователей, все слова "жили" под условным user_id=1.
   // Как только зарегистрируется настоящий первый пользователь, старые
   // записи можно будет вручную перепривязать по email — это осознанно
