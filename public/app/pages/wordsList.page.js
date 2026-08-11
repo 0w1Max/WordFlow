@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { get, put, del } from "../core/api.js";
-import { escapeHtml, brandMark, stampIcon, formatShortDate, progressDotsHtml, bookmarkIcon, fieldWrapClass, fieldErrorHtml, accentPickerHtml, attachAccentPicker, wordWithAccentHtml } from "../core/dom.js";
+import { escapeHtml, brandMark, stampIcon, formatShortDate, progressDotsHtml, bookmarkIcon, fieldWrapClass, fieldErrorHtml, accentPickerHtml, attachAccentPicker, wordWithAccentHtml, wireRequiredFieldsToggle } from "../core/dom.js";
 
 export async function renderWordsList() {
   const app = document.getElementById("app");
@@ -234,6 +234,12 @@ function render(app, state) {
         editingWord.draftAccentIndex = null;
         renderAccent();
       });
+    }
+
+    const meaningInput = card?.querySelector(".edit-meaning");
+    const saveBtn = card?.querySelector(".save-btn");
+    if (textInput && meaningInput && saveBtn) {
+      wireRequiredFieldsToggle(saveBtn, [textInput, meaningInput]);
     }
   }
 

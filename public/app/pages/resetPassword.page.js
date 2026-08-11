@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { post } from "../core/api.js";
-import { escapeHtml, passwordFieldHtml, attachPasswordToggles, brandMark } from "../core/dom.js";
+import { escapeHtml, passwordFieldHtml, attachPasswordToggles, brandMark, wireRequiredFieldsToggle } from "../core/dom.js";
 
 export function renderResetPassword() {
   const app = document.getElementById("app");
@@ -55,6 +55,11 @@ function render(app, token, errorMessage, errorField) {
   `;
 
   attachPasswordToggles(app);
+
+  wireRequiredFieldsToggle(
+    document.getElementById("submitBtn"),
+    [document.getElementById("password")]
+  );
 
   document.getElementById("resetForm").onsubmit = async (e) => {
     e.preventDefault();

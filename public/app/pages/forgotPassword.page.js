@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { post } from "../core/api.js";
-import { escapeHtml, brandMark, fieldWrapClass, fieldErrorHtml } from "../core/dom.js";
+import { escapeHtml, brandMark, fieldWrapClass, fieldErrorHtml, wireRequiredFieldsToggle } from "../core/dom.js";
 
 export function renderForgotPassword() {
   const app = document.getElementById("app");
@@ -45,6 +45,11 @@ function render(app, message, errorMessage, errorField, emailValue) {
 
   const form = document.getElementById("forgotForm");
   if (!form) return;
+
+  wireRequiredFieldsToggle(
+    document.getElementById("submitBtn"),
+    [document.getElementById("email")]
+  );
 
   form.onsubmit = async (e) => {
     e.preventDefault();

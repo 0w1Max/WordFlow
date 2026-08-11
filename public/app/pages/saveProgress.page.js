@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { get, post } from "../core/api.js";
-import { escapeHtml, passwordFieldHtml, attachPasswordToggles, brandMark, fieldWrapClass, fieldErrorHtml } from "../core/dom.js";
+import { escapeHtml, passwordFieldHtml, attachPasswordToggles, brandMark, fieldWrapClass, fieldErrorHtml, wireRequiredFieldsToggle } from "../core/dom.js";
 
 export async function renderSaveProgress() {
   const app = document.getElementById("app");
@@ -54,6 +54,11 @@ function render(app, errorMessage, errorField) {
   `;
 
   attachPasswordToggles(app);
+
+  wireRequiredFieldsToggle(
+    document.getElementById("submitBtn"),
+    [document.getElementById("email"), document.getElementById("password")]
+  );
 
   document.getElementById("skipLink").onclick = (e) => {
     e.preventDefault();

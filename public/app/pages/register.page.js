@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { post } from "../core/api.js";
-import { escapeHtml, passwordFieldHtml, attachPasswordToggles, brandMark, fieldWrapClass, fieldErrorHtml } from "../core/dom.js";
+import { escapeHtml, passwordFieldHtml, attachPasswordToggles, brandMark, fieldWrapClass, fieldErrorHtml, wireRequiredFieldsToggle } from "../core/dom.js";
 
 export function renderRegister() {
   const app = document.getElementById("app");
@@ -51,6 +51,11 @@ function render(app, errorMessage, errorField, emailValue) {
   };
 
   attachPasswordToggles(app);
+
+  wireRequiredFieldsToggle(
+    document.getElementById("submitBtn"),
+    [document.getElementById("email"), document.getElementById("password")]
+  );
 
   document.getElementById("registerForm").onsubmit = async (e) => {
     e.preventDefault();

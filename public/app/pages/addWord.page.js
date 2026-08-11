@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { get, post } from "../core/api.js";
-import { escapeHtml, brandMark, fieldWrapClass, fieldErrorHtml, accentPickerHtml, attachAccentPicker } from "../core/dom.js";
+import { escapeHtml, brandMark, fieldWrapClass, fieldErrorHtml, accentPickerHtml, attachAccentPicker, wireRequiredFieldsToggle } from "../core/dom.js";
 
 export async function renderAddWord() {
   const app = document.getElementById("app");
@@ -110,13 +110,21 @@ function renderForm(app, categories) {
 
   renderAccentPicker();
 
+  wireRequiredFieldsToggle(
+    document.getElementById("submitBtn"),
+    [document.getElementById("text"), document.getElementById("meaning")]
+  );
+
   // ВАЖНО: создание категории раньше вызывало полную перерисовку формы
   // (renderForm(...)), которая стирала уже введённые слово/значение/пример —
   // человек терял заполненные данные только потому, что попутно завёл
   // категорию. Теперь новый <option> просто добавляется в существующий
   // <select> точечно, ни один другой элемент формы не трогается и не
   // перерисовывается.
-  document.getElementById("createCategoryBtn").onclick = async () => {
+  const createCategoryBtn = document.getElementById("createCategoryBtn");
+  wireRequiredFieldsToggle(createCategoryBtn, [document.getElementById("newCategoryName")]);
+
+  createCategoryBtn.onclick = async () => {
     const nameInput = document.getElementById("newCategoryName");
     const name = nameInput.value.trim();
     const categoryError = document.getElementById("categoryError");
@@ -135,6 +143,7 @@ function renderForm(app, categories) {
       select.value = category.id;
 
       nameInput.value = "";
+      createCategoryBtn.disabled = true;
       categoryError.hidden = true;
     } catch (err) {
       categoryError.textContent = err.message;
