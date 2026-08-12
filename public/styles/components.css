@@ -757,6 +757,15 @@ button.accent-picker-letter.is-selected::after {
   text-decoration: underline;
 }
 
+/* Деструктивное действие (выйти и безвозвратно потерять несохранённые
+   гостевые данные) — сознательно НЕ зелёным "положительным" цветом, как
+   обычные ссылки выше, а приглушённым предупреждающим, чтобы не выглядеть
+   как рядовой пункт навигации и не провоцировать случайный клик. */
+.auth-links a.auth-link-danger {
+  color: var(--color-rust);
+  font-weight: 500;
+}
+
 /* ---------- Password field with show/hide toggle ---------- */
 .password-field {
   position: relative;

@@ -48,6 +48,7 @@ function render(app, errorMessage, errorField) {
 
         <div class="auth-links">
           <a href="/dashboard" id="skipLink">Пропустить, вернуться позже</a>
+          <a href="/" id="logoutWithoutSavingLink" class="auth-link-danger">Выйти без сохранения</a>
         </div>
       </div>
     </div>
@@ -63,6 +64,30 @@ function render(app, errorMessage, errorField) {
   document.getElementById("skipLink").onclick = (e) => {
     e.preventDefault();
     navigate("/dashboard");
+  };
+
+  // БАГ, который чинит эта ссылка: раньше единственным способом покинуть
+  // этот экран было "Пропустить" — а оно ведёт обратно на /dashboard, а
+  // не разлогинивает. Человек, который специально пришёл сюда, чтобы
+  // выйти (например, через предупреждение при logout на dashboard —
+  // см. dashboard.page.js), утыкался в замкнутый круг: dashboard → сюда →
+  // "Пропустить" → снова dashboard, без реальной возможности прервать
+  // гостевую сессию. Эта ссылка — настоящий logout, а не переход назад.
+  document.getElementById("logoutWithoutSavingLink").onclick = async (e) => {
+    e.preventDefault();
+
+    const confirmedLoss = window.confirm(
+      "Слова, собранные в этой гостевой сессии, будут потеряны без возможности восстановления.\n\n" +
+      "Точно выйти без сохранения?"
+    );
+
+    if (!confirmedLoss) return;
+
+    try {
+      await post("/auth/logout");
+    } finally {
+      window.location.href = "/";
+    }
   };
 
   document.getElementById("claimForm").onsubmit = async (e) => {
