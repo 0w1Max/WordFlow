@@ -8,6 +8,7 @@ import { renderRegister } from "../pages/register.page.js";
 import { renderForgotPassword } from "../pages/forgotPassword.page.js";
 import { renderResetPassword } from "../pages/resetPassword.page.js";
 import { renderSaveProgress } from "../pages/saveProgress.page.js";
+import { renderConfirmLogout } from "../pages/confirmLogout.page.js";
 
 const routes = {
   "/": renderLanding,
@@ -19,7 +20,8 @@ const routes = {
   "/register": renderRegister,
   "/forgot-password": renderForgotPassword,
   "/reset-password": renderResetPassword,
-  "/save-progress": renderSaveProgress
+  "/save-progress": renderSaveProgress,
+  "/leave": renderConfirmLogout
 };
 
 export function router() {
