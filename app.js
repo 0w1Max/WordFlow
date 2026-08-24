@@ -29,6 +29,17 @@ app.set('trust proxy', 1);
 // helmet выставляет набор стандартных security-заголовков (X-Content-Type-
 // -Options, отключение X-Powered-By и т.д.) — раньше их не было вообще.
 app.use(helmet());
+
+// Helmet по умолчанию ставит Cross-Origin-Resource-Policy: same-origin —
+// это верно для HTML/статики сайта, но мешает браузерному расширению
+// WordFlow читать ответы API из своего привилегированного контекста
+// (chrome-extension://...). Снимаем ограничение только для /api — страница
+// сайта и статика по-прежнему same-origin, как и раньше.
+app.use(API_PREFIX, (req, res, next) => {
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+});
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(publicDir));
