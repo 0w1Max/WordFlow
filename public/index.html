@@ -7,15 +7,20 @@
     <meta name="description" content="WordFlow — личный каталог слов и значений с расписанием повторений, которое подстраивается под то, что вы уже помните. Начните бесплатно, без регистрации.">
     <meta name="theme-color" content="#fdf1e4">
 
-    <!-- Open Graph / соцсети -->
+    <!-- Open Graph / соцсети.
+         ВАЖНО: og:image, twitter:image и og:url — относительные/неабсолютные
+         сейчас, потому что домен ещё не известен (проект не задеплоен на
+         постоянный адрес). Часть краулеров соцсетей (например, старый
+         Facebook Sharing Debugger) требует именно абсолютный URL для
+         превью-картинки и для og:url — после деплоя все три стоит заменить
+         на полный адрес вида https://your-domain.com/og-image.png. -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="WordFlow">
     <meta property="og:title" content="WordFlow — коллекция слов">
     <meta property="og:description" content="Личный каталог слов и значений с расписанием повторений, которое подстраивается под то, что вы уже помните.">
     <meta property="og:image" content="/og-image.png">
     <meta property="og:locale" content="ru_RU">
-    <!-- og:url лучше указать абсолютным после деплоя, например:
-         <meta property="og:url" content="https://your-domain.com/"> -->
+    <!-- <meta property="og:url" content="https://your-domain.com/"> -->
 
     <!-- Twitter/X Card -->
     <meta name="twitter:card" content="summary_large_image">

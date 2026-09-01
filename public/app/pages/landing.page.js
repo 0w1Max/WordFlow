@@ -230,7 +230,7 @@ export async function renderLanding() {
             </div>
             <div class="footer-col">
               <p class="footer-col-title">Начать</p>
-              <button id="footerFooterTryFree" class="footer-link-btn">Без регистрации</button>
+              <button id="footerLinkTryFree" class="footer-link-btn">Без регистрации</button>
             </div>
           </div>
         </div>
@@ -270,7 +270,7 @@ export async function renderLanding() {
 
   document.getElementById("tryFreeBtn").onclick = (e) => startTrial(e.currentTarget);
   document.getElementById("footerTryFree").onclick = (e) => startTrial(e.currentTarget);
-  document.getElementById("footerFooterTryFree").onclick = (e) => startTrial(e.currentTarget);
+  document.getElementById("footerLinkTryFree").onclick = (e) => startTrial(e.currentTarget);
 
   initScrollReveal(app);
 }

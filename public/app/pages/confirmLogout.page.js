@@ -1,5 +1,5 @@
 import { navigate } from "../core/router.js";
-import { post } from "../core/api.js";
+import { get, post } from "../core/api.js";
 import { brandMark } from "../core/dom.js";
 
 // Экран подтверждения выхода для гостя. Раньше это было либо два подряд
@@ -9,8 +9,22 @@ import { brandMark } from "../core/dom.js";
 // то же предупреждение, но оформленное как часть интерфейса, с двумя
 // равнозначными по важности вариантами действия, а не одной кнопкой
 // "ОК/Отмена".
-export function renderConfirmLogout() {
+export async function renderConfirmLogout() {
   const app = document.getElementById("app");
+
+  app.innerHTML = `<div class="page"><p class="loading-line">Проверяем аккаунт…</p></div>`;
+
+  // get() сам уведёт на /login, если сессии нет вообще. Единственный путь
+  // сюда — кнопка "Выйти" на dashboard для гостя (см. dashboard.page.js),
+  // но прямой переход по URL никто не запрещает: обычному пользователю
+  // предупреждение о потере гостевых данных не имеет смысла — ему нечего
+  // терять, его аккаунт и так привязан к email.
+  const { user } = await get("/auth/me");
+
+  if (!user.isGuest) {
+    navigate("/dashboard");
+    return;
+  }
 
   app.innerHTML = `
     <div class="auth-shell">

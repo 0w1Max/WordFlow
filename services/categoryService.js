@@ -1,4 +1,5 @@
 const categoryRepository = require('../data/categoryRepository');
+const { createCategory: buildCategory } = require('../models/category');
 const { ValidationError, NotFoundError } = require('../errors/AppError');
 
 async function addCategory(name, userId) {
@@ -6,7 +7,7 @@ async function addCategory(name, userId) {
     throw new ValidationError('Поле "Название категории" обязательно', 'name');
   }
 
-  return categoryRepository.addCategory({ name: name.trim(), userId });
+  return categoryRepository.addCategory(buildCategory({ name, userId }));
 }
 
 async function getCategories(userId) {

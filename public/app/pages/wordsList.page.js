@@ -1,6 +1,6 @@
 import { navigate } from "../core/router.js";
 import { get, put, del } from "../core/api.js";
-import { escapeHtml, brandMark, stampIcon, formatShortDate, progressDotsHtml, bookmarkIcon, fieldWrapClass, fieldErrorHtml, accentPickerHtml, attachAccentPicker, wordWithAccentHtml, wireRequiredFieldsToggle } from "../core/dom.js";
+import { escapeHtml, brandMark, stampIcon, formatShortDate, progressDotsHtml, bookmarkIcon, fieldWrapClass, fieldErrorHtml, accentPickerHtml, attachAccentPicker, wordWithAccentHtml, wireRequiredFieldsToggle, pluralizeRu } from "../core/dom.js";
 
 export async function renderWordsList() {
   const app = document.getElementById("app");
@@ -174,7 +174,7 @@ function render(app, state) {
     <div class="page">
       ${brandMark()}
       <h1 class="headline" style="margin-top: 18px;">Все слова</h1>
-      <p class="meta-line">${state.words.length} слов${state.words.length === 1 ? "о" : ""} в коллекции</p>
+      <p class="meta-line">${state.words.length} ${pluralizeRu(state.words.length, "слово", "слова", "слов")} в коллекции</p>
 
       ${state.error && !["text", "meaning"].includes(state.errorField) ? `<p class="error-banner">${escapeHtml(state.error)}</p>` : ""}
 
@@ -355,8 +355,10 @@ function render(app, state) {
         await del(`/words/${id}`);
         state.words = state.words.filter(w => w.id !== id);
         state.error = "";
+        state.errorField = null;
       } catch (err) {
         state.error = err.message;
+        state.errorField = err.field ?? null;
       }
 
       render(app, state);
