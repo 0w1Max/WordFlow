@@ -1,4 +1,3 @@
-/* ---------- Layout shell ---------- */
 .page {
   max-width: 640px;
   margin: 0 auto;
@@ -74,7 +73,6 @@
   font-weight: 500;
 }
 
-/* ---------- Buttons: premium interaction, not a color swap ---------- */
 .btn {
   font-family: var(--font-body);
   font-size: 14.5px;
@@ -83,8 +81,12 @@
   border-radius: var(--radius-control);
   border: 1px solid transparent;
   cursor: pointer;
-  transition: transform 250ms var(--ease-spring), box-shadow 250ms var(--ease-out),
-    background-color 250ms, border-color 250ms, opacity 250ms;
+  transition:
+    transform 250ms var(--ease-spring),
+    box-shadow 250ms var(--ease-out),
+    background-color 250ms,
+    border-color 250ms,
+    opacity 250ms;
   line-height: 1.2;
   box-shadow: var(--shadow-1);
 }
@@ -162,7 +164,6 @@
   flex-wrap: wrap;
 }
 
-/* ---------- Forms: editorial workspace, not boxed inputs ---------- */
 .form {
   display: flex;
   flex-direction: column;
@@ -208,12 +209,6 @@
   box-shadow: none;
 }
 
-/* Ошибка конкретного поля — раньше валидация показывалась только общим
-   баннером сверху формы, человек должен был сам угадывать, какое поле
-   не понравилось серверу. Теперь линия под инпутом и подпись под ней
-   красные именно там, где реальная проблема (см. err.field в api.js и
-   ValidationError.field на бэкенде). Баннер сверху остаётся для ошибок,
-   не привязанных к одному полю (например, "такой email уже занят"). */
 .field.has-error input,
 .field.has-error select {
   border-bottom-color: var(--color-rust);
@@ -229,57 +224,18 @@
   margin: 0;
 }
 
-/* ---------- Ударение ---------- */
-/* Показ на уже сохранённом слове (карточка, флэшкарта, "недавно собрано" —
-   см. wordWithAccentHtml в core/dom.js).
-
-   Засечка нарисована через ::after (CSS), а не юникодовским комбинирующим
-   акутом (U+0301): поддержка отрисовки такой диакритики поверх кириллической
-   буквы зависит от шрифта/браузера и ненадёжна — акут может получить
-   собственную ширину вместо того, чтобы "сесть" на букву, и тогда справа от
-   ударной буквы появляется лишний пробел.
-
-   .accent-mark — обязательно display: inline-block, не просто inline: для
-   абсолютно спозиционированного ::after внутри строчного (inline) элемента
-   containing block определяется границами фрагментов СТРОКИ, которые
-   генерирует этот элемент, а не однозначной "коробкой" буквы — при переносах
-   строк и разной ширине контейнера (карточка/флэшкарта/лендинг) это даёт
-   непредсказуемое смещение засечки. У inline-block, в отличие от inline,
-   всегда ровно одна "коробка" размером точно с содержимое, поэтому
-   containing block для ::after однозначен независимо от переносов и ширины
-   родителя.
-
-   Размер и отступ (0.3em/1.5px/-0.14em) подобраны и проверены рендером на
-   реальных размерах шрифта приложения (specimen-word 23px, flashcard-word
-   34px, mini-card-word 21px) — искать баланс на произвольном font-size
-   в изоляции не годится, результат на реальных размерах будет другим.
-
-   Засечка выровнена по правому краю буквы (right, не center + translateX):
-   в кириллической типографике ударение визуально смещено к правому краю
-   буквы, а не строго по центру — так оно и читается привычнее. Небольшой
-   отрицательный right даёт лёгкий заход за правый край буквы, не вылезая
-   на соседнюю целиком. */
 .accent-mark {
   position: relative;
   display: inline-block;
   color: var(--color-brass-deep);
 }
 
-/* Граница inline-block-элемента — сама по себе допустимая точка переноса
-   строки в браузерах (проверено и в реальном Chromium, не только в старых
-   движках), независимо от того, есть ли рядом пробел. Без этого правила
-   строка могла разорваться прямо на границе ударной буквы, без всякого
-   дефиса — та же ошибка, которую чинит весь этот модуль (см. hyphenateRu).
-   white-space: nowrap на обёртке из трёх символов (один до + ударная буква
-   + один после, см. wordWithAccentHtml) физически не даёт браузеру
-   разорвать строку в этом месте; перенос по слогам по-прежнему работает в
-   остальной части слова снаружи этой обёртки. */
 .accent-mark-unit {
   white-space: nowrap;
 }
 
 .accent-mark::after {
-  content: "";
+  content: '';
   position: absolute;
   top: -0.14em;
   left: auto;
@@ -291,10 +247,6 @@
   transform: rotate(-35deg);
 }
 
-/* Интерактивный выбор ударения при вводе/редактировании слова
-   (accentPickerHtml + attachAccentPicker в core/dom.js). Буквы идут в ряд
-   без переносов внутри слова — это одно слово, а не текст, который нужно
-   переносить по ширине контейнера. */
 .accent-picker-hint {
   font-family: var(--font-mono);
   font-size: 12px;
@@ -320,16 +272,15 @@
   color: var(--color-ink);
 }
 
-/* Согласные/пробелы — не кнопка, просто буква-заполнитель, чтобы слово
-   не "разваливалось" по буквам визуально. Курсор остаётся обычным: кликнуть
-   по ним всё равно ничего не даст, наводить палец незачем. */
 span.accent-picker-letter.is-inert {
   color: var(--color-ink-soft);
 }
 
 button.accent-picker-letter {
   cursor: pointer;
-  transition: background-color 150ms var(--ease-out), color 150ms var(--ease-out);
+  transition:
+    background-color 150ms var(--ease-out),
+    color 150ms var(--ease-out);
 }
 
 button.accent-picker-letter:hover {
@@ -345,11 +296,8 @@ button.accent-picker-letter.is-selected {
   font-weight: 600;
 }
 
-/* Тот же CSS-рисованный акцент, что и в финальном рендере (.accent-mark
-   выше) — то, что человек видит при выборе буквы, уже буквально
-   превью того, как слово будет выглядеть в коллекции. */
 button.accent-picker-letter.is-selected::after {
-  content: "";
+  content: '';
   position: absolute;
   top: -0.14em;
   left: auto;
@@ -361,7 +309,6 @@ button.accent-picker-letter.is-selected::after {
   transform: rotate(-35deg);
 }
 
-/* ---------- Messages ---------- */
 .error-banner {
   font-size: 14px;
   color: var(--color-rust);
@@ -409,7 +356,6 @@ button.accent-picker-letter.is-selected::after {
   color: var(--color-ink-faint);
 }
 
-/* ---------- Chips (categories) ---------- */
 .chip-row {
   display: flex;
   flex-wrap: wrap;
@@ -451,7 +397,6 @@ button.accent-picker-letter.is-selected::after {
   opacity: 1;
 }
 
-/* ---------- Category drawer (add-word page) ---------- */
 .category-drawer {
   margin-top: 26px;
   border-top: 1px solid var(--color-rule-soft);
@@ -473,11 +418,11 @@ button.accent-picker-letter.is-selected::after {
 }
 
 .category-drawer summary::before {
-  content: "+ ";
+  content: '+ ';
 }
 
 .category-drawer[open] summary::before {
-  content: "– ";
+  content: '– ';
 }
 
 .category-drawer .actions {
@@ -499,7 +444,6 @@ button.accent-picker-letter.is-selected::after {
   border-bottom-color: var(--color-moss);
 }
 
-/* ---------- Specimen card: a herbarium sheet, not a Material card ---------- */
 .specimen-list {
   list-style: none;
   padding: 0;
@@ -523,15 +467,21 @@ button.accent-picker-letter.is-selected::after {
   background: var(--color-card);
   border: 1px solid var(--color-rule-soft);
   border-radius: var(--radius-card);
-  box-shadow: var(--shadow-2), inset 0 1px 0 rgba(255, 253, 247, 0.6);
+  box-shadow:
+    var(--shadow-2),
+    inset 0 1px 0 rgba(255, 253, 247, 0.6);
   overflow: hidden;
-  transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
+  transition:
+    transform 220ms var(--ease-out),
+    box-shadow 220ms var(--ease-out);
   animation: cascade-in 460ms var(--ease-out) both;
 }
 
 .specimen:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow-3), inset 0 1px 0 rgba(255, 253, 247, 0.6);
+  box-shadow:
+    var(--shadow-3),
+    inset 0 1px 0 rgba(255, 253, 247, 0.6);
 }
 
 .specimen-bar {
@@ -539,11 +489,11 @@ button.accent-picker-letter.is-selected::after {
   background: var(--color-moss-pale);
 }
 
-.specimen[data-strength="learning"] .specimen-bar {
+.specimen[data-strength='learning'] .specimen-bar {
   background: var(--color-moss-mid);
 }
 
-.specimen[data-strength="known"] .specimen-bar {
+.specimen[data-strength='known'] .specimen-bar {
   background: var(--color-moss);
 }
 
@@ -554,9 +504,6 @@ button.accent-picker-letter.is-selected::after {
   position: relative;
 }
 
-/* Штамп в углу — фирменный знак коллекции, не декор ради декора: тот же
-   мотив, что в лого, отпечатан бледно на каждом экземпляре, как печать
-   архива на карточке каталога. */
 .specimen-stamp {
   position: absolute;
   top: 14px;
@@ -612,9 +559,6 @@ button.accent-picker-letter.is-selected::after {
   flex-wrap: wrap;
 }
 
-/* Прогресс изучения — честные данные (review_count), а не декоративная
-   выдумка: сколько сегментов закрашено, столько раз слово повторили,
-   максимум пять. */
 .specimen-progress {
   display: inline-flex;
   gap: 3px;
@@ -636,7 +580,6 @@ button.accent-picker-letter.is-selected::after {
   gap: 14px;
 }
 
-/* ---------- Flashcard (review page) ---------- */
 .flashcard-progress {
   font-family: var(--font-mono);
   font-size: 12.5px;
@@ -649,7 +592,9 @@ button.accent-picker-letter.is-selected::after {
   background: var(--color-card-raised);
   border: 1px solid var(--color-rule-soft);
   border-radius: 12px;
-  box-shadow: var(--shadow-3), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  box-shadow:
+    var(--shadow-3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
   padding: 52px 30px;
   min-height: 190px;
   text-align: center;
@@ -691,7 +636,6 @@ button.accent-picker-letter.is-selected::after {
   margin: 0;
 }
 
-/* ---------- Auth pages ---------- */
 .auth-shell {
   min-height: 100vh;
   display: flex;
@@ -751,16 +695,11 @@ button.accent-picker-letter.is-selected::after {
   text-decoration: underline;
 }
 
-/* Деструктивное действие (выйти и безвозвратно потерять несохранённые
-   гостевые данные) — сознательно НЕ зелёным "положительным" цветом, как
-   обычные ссылки выше, а приглушённым предупреждающим, чтобы не выглядеть
-   как рядовой пункт навигации и не провоцировать случайный клик. */
 .auth-links a.auth-link-danger {
   color: var(--color-rust);
   font-weight: 500;
 }
 
-/* ---------- Password field with show/hide toggle ---------- */
 .password-field {
   position: relative;
   display: flex;
@@ -789,7 +728,6 @@ button.accent-picker-letter.is-selected::after {
   color: var(--color-moss-deep);
 }
 
-/* ---------- Guest banner (dashboard) ---------- */
 .guest-banner {
   display: flex;
   align-items: center;
@@ -810,7 +748,6 @@ button.accent-picker-letter.is-selected::after {
   flex-shrink: 0;
 }
 
-/* ---------- Cookie notice ---------- */
 .cookie-notice {
   position: fixed;
   left: 16px;
@@ -846,4 +783,3 @@ button.accent-picker-letter.is-selected::after {
 .cookie-notice .btn-primary:hover {
   background: #ffffff;
 }
-

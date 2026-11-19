@@ -21,6 +21,6 @@ router.get('/me', requireAuth, meController);
 router.post('/forgot-password', authRateLimiter, forgotPasswordController);
 router.post('/reset-password', authRateLimiter, resetPasswordController);
 router.post('/guest', authRateLimiter, guestController);
-router.post('/claim', requireAuth, claimController);
+router.post('/claim', authRateLimiter, requireAuth, claimController);
 
 module.exports = router;

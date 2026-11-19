@@ -1,35 +1,37 @@
-// Версионируем API сразу — WordFlow задуман как модуль экосистемы KeyStep,
-// и другие модули будут дёргать этот API. Версионирование убережёт их от поломок
-// при будущих изменениях контракта.
-const API_PREFIX = '/api/v1';
-
-// Раньше порт был захардкожен в server.js, хотя docker-compose.yml уже
-// передавал переменные окружения (NODE_ENV), которые никто не читал.
-// Теперь порт можно переопределить через .env / docker-compose.
-const PORT = process.env.PORT || 3000;
-
-// Секрет для подписи JWT. В проде ОБЯЗАТЕЛЬНО должен быть задан через
-// переменную окружения — иначе токены разных деплоев/разработчиков будут
-// подписаны одним и тем же дефолтным значением, что небезопасно.
-// Для локальной разработки без .env даём запасной вариант, чтобы не
-// блокировать быстрый старт, но громко предупреждаем в логах.
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-only-insecure-secret-change-me';
-
-if (!process.env.JWT_SECRET) {
-  console.warn(
-    '[config] JWT_SECRET не задан в переменных окружения — используется ' +
-    'небезопасное значение по умолчанию. Обязательно задайте JWT_SECRET ' +
-    'перед деплоем в прод (Vercel → Settings → Environment Variables).'
-  );
+const crypto = require('node:crypto');
+const isProduction = process.env.NODE_ENV === 'production';
+const configuredSecret = process.env.JWT_SECRET;
+if (
+  isProduction &&
+  (!configuredSecret ||
+    configuredSecret.length < 32 ||
+    configuredSecret.startsWith('replace-with-'))
+) {
+  throw new Error('Production requires a random JWT_SECRET of at least 32 characters');
+}
+const origin = process.env.APP_ORIGIN || (!isProduction ? 'http://localhost:3000' : '');
+let parsedOrigin;
+try {
+  parsedOrigin = new URL(origin);
+} catch {
+  throw new Error('APP_ORIGIN must be an absolute application URL');
+}
+if (
+  !['http:', 'https:'].includes(parsedOrigin.protocol) ||
+  parsedOrigin.username ||
+  parsedOrigin.password ||
+  (isProduction && parsedOrigin.protocol !== 'https:')
+) {
+  throw new Error('APP_ORIGIN must use HTTPS in production and contain no credentials');
 }
 
-const JWT_EXPIRES_IN = '30d';
-const AUTH_COOKIE_NAME = 'wordflow_token';
-
 module.exports = {
-  API_PREFIX,
-  PORT,
-  JWT_SECRET,
-  JWT_EXPIRES_IN,
-  AUTH_COOKIE_NAME
+  API_PREFIX: '/api/v1',
+  PORT: process.env.PORT || 3000,
+  APP_ORIGIN: parsedOrigin.origin,
+  TRUST_PROXY: process.env.TRUST_PROXY === '1' ? 1 : false,
+  // Development tokens cannot be forged with a shared default secret.
+  JWT_SECRET: configuredSecret || crypto.randomBytes(32).toString('hex'),
+  JWT_EXPIRES_IN: '30d',
+  AUTH_COOKIE_NAME: 'wordflow_token'
 };

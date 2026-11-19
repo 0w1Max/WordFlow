@@ -1,25 +1,22 @@
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET, AUTH_COOKIE_NAME } = require('../config/constants');
 const { UnauthorizedError } = require('../errors/AppError');
+const users = require('../data/userRepository');
 
-// Читает JWT из httpOnly-куки (не localStorage — так токен недоступен
-// клиентскому JS и не может быть украден через XSS) и кладёт req.user.
-// Дальше все контроллеры слов/категорий используют req.user.id вместо
-// DEFAULT_USER_ID.
-function requireAuth(req, res, next) {
-  const token = req.cookies && req.cookies[AUTH_COOKIE_NAME];
-
-  if (!token) {
-    return next(new UnauthorizedError());
-  }
-
+async function requireAuth(req, res, next) {
+  const token = req.cookies?.[AUTH_COOKIE_NAME];
+  if (!token) throw new UnauthorizedError();
+  let payload;
   try {
-    const payload = jwt.verify(token, JWT_SECRET);
-    req.user = { id: payload.sub, email: payload.email, isGuest: !!payload.isGuest };
-    next();
+    payload = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
   } catch {
-    next(new UnauthorizedError('Сессия истекла или недействительна, войдите заново'));
+    throw new UnauthorizedError('Сессия истекла или недействительна, войдите заново');
   }
+  if (!Number.isSafeInteger(payload.sub) || payload.sub <= 0) throw new UnauthorizedError();
+  const user = await users.getUserById(payload.sub);
+  if (!user || (payload.version ?? 0) !== user.tokenVersion) throw new UnauthorizedError();
+  req.user = { id: user.id, email: user.email, isGuest: user.isGuest };
+  next();
 }
 
 module.exports = { requireAuth };

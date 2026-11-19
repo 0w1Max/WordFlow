@@ -1,29 +1,16 @@
-import { navigate } from "../core/router.js";
-import { checkAuth, post } from "../core/api.js";
-import { escapeHtml, brandMark, wordWithAccentHtml } from "../core/dom.js";
-import { initScrollReveal } from "../core/scrollReveal.js";
+import { navigate } from '../core/router.js';
+import { checkAuth, post } from '../core/api.js';
+import { escapeHtml, brandMark, wordWithAccentHtml } from '../core/dom.js';
+import { initScrollReveal } from '../core/scrollReveal.js';
 
 export async function renderLanding() {
-  const app = document.getElementById("app");
-
-  // Если сессия уже есть (обычный или гостевой аккаунт) — незачем показывать
-  // рекламную страницу повторно, сразу ведём в приложение.
+  const app = document.getElementById('app');
   const user = await checkAuth();
+  if (!app.isConnected) return;
   if (user) {
-    navigate("/dashboard");
+    navigate('/dashboard');
     return;
   }
-
-  // ВАЖНО: цифры в превью dashboard'а ниже — иллюстративный пример (как и
-  // слово "Петрикор" в карточке), а не случайные красивые числа. Они
-  // намеренно ограничены тем, что приложение реально умеет считать сейчас
-  // (слова, категории, к повторению) — без выдуманных метрик вроде
-  // "% запоминания" или "серии дней", которых в продукте нет.
-  //
-  // Числа сознательно скромные (128 слов, а не 1 248) и подписаны прямо в
-  // интерфейсе как "Пример" — раньше крупные "внушительные" цифры рядом с
-  // живым превью дашборда читались как соцдоказательство масштаба всей
-  // платформы, чего у нового продукта на самом деле ещё нет.
   app.innerHTML = `
     <div class="landing-wrap">
       <nav class="landing-nav">
@@ -76,17 +63,17 @@ export async function renderLanding() {
         <div class="card-stack" data-reveal>
           <div class="mini-card mini-card-1" data-strength="new">
             <p class="mini-card-label">№ 014</p>
-            <p class="mini-card-word">${wordWithAccentHtml("Серендипность", 6)}</p>
+            <p class="mini-card-word">${wordWithAccentHtml('Серендипность', 6)}</p>
             <p class="mini-card-meaning">случайная удачная находка</p>
           </div>
           <div class="mini-card mini-card-2" data-strength="learning">
             <p class="mini-card-label">№ 041</p>
-            <p class="mini-card-word">${wordWithAccentHtml("Петрикор", 6)}</p>
+            <p class="mini-card-word">${wordWithAccentHtml('Петрикор', 6)}</p>
             <p class="mini-card-meaning">запах земли после первого дождя</p>
           </div>
           <div class="mini-card mini-card-3" data-strength="known">
             <p class="mini-card-label">№ 128</p>
-            <p class="mini-card-word">${wordWithAccentHtml("Апломб", 3)}</p>
+            <p class="mini-card-word">${wordWithAccentHtml('Апломб', 3)}</p>
             <p class="mini-card-meaning">самоуверенная манера держаться</p>
           </div>
         </div>
@@ -180,11 +167,11 @@ export async function renderLanding() {
               <div class="dashboard-preview-list">
                 <p class="dashboard-preview-list-title">Недавно собрано</p>
                 <div class="dashboard-preview-row">
-                  <span class="dashboard-preview-row-word">${wordWithAccentHtml("Лучезарный", 5)}</span>
+                  <span class="dashboard-preview-row-word">${wordWithAccentHtml('Лучезарный', 5)}</span>
                   <span class="dashboard-preview-row-meaning">сияющий, светящийся изнутри</span>
                 </div>
                 <div class="dashboard-preview-row">
-                  <span class="dashboard-preview-row-word">${wordWithAccentHtml("Эфемерность", 4)}</span>
+                  <span class="dashboard-preview-row-word">${wordWithAccentHtml('Эфемерность', 4)}</span>
                   <span class="dashboard-preview-row-meaning">мимолётность, быстротечность</span>
                 </div>
               </div>
@@ -243,42 +230,39 @@ export async function renderLanding() {
     </footer>
   `;
 
-  document.getElementById("navLogin").onclick = () => navigate("/login");
-  document.getElementById("navRegister").onclick = () => navigate("/register");
-  document.getElementById("benefitsRegisterBtn").onclick = () => navigate("/register");
+  app.querySelector('#navLogin').onclick = () => navigate('/login');
+  app.querySelector('#navRegister').onclick = () => navigate('/register');
+  app.querySelector('#benefitsRegisterBtn').onclick = () => navigate('/register');
 
-  document.getElementById("howItWorksBtn").onclick = () => {
-    document.getElementById("how-it-works").scrollIntoView({ behavior: "smooth", block: "start" });
+  app.querySelector('#howItWorksBtn').onclick = () => {
+    app.querySelector('#how-it-works').scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const startTrial = async (btn) => {
     const original = btn.textContent;
     btn.disabled = true;
-    btn.textContent = "Открываем…";
-    document.getElementById("heroError").innerHTML = "";
+    btn.textContent = 'Открываем…';
+    app.querySelector('#heroError').innerHTML = '';
 
     try {
-      await post("/auth/guest");
-      navigate("/dashboard");
+      await post('/auth/guest');
+      if (!app.isConnected) return;
+      navigate('/dashboard');
     } catch (err) {
+      if (!app.isConnected) return;
       btn.disabled = false;
       btn.textContent = original;
-      document.getElementById("heroError").innerHTML =
+      app.querySelector('#heroError').innerHTML =
         `<p class="error-banner">Не удалось начать пробную сессию: ${escapeHtml(err.message)}</p>`;
     }
   };
 
-  document.getElementById("tryFreeBtn").onclick = (e) => startTrial(e.currentTarget);
-  document.getElementById("footerTryFree").onclick = (e) => startTrial(e.currentTarget);
-  document.getElementById("footerLinkTryFree").onclick = (e) => startTrial(e.currentTarget);
+  app.querySelector('#tryFreeBtn').onclick = (e) => startTrial(e.currentTarget);
+  app.querySelector('#footerTryFree').onclick = (e) => startTrial(e.currentTarget);
+  app.querySelector('#footerLinkTryFree').onclick = (e) => startTrial(e.currentTarget);
 
   initScrollReveal(app);
 }
-
-// Единый визуальный язык для всех иконок лендинга: один stroke-width (1.6),
-// один размер (20x20 — как во всех иконках core/dom.js) и aria-hidden,
-// поскольку каждая иконка здесь всегда сопровождается подписью рядом
-// и сама по себе смысловой нагрузки для скринридера не несёт.
 function lockIcon() {
   return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="9" rx="1.5"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
 }

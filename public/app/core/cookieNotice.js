@@ -1,17 +1,15 @@
-// Единственный cookie, который использует WordFlow, — сессия входа
-// (httpOnly, этому скрипту вообще не видна). Никакой рекламы, аналитики
-// или слежки за пользователем сайт не ведёт. Поэтому это не запрос
-// разрешения "принять/отклонить" (нечего отклонять — cookie строго
-// необходима для входа и не требует согласия по GDPR), а короткое,
-// честное уведомление для прозрачности, показанное один раз.
-const STORAGE_KEY = "wordflow:cookieNoticeSeen";
+const STORAGE_KEY = 'wordflow:cookieNoticeSeen';
 
 export function maybeShowCookieNotice() {
-  if (localStorage.getItem(STORAGE_KEY)) return;
+  try {
+    if (localStorage.getItem(STORAGE_KEY)) return;
+  } catch {
+    /* Storage can be disabled by browser privacy settings. */
+  }
 
-  const el = document.createElement("div");
-  el.className = "cookie-notice";
-  el.setAttribute("role", "status");
+  const el = document.createElement('div');
+  el.className = 'cookie-notice';
+  el.setAttribute('role', 'status');
 
   el.innerHTML = `
     <p style="margin: 0;">
@@ -25,8 +23,12 @@ export function maybeShowCookieNotice() {
 
   document.body.appendChild(el);
 
-  document.getElementById("cookieNoticeOk").onclick = () => {
-    localStorage.setItem(STORAGE_KEY, "1");
+  document.getElementById('cookieNoticeOk').onclick = () => {
+    try {
+      localStorage.setItem(STORAGE_KEY, '1');
+    } catch {
+      /* Dismiss for this visit. */
+    }
     el.remove();
   };
 }

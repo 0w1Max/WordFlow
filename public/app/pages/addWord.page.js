@@ -1,22 +1,27 @@
-import { navigate } from "../core/router.js";
-import { get, post } from "../core/api.js";
-import { escapeHtml, brandMark, fieldWrapClass, fieldErrorHtml, accentPickerHtml, attachAccentPicker, wireRequiredFieldsToggle } from "../core/dom.js";
+import { navigate } from '../core/router.js';
+import { get, post } from '../core/api.js';
+import {
+  escapeHtml,
+  brandMark,
+  accentPickerHtml,
+  attachAccentPicker,
+  wireRequiredFieldsToggle
+} from '../core/dom.js';
 
 export async function renderAddWord() {
-  const app = document.getElementById("app");
+  const app = document.getElementById('app');
 
   app.innerHTML = `
     <div class="page">
       <p class="loading-line">Открываем категории…</p>
     </div>
   `;
-
-  // Категории не обязательны для добавления слова, поэтому если их
-  // загрузка упадёт — не блокируем форму, просто показываем её без списка.
-  let categories = [];
+  let categories;
   try {
-    categories = await get("/categories");
+    categories = await get('/categories');
+    if (!app.isConnected) return;
   } catch (e) {
+    if (!app.isConnected) return;
     categories = [];
   }
 
@@ -24,9 +29,10 @@ export async function renderAddWord() {
 }
 
 function renderForm(app, categories) {
+  if (!app.isConnected) return;
   const categoryOptions = categories
-    .map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`)
-    .join("");
+    .map((c) => `<option value="${c.id}">${escapeHtml(c.name)}</option>`)
+    .join('');
 
   app.innerHTML = `
     <div class="page">
@@ -78,22 +84,12 @@ function renderForm(app, categories) {
     </div>
   `;
 
-  document.getElementById("back").onclick = () => {
-    navigate("/dashboard");
+  app.querySelector('#back').onclick = () => {
+    navigate('/dashboard');
   };
-
-  // Ударение — необязательное поле (см. миграцию accent_index в db/db.js).
-  // accentIndex здесь хранит индекс буквы, выбранной кликом по превью, а не
-  // просто DOM-состояние: на submit его нужно явно прочитать и отправить.
-  //
-  // ВАЖНО: при любом изменении текста слова индекс сбрасывается в null, а
-  // не пересчитывается "на глаз" — буквы могли полностью перетасоваться
-  // (например, слово стёрли и напечатали другое), и молчаливое сохранение
-  // старого индекса указало бы на случайную букву нового слова. Явный сброс
-  // безопаснее: в худшем случае человек просто отметит ударение заново.
   let accentIndex = null;
-  const textInput = document.getElementById("text");
-  const accentPicker = document.getElementById("accentPicker");
+  const textInput = app.querySelector('#text');
+  const accentPicker = app.querySelector('#accentPicker');
 
   function renderAccentPicker() {
     accentPicker.innerHTML = accentPickerHtml(textInput.value, accentIndex);
@@ -103,119 +99,100 @@ function renderForm(app, categories) {
     });
   }
 
-  textInput.addEventListener("input", () => {
+  textInput.addEventListener('input', () => {
     accentIndex = null;
     renderAccentPicker();
   });
 
   renderAccentPicker();
 
-  wireRequiredFieldsToggle(
-    document.getElementById("submitBtn"),
-    [document.getElementById("text"), document.getElementById("meaning")]
-  );
-
-  // ВАЖНО: создание категории раньше вызывало полную перерисовку формы
-  // (renderForm(...)), которая стирала уже введённые слово/значение/пример —
-  // человек терял заполненные данные только потому, что попутно завёл
-  // категорию. Теперь новый <option> просто добавляется в существующий
-  // <select> точечно, ни один другой элемент формы не трогается и не
-  // перерисовывается.
-  const createCategoryBtn = document.getElementById("createCategoryBtn");
-  wireRequiredFieldsToggle(createCategoryBtn, [document.getElementById("newCategoryName")]);
+  wireRequiredFieldsToggle(app.querySelector('#submitBtn'), [
+    app.querySelector('#text'),
+    app.querySelector('#meaning')
+  ]);
+  const createCategoryBtn = app.querySelector('#createCategoryBtn');
+  wireRequiredFieldsToggle(createCategoryBtn, [app.querySelector('#newCategoryName')]);
 
   createCategoryBtn.onclick = async () => {
-    const nameInput = document.getElementById("newCategoryName");
+    const nameInput = app.querySelector('#newCategoryName');
     const name = nameInput.value.trim();
-    const categoryError = document.getElementById("categoryError");
+    const categoryError = app.querySelector('#categoryError');
 
     if (!name) return;
 
     try {
-      const category = await post("/categories", { name });
+      const category = await post('/categories', { name });
+      if (!app.isConnected) return;
       categories = [...categories, category];
 
-      const select = document.getElementById("categoryId");
-      const option = document.createElement("option");
+      const select = app.querySelector('#categoryId');
+      const option = document.createElement('option');
       option.value = category.id;
       option.textContent = category.name;
       select.appendChild(option);
       select.value = category.id;
 
-      nameInput.value = "";
+      nameInput.value = '';
       createCategoryBtn.disabled = true;
       categoryError.hidden = true;
     } catch (err) {
+      if (!app.isConnected) return;
       categoryError.textContent = err.message;
       categoryError.hidden = false;
     }
   };
 
-  document.getElementById("addWordForm").onsubmit = async (e) => {
+  app.querySelector('#addWordForm').onsubmit = async (e) => {
     e.preventDefault();
 
-    const submitBtn = document.getElementById("submitBtn");
+    const submitBtn = app.querySelector('#submitBtn');
     submitBtn.disabled = true;
-    submitBtn.textContent = "Сохраняем…";
+    submitBtn.textContent = 'Сохраняем…';
 
-    const text = document.getElementById("text").value.trim();
-    const meaning = document.getElementById("meaning").value.trim();
-    const example = document.getElementById("example").value.trim();
-    const categoryId = document.getElementById("categoryId").value || null;
+    const text = app.querySelector('#text').value;
+    const meaning = app.querySelector('#meaning').value.trim();
+    const example = app.querySelector('#example').value.trim();
+    const categoryId = app.querySelector('#categoryId').value || null;
 
     try {
-      await post("/words", {
+      await post('/words', {
         text,
         meaning,
         example: example || null,
         categoryId: categoryId ? Number(categoryId) : null,
         accentIndex
       });
+      if (!app.isConnected) return;
+      if (!app.isConnected) return;
 
-      navigate("/dashboard");
+      navigate('/dashboard');
     } catch (err) {
-      // ВАЖНО: раньше ошибка валидации перерисовывала всю форму заново —
-      // человек, опечатавшийся в одном поле, терял и все остальные.
-      // Теперь и баннер, и подсветка конкретного поля (err.field —
-      // "text" или "meaning") просто вставляются/обновляются на месте,
-      // сама форма и всё, что в неё введено, не трогается.
-      showFormError(err.message, err.field);
+      if (!app.isConnected) return;
+      showFormError(app, err.message, err.field);
       submitBtn.disabled = false;
-      submitBtn.textContent = "Сохранить слово";
+      submitBtn.textContent = 'Сохранить слово';
     }
   };
 }
-
-// Поля формы, у которых сервер может указать конкретную ошибку
-// (validators/wordValidator.js: field "text" или "meaning").
-const WORD_FIELD_IDS = ["text", "meaning"];
-
-// Точечная подсветка без re-render всей формы (см. комментарий в onsubmit
-// выше) — снимаем прошлую подсветку со всех полей и, если ошибка привязана
-// к конкретному полю, подсвечиваем только его; иначе показываем общий
-// баннер сверху формы, как раньше.
-//
-// accentIndex сюда намеренно не входит: у него нет своего .field-блока
-// (это дополнение внутри textField, см. renderForm выше), и в норме такая
-// ошибка вообще не должна долетать до сервера — форма сама сбрасывает
-// accentIndex в null при любой правке текста. Если она всё же пришла
-// (WORD_FIELD_IDS.includes(field) === false), считаем её "не привязанной
-// к конкретному видимому полю" и показываем обычным баннером сверху.
-function showFormError(message, field = null) {
-  const formError = document.getElementById("formError");
+const WORD_FIELD_IDS = ['text', 'meaning'];
+function showFormError(app, message, field = null) {
+  const formError = app.querySelector('#formError');
   const showBanner = message && !WORD_FIELD_IDS.includes(field);
-  formError.innerHTML = showBanner ? `<p class="error-banner">${escapeHtml(message)}</p>` : "";
+  formError.innerHTML = showBanner ? `<p class="error-banner">${escapeHtml(message)}</p>` : '';
 
   WORD_FIELD_IDS.forEach((id) => {
-    const wrap = document.getElementById(`${id}Field`);
+    const wrap = app.querySelector(`#${id}Field`);
     if (!wrap) return;
 
-    wrap.classList.remove("has-error");
-    wrap.querySelector(".field-error-text")?.remove();
+    wrap.classList.remove('has-error');
+    wrap.querySelector('.field-error-text')?.remove();
 
     if (id === field) {
-      wrap.classList.add("has-error");
-      wrap.insertAdjacentHTML("beforeend", `<p class="field-error-text">${escapeHtml(message)}</p>`);
+      wrap.classList.add('has-error');
+      wrap.insertAdjacentHTML(
+        'beforeend',
+        `<p class="field-error-text">${escapeHtml(message)}</p>`
+      );
     }
   });
 }

@@ -1,4 +1,5 @@
 const { client, ensureReady } = require('../db/db.js');
+const { toIsoDate } = require('./dateMapper');
 
 function mapCategoryRow(row) {
   if (!row) return null;
@@ -7,7 +8,7 @@ function mapCategoryRow(row) {
     id: row.id,
     userId: row.user_id,
     name: row.name,
-    createdAt: row.created_at
+    createdAt: toIsoDate(row.created_at)
   };
 }
 
@@ -36,26 +37,33 @@ async function getAllCategories(userId) {
 
   return result.rows.map(mapCategoryRow);
 }
-
-// Схема объявляет FOREIGN KEY ... ON DELETE SET NULL, но PRAGMA foreign_keys
-// — настройка уровня соединения, а @libsql/client работает поверх HTTP, где
-// нет гарантии, что она сохранится к моменту этого запроса. Поэтому не
-// полагаемся на автоматический каскад, а явно отвязываем слова от категории
-// перед её удалением — так безопаснее вне зависимости от поведения драйвера.
 async function deleteCategory(id, userId) {
   await ensureReady();
 
-  await client.execute({
-    sql: 'UPDATE words SET category_id = NULL WHERE category_id = ? AND user_id = ?',
-    args: [id, userId]
-  });
+  const results = await client.batch(
+    [
+      {
+        sql: 'UPDATE words SET category_id = NULL WHERE category_id = ? AND user_id = ?',
+        args: [id, userId]
+      },
+      {
+        sql: 'DELETE FROM categories WHERE id = ? AND user_id = ?',
+        args: [id, userId]
+      }
+    ],
+    'write'
+  );
 
-  const result = await client.execute({
-    sql: 'DELETE FROM categories WHERE id = ? AND user_id = ?',
-    args: [id, userId]
-  });
-
-  return result.rowsAffected > 0;
+  return results[1].rowsAffected > 0;
 }
 
-module.exports = { addCategory, getAllCategories, deleteCategory };
+async function getCategoryById(id, userId) {
+  await ensureReady();
+  const result = await client.execute({
+    sql: 'SELECT * FROM categories WHERE id = ? AND user_id = ?',
+    args: [id, userId]
+  });
+  return mapCategoryRow(result.rows[0]);
+}
+
+module.exports = { getCategoryById, addCategory, getAllCategories, deleteCategory };

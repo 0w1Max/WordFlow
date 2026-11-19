@@ -1,17 +1,14 @@
 const wordRepository = require('../data/wordRepository');
-const { NotFoundError } = require('../errors/AppError');
+const { NotFoundError, ValidationError } = require('../errors/AppError');
 const appEvents = require('../events/emitter');
 const { computeNextReview } = require('./spacedRepetition');
-
-// Страница "Повторение" показывает только слова, которые пора повторить
-// сегодня — раньше здесь возвращались вообще все слова без учёта
-// расписания. Управление всей базой слов теперь отдельная функция,
-// см. services/wordsService.js -> getAllWords.
 async function getWordsForReview(userId) {
   return wordRepository.getDueWords(userId);
 }
 
 async function markWordReviewed(id, userId, remembered) {
+  if (typeof remembered !== 'boolean')
+    throw new ValidationError('Некорректный результат повторения', 'remembered');
   const word = await wordRepository.getWordById(id, userId);
 
   if (!word) {
@@ -25,6 +22,7 @@ async function markWordReviewed(id, userId, remembered) {
 
   const updated = await wordRepository.markReviewed(id, userId, next);
 
+  if (!updated) throw new NotFoundError('Слово не найдено');
   appEvents.emit('word.reviewed', { ...updated, remembered });
 
   return updated;

@@ -1,10 +1,9 @@
-FROM node:24
-
+FROM node:24-bookworm-slim
 WORKDIR /app
-
+ENV NODE_ENV=production
 COPY package*.json ./
-RUN npm install
-
-COPY . .
-
-CMD ["npm", "start"]
+RUN npm ci --omit=dev
+COPY --chown=node:node . .
+USER node
+EXPOSE 3000
+CMD ["node", "server.js"]

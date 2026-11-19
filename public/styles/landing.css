@@ -1,8 +1,9 @@
-/* ---------- Scroll reveal (landing) ---------- */
 [data-reveal] {
   opacity: 0;
   transform: translateY(18px);
-  transition: opacity 620ms var(--ease-out), transform 620ms var(--ease-out);
+  transition:
+    opacity 620ms var(--ease-out),
+    transform 620ms var(--ease-out);
 }
 
 [data-reveal].is-visible {
@@ -10,7 +11,6 @@
   transform: translateY(0);
 }
 
-/* ---------- Landing: asymmetric hero grid, not a centered column ---------- */
 .landing-wrap {
   max-width: 1080px;
   margin: 0 auto;
@@ -60,8 +60,6 @@
   animation: rise-in 420ms var(--ease-out) both;
 }
 
-/* Магазинный масштаб, не боится переносов строк — заголовок продаёт
-   ощущение, а не перечисляет функции. */
 .hero-headline {
   font-family: var(--font-display);
   font-size: clamp(2.2rem, 3.6vw + 1rem, 3.2rem);
@@ -104,7 +102,6 @@
   font-weight: 600;
 }
 
-/* ---------- Trust row: 3 icon items instead of one text line ---------- */
 .trust-row {
   display: flex;
   flex-wrap: wrap;
@@ -138,9 +135,6 @@
   margin: 2px 0 0;
 }
 
-/* ---------- Hero visual: three small cards in a row, each floating on
-   its own rhythm — a nod to the product's name, Flow. No overlap, no
-   dark borders — colored top/bottom rules instead. ---------- */
 .card-stack {
   display: flex;
   flex-wrap: wrap;
@@ -152,11 +146,6 @@
   padding: 24px 0;
 }
 
-/* Верхняя полоса — не декор, а тот же индикатор прогресса запоминания,
-   что и на настоящих карточках слов (см. .specimen[data-strength] в
-   wordsList.page.js): бледнее — слово только собрано, темнее — хорошо
-   выучено. На демонстрации три карточки специально показывают все три
-   состояния сразу. */
 .mini-card {
   width: 190px;
   background: var(--color-card-raised);
@@ -166,11 +155,11 @@
   box-shadow: var(--shadow-3);
 }
 
-.mini-card[data-strength="learning"] {
+.mini-card[data-strength='learning'] {
   border-top-color: var(--color-moss-mid);
 }
 
-.mini-card[data-strength="known"] {
+.mini-card[data-strength='known'] {
   border-top-color: var(--color-moss);
 }
 
@@ -189,19 +178,6 @@
   font-weight: 600;
   margin: 0 0 8px;
   color: var(--color-ink);
-  /* ВАЖНО: hyphens: auto раньше опирался на словарный перенос браузера —
-     для кириллицы поддержка ненадёжна и местами отсутствует вовсе, из-за
-     чего слово рвалось через overflow-wrap: break-word где попало и без
-     видимого дефиса. Теперь перенос расставляется вручную по слогам (см.
-     hyphenateRu в core/dom.js, вызывается внутри wordWithAccentHtml) —
-     мягкие переносы работают одинаково во всех браузерах без словарей.
-     overflow-wrap: break-word НЕ оставляем даже подстраховкой: он
-     принудительно рвёт слово посимвольно и без дефиса, если не помещается
-     целиком, — то есть воспроизводит ровно ту же ошибку, которую мы
-     чиним, стоит карточке оказаться чуть уже слова. Единственные точки
-     разрыва теперь — только те, что расставил hyphenateRu; если слову
-     всё равно не хватает места, оно выйдет за рамки карточки, а не
-     разорвётся посередине буквы — это меньшее и более честное зло. */
 }
 
 .mini-card-meaning {
@@ -213,8 +189,13 @@
 }
 
 @keyframes mini-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-14px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
 }
 
 .mini-card-1 {
@@ -233,10 +214,6 @@
   margin-top: 26px;
 }
 
-/* Смартфоны и небольшие экраны — карточки уже сами переносятся по строкам
-   (flex-wrap), здесь только уменьшаем размер, чтобы всё оставалось
-   аккуратным и не растягивало страницу по ширине. Текст по-прежнему не
-   выходит за рамки — overflow-wrap ловит длинные слова на любом размере. */
 @media (max-width: 480px) {
   .card-stack {
     max-width: 340px;
@@ -262,7 +239,6 @@
   }
 }
 
-/* ---------- Section bands: real color rhythm, not one flat repeating tone ---------- */
 .band-dark {
   background: linear-gradient(155deg, var(--color-moss-deep) 0%, var(--color-wood) 100%);
   color: #f4f1e4;
@@ -343,8 +319,6 @@
   margin: 0;
 }
 
-/* Небольшая цитата вместо целой полосы — фраза, которую хвалили отдельно,
-   получает своё место без лишней тяжеловесной секции. */
 .editorial-quote {
   max-width: 700px;
   margin: 0 auto;
@@ -367,7 +341,6 @@
   color: var(--color-ink-faint);
 }
 
-/* ---------- Progress preview: honest metrics only ---------- */
 .progress-section {
   padding: 64px 0 76px;
 }
@@ -419,9 +392,6 @@
   color: var(--color-ink-faint);
 }
 
-/* Иллюстративный превью dashboard'а — те же поля, что и в настоящем
-   приложении (см. dashboard.page.js): без выдуманных метрик вроде
-   "процента запоминания" или "серии дней", которых продукт не считает. */
 .dashboard-preview {
   background: var(--color-card-raised);
   border: 1px solid var(--color-rule-soft);
@@ -518,7 +488,6 @@
   font-size: 12.5px;
 }
 
-/* ---------- Final CTA: bordered box, not a full-bleed band ---------- */
 .final-cta-box {
   background: var(--color-card-raised);
   border: 1px solid var(--color-rule-soft);
@@ -574,7 +543,6 @@
   line-height: 1.5;
 }
 
-/* ---------- Footer ---------- */
 .landing-footer {
   border-top: 1px solid var(--color-rule);
   background: rgba(255, 253, 247, 0.35);

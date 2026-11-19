@@ -1,3 +1,14 @@
 node_modules
 .git
 .gitignore
+.env
+.env.*
+!.env.example
+*.db
+*.sqlite*
+*.log
+tests
+docs
+test-results
+playwright-report
+.dependency-refresh

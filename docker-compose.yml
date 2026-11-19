@@ -1,11 +1,9 @@
-version: "3.9"
-
 services:
   wordflow:
     build: .
     container_name: wordflow_app
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       NODE_ENV: development
       PORT: 3000
@@ -15,3 +13,8 @@ services:
       TURSO_DATABASE_URL: ${TURSO_DATABASE_URL}
       TURSO_AUTH_TOKEN: ${TURSO_AUTH_TOKEN}
       JWT_SECRET: ${JWT_SECRET}
+      APP_ORIGIN: ${APP_ORIGIN:-http://localhost:3000}
+      TRUST_PROXY: ${TRUST_PROXY:-0}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL:-WordFlow <onboarding@resend.dev>}
+      SENTRY_DSN: ${SENTRY_DSN:-}

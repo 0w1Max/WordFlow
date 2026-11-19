@@ -1,5 +1,5 @@
 const authService = require('../services/authService');
-const { AUTH_COOKIE_NAME } = require('../config/constants');
+const { AUTH_COOKIE_NAME, APP_ORIGIN } = require('../config/constants');
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
@@ -26,25 +26,21 @@ async function loginController(req, res) {
 }
 
 function logoutController(req, res) {
-  res.clearCookie(AUTH_COOKIE_NAME, { path: '/' });
+  const options = { ...COOKIE_OPTIONS };
+  delete options.maxAge;
+  res.clearCookie(AUTH_COOKIE_NAME, options);
   res.status(204).end();
 }
 
 function meController(req, res) {
-  // requireAuth уже отработал до этого контроллера и положил req.user
   res.json({ user: req.user });
 }
 
 async function forgotPasswordController(req, res) {
   const { email } = req.body;
-  // req.protocol корректно определяет https благодаря app.set('trust proxy', 1) —
-  // без этой настройки за прокси Vercel он всегда показывал бы http.
-  const baseUrl = `${req.protocol}://${req.get('host')}`;
+  const baseUrl = APP_ORIGIN;
 
   await authService.requestPasswordReset(email, baseUrl);
-
-  // Один и тот же ответ независимо от того, существует email или нет —
-  // см. комментарий в authService.requestPasswordReset.
   res.json({ message: 'Если такой email зарегистрирован, письмо со ссылкой уже отправлено' });
 }
 
@@ -54,21 +50,12 @@ async function resetPasswordController(req, res) {
 
   res.json({ message: 'Пароль успешно изменён' });
 }
-
-// "Попробовать без регистрации" — создаёт обычный аккаунт с сгенерированными
-// email/паролем и сразу выдаёт ту же cookie-сессию, что и логин/регистрация.
-// Дальше гость ничем не отличается от обычного пользователя для остального
-// API (слова, категории и т.д.).
 async function guestController(req, res) {
   const { user, token } = await authService.createGuestSession();
 
   res.cookie(AUTH_COOKIE_NAME, token, COOKIE_OPTIONS);
   res.status(201).json({ user });
 }
-
-// "Сохранить прогресс" — привязывает email/пароль к уже существующему
-// (гостевому) аккаунту вместо создания нового, поэтому все слова и
-// категории, собранные как гость, остаются на месте.
 async function claimController(req, res) {
   const { email, password } = req.body;
   const { user, token } = await authService.claimAccount(req.user.id, { email, password });

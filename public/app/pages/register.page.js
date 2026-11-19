@@ -1,37 +1,37 @@
-import { navigate } from "../core/router.js";
-import { post } from "../core/api.js";
-import { escapeHtml, passwordFieldHtml, attachPasswordToggles, brandMark, fieldWrapClass, fieldErrorHtml, wireRequiredFieldsToggle } from "../core/dom.js";
+import { navigate } from '../core/router.js';
+import { post } from '../core/api.js';
+import {
+  escapeHtml,
+  passwordFieldHtml,
+  attachPasswordToggles,
+  brandMark,
+  fieldWrapClass,
+  fieldErrorHtml,
+  wireRequiredFieldsToggle
+} from '../core/dom.js';
 
 export function renderRegister() {
-  const app = document.getElementById("app");
-  render(app, "", null, "");
+  const app = document.getElementById('app');
+  render(app, '', null, '');
 }
-
-// emailValue сохраняет введённый email при повторной отрисовке после ошибки
-// (например, "такой email уже занят") — без этого пришлось бы вводить его
-// заново только из-за проблемы в отдельном поле.
-//
-// errorField — "такой email уже занят" (ConflictError) не приходит с полем,
-// поэтому останется в общем баннере; а вот "укажите корректный email" или
-// "пароль короче 8 символов" (ValidationError с field) подсветят нужный
-// инпут напрямую.
 function render(app, errorMessage, errorField, emailValue) {
+  if (!app.isConnected) return;
   app.innerHTML = `
     <div class="auth-shell">
       <div class="auth-card">
-        ${brandMark("auth")}
+        ${brandMark('auth')}
         <h1 class="headline">Регистрация</h1>
 
-        ${errorMessage && !errorField ? `<p class="error-banner">${escapeHtml(errorMessage)}</p>` : ""}
+        ${errorMessage && !errorField ? `<p class="error-banner">${escapeHtml(errorMessage)}</p>` : ''}
 
         <form id="registerForm" class="form">
-          <div class="${fieldWrapClass("email", errorField)}">
+          <div class="${fieldWrapClass('email', errorField)}">
             <label class="field-label" for="email">Email</label>
             <input type="email" id="email" required autocomplete="email" value="${escapeHtml(emailValue)}" />
-            ${fieldErrorHtml("email", errorField, errorMessage)}
+            ${fieldErrorHtml('email', errorField, errorMessage)}
           </div>
 
-          ${passwordFieldHtml("password", "Пароль (минимум 8 символов)", 'required minlength="8" autocomplete="new-password"', errorField === "password" ? errorMessage : "")}
+          ${passwordFieldHtml('password', 'Пароль (минимум 8 символов)', 'required minlength="8" autocomplete="new-password"', errorField === 'password' ? errorMessage : '')}
 
           <div class="actions">
             <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%;">Создать аккаунт</button>
@@ -45,32 +45,34 @@ function render(app, errorMessage, errorField, emailValue) {
     </div>
   `;
 
-  document.getElementById("toLogin").onclick = (e) => {
+  app.querySelector('#toLogin').onclick = (e) => {
     e.preventDefault();
-    navigate("/login");
+    navigate('/login');
   };
 
   attachPasswordToggles(app);
 
-  wireRequiredFieldsToggle(
-    document.getElementById("submitBtn"),
-    [document.getElementById("email"), document.getElementById("password")]
-  );
+  wireRequiredFieldsToggle(app.querySelector('#submitBtn'), [
+    app.querySelector('#email'),
+    app.querySelector('#password')
+  ]);
 
-  document.getElementById("registerForm").onsubmit = async (e) => {
+  app.querySelector('#registerForm').onsubmit = async (e) => {
     e.preventDefault();
 
-    const submitBtn = document.getElementById("submitBtn");
+    const submitBtn = app.querySelector('#submitBtn');
     submitBtn.disabled = true;
-    submitBtn.textContent = "Создаём аккаунт…";
+    submitBtn.textContent = 'Создаём аккаунт…';
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+    const email = app.querySelector('#email').value.trim();
+    const password = app.querySelector('#password').value;
 
     try {
-      await post("/auth/register", { email, password });
-      navigate("/dashboard");
+      await post('/auth/register', { email, password });
+      if (!app.isConnected) return;
+      navigate('/dashboard');
     } catch (err) {
+      if (!app.isConnected) return;
       render(app, err.message, err.field, email);
     }
   };

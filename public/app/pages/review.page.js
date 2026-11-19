@@ -1,9 +1,9 @@
-import { navigate } from "../core/router.js";
-import { get, post } from "../core/api.js";
-import { escapeHtml, brandMark, sproutIcon, wordWithAccentHtml } from "../core/dom.js";
+import { navigate } from '../core/router.js';
+import { get, post } from '../core/api.js';
+import { escapeHtml, brandMark, sproutIcon, wordWithAccentHtml } from '../core/dom.js';
 
 export async function renderReview() {
-  const app = document.getElementById("app");
+  const app = document.getElementById('app');
 
   app.innerHTML = `
     <div class="page">
@@ -12,11 +12,11 @@ export async function renderReview() {
   `;
 
   try {
-    // /words/due — только слова, которые пора повторить сегодня по расписанию
-    // упрощённого SM-2 (см. services/spacedRepetition.js на бэкенде).
-    const words = await get("/words/due");
+    const words = await get('/words/due');
+    if (!app.isConnected) return;
     startReview(app, words);
   } catch (e) {
+    if (!app.isConnected) return;
     app.innerHTML = `
       <div class="page">
         ${brandMark()}
@@ -24,7 +24,7 @@ export async function renderReview() {
         <div class="actions"><button id="back" class="btn btn-ghost">Назад</button></div>
       </div>
     `;
-    document.getElementById("back").onclick = () => navigate("/dashboard");
+    app.querySelector('#back').onclick = () => navigate('/dashboard');
   }
 }
 
@@ -40,6 +40,7 @@ function startReview(app, words) {
 }
 
 function render(app, state) {
+  if (!app.isConnected) return;
   const { words, index } = state;
 
   if (words.length === 0) {
@@ -57,8 +58,8 @@ function render(app, state) {
         </div>
       </div>
     `;
-    document.getElementById("addBtn").onclick = () => navigate("/add");
-    document.getElementById("back").onclick = () => navigate("/dashboard");
+    app.querySelector('#addBtn').onclick = () => navigate('/add');
+    app.querySelector('#back').onclick = () => navigate('/dashboard');
     return;
   }
 
@@ -71,7 +72,7 @@ function render(app, state) {
         <div class="actions"><button id="back" class="btn btn-primary">На главную</button></div>
       </div>
     `;
-    document.getElementById("back").onclick = () => navigate("/dashboard");
+    app.querySelector('#back').onclick = () => navigate('/dashboard');
     return;
   }
 
@@ -85,50 +86,60 @@ function render(app, state) {
       <div class="flashcard">
         <p class="flashcard-word">${wordWithAccentHtml(word.text, word.accentIndex)}</p>
 
-        ${state.revealed ? `
+        ${
+          state.revealed
+            ? `
           <div class="flashcard-answer">
             <p class="flashcard-meaning">${escapeHtml(word.meaning)}</p>
-            ${word.example ? `<p class="flashcard-example">«${escapeHtml(word.example)}»</p>` : ""}
+            ${word.example ? `<p class="flashcard-example">«${escapeHtml(word.example)}»</p>` : ''}
           </div>
-        ` : ""}
+        `
+            : ''
+        }
       </div>
 
       <div class="actions">
-        ${state.revealed ? `
+        ${
+          state.revealed
+            ? `
           <button id="rememberedBtn" class="btn btn-primary">Вспомнил</button>
           <button id="forgotBtn" class="btn btn-ghost">Не вспомнил</button>
-        ` : `
+        `
+            : `
           <button id="revealBtn" class="btn btn-primary">Показать ответ</button>
-        `}
+        `
+        }
         <button id="back" class="btn-text">Прервать</button>
       </div>
     </div>
   `;
 
-  document.getElementById("back").onclick = () => navigate("/dashboard");
+  app.querySelector('#back').onclick = () => navigate('/dashboard');
 
   if (!state.revealed) {
-    document.getElementById("revealBtn").onclick = () => {
+    app.querySelector('#revealBtn').onclick = () => {
       state.revealed = true;
       render(app, state);
     };
     return;
   }
 
-  document.getElementById("rememberedBtn").onclick = () => submitReview(app, state, word, true);
-  document.getElementById("forgotBtn").onclick = () => submitReview(app, state, word, false);
+  app.querySelector('#rememberedBtn').onclick = () => submitReview(app, state, word, true);
+  app.querySelector('#forgotBtn').onclick = () => submitReview(app, state, word, false);
 }
-
-// И "вспомнил", и "не вспомнил" отправляются на бэкенд — оба случая двигают
-// расписание повторений (SM-2): "вспомнил" отодвигает следующий показ
-// дальше, "не вспомнил" сбрасывает интервал, чтобы слово вернулось быстрее.
 async function submitReview(app, state, word, remembered) {
+  if (state.saving) return;
+  state.saving = true;
   try {
     await post(`/words/${word.id}/review`, { remembered });
+    if (!app.isConnected) return;
     if (remembered) state.reviewedCount += 1;
   } catch (e) {
-    // Не удалось сохранить результат повторения — не блокируем сам процесс,
-    // просто идём дальше без учёта этого слова в статистике.
+    if (!app.isConnected) return;
+    window.alert(`Не удалось сохранить повторение: ${e.message}`);
+    return;
+  } finally {
+    state.saving = false;
   }
 
   state.index += 1;

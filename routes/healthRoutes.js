@@ -5,7 +5,7 @@ router.get('/', (req, res) => {
   res.json({
     status: 'ok',
     service: 'WordFlow API'
-  })
-})
+  });
+});
 
 module.exports = router;

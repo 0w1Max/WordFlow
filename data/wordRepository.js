@@ -1,9 +1,5 @@
 const { client, ensureReady } = require('../db/db.js');
-
-// Раньше POST /words возвращал camelCase (из JS-объекта), а GET /words —
-// сырые строки БД в snake_case. Теперь это единственное место, где строка
-// БД превращается в объект API — все эндпоинты гарантированно отдают
-// одинаковую форму данных.
+const { toIsoDate } = require('./dateMapper');
 function mapWordRow(row) {
   if (!row) return null;
 
@@ -15,10 +11,10 @@ function mapWordRow(row) {
     meaning: row.meaning,
     example: row.example,
     accentIndex: row.accent_index === undefined ? null : row.accent_index,
-    createdAt: row.created_at,
-    lastReview: row.last_review,
+    createdAt: toIsoDate(row.created_at),
+    lastReview: toIsoDate(row.last_review),
     reviewCount: row.review_count,
-    nextReviewAt: row.next_review_at,
+    nextReviewAt: toIsoDate(row.next_review_at),
     intervalDays: row.interval_days,
     easeFactor: row.ease_factor
   };
@@ -32,11 +28,15 @@ async function addWord(word) {
       INSERT INTO words (user_id, category_id, text, meaning, example, accent_index)
       VALUES (?, ?, ?, ?, ?, ?)
     `,
-    args: [word.userId, word.categoryId, word.text, word.meaning, word.example, word.accentIndex ?? null]
+    args: [
+      word.userId,
+      word.categoryId,
+      word.text,
+      word.meaning,
+      word.example,
+      word.accentIndex ?? null
+    ]
   });
-
-  // lastInsertRowid приходит как BigInt — приводим к Number, id в этом
-  // проекте не приближается к пределу безопасного целого JS.
   return getWordById(Number(result.lastInsertRowid), word.userId);
 }
 
@@ -61,28 +61,20 @@ async function getAllWords(userId) {
 
   return result.rows.map(mapWordRow);
 }
-
-// Слова, которые пора повторить сегодня (next_review_at в прошлом или
-// сейчас) — именно это должна показывать страница "Повторение", в отличие
-// от getAllWords, которая используется для страницы управления словами.
 async function getDueWords(userId) {
   await ensureReady();
 
   const result = await client.execute({
     sql: `
       SELECT * FROM words
-      WHERE user_id = ? AND next_review_at <= CURRENT_TIMESTAMP
-      ORDER BY next_review_at ASC
+      WHERE user_id = ? AND datetime(next_review_at) <= CURRENT_TIMESTAMP
+      ORDER BY datetime(next_review_at) ASC
     `,
     args: [userId]
   });
 
   return result.rows.map(mapWordRow);
 }
-
-// Записывает результат повторения слова: новый интервал/ease-фактор/дату
-// следующего показа считает services/spacedRepetition.js — сюда приходят
-// уже готовые значения, репозиторий только сохраняет их.
 async function markReviewed(id, userId, { intervalDays, easeFactor, nextReviewAt }) {
   await ensureReady();
 

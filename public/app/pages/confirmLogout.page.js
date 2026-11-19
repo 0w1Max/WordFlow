@@ -1,35 +1,22 @@
-import { navigate } from "../core/router.js";
-import { get, post } from "../core/api.js";
-import { brandMark } from "../core/dom.js";
-
-// Экран подтверждения выхода для гостя. Раньше это было либо два подряд
-// window.confirm() (слишком тяжеловесно для одной кнопки), либо выход без
-// единого предупреждения (человек молча терял слова). Здесь — обычный
-// экран SPA, без перезагрузки страницы и без нативных диалогов браузера:
-// то же предупреждение, но оформленное как часть интерфейса, с двумя
-// равнозначными по важности вариантами действия, а не одной кнопкой
-// "ОК/Отмена".
+import { navigate } from '../core/router.js';
+import { get, post } from '../core/api.js';
+import { brandMark } from '../core/dom.js';
 export async function renderConfirmLogout() {
-  const app = document.getElementById("app");
+  const app = document.getElementById('app');
 
   app.innerHTML = `<div class="page"><p class="loading-line">Проверяем аккаунт…</p></div>`;
-
-  // get() сам уведёт на /login, если сессии нет вообще. Единственный путь
-  // сюда — кнопка "Выйти" на dashboard для гостя (см. dashboard.page.js),
-  // но прямой переход по URL никто не запрещает: обычному пользователю
-  // предупреждение о потере гостевых данных не имеет смысла — ему нечего
-  // терять, его аккаунт и так привязан к email.
-  const { user } = await get("/auth/me");
+  const { user } = await get('/auth/me');
+  if (!app.isConnected) return;
 
   if (!user.isGuest) {
-    navigate("/dashboard");
+    navigate('/dashboard');
     return;
   }
 
   app.innerHTML = `
     <div class="auth-shell">
       <div class="auth-card">
-        ${brandMark("auth")}
+        ${brandMark('auth')}
         <h1 class="headline">Выйти из аккаунта?</h1>
 
         <p class="meta-line" style="margin-bottom: 24px;">
@@ -49,20 +36,21 @@ export async function renderConfirmLogout() {
     </div>
   `;
 
-  document.getElementById("saveAndLeaveBtn").onclick = () => {
-    navigate("/save-progress");
+  app.querySelector('#saveAndLeaveBtn').onclick = () => {
+    navigate('/save-progress');
   };
 
-  document.getElementById("leaveWithoutSavingBtn").onclick = async () => {
+  app.querySelector('#leaveWithoutSavingBtn').onclick = async () => {
     try {
-      await post("/auth/logout");
+      await post('/auth/logout');
+      if (!app.isConnected) return;
     } finally {
-      window.location.href = "/";
+      window.location.href = '/';
     }
   };
 
-  document.getElementById("stayLink").onclick = (e) => {
+  app.querySelector('#stayLink').onclick = (e) => {
     e.preventDefault();
-    navigate("/dashboard");
+    navigate('/dashboard');
   };
 }

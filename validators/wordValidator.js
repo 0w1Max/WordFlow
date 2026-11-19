@@ -1,10 +1,5 @@
 const { ValidationError } = require('../errors/AppError');
-
-// Единственное место, где проверяются входные данные слова.
-// Раньше одна и та же проверка жила и в services/addWord.js, и в
-// data/wordRepository.js — при добавлении новых полей (категория,
-// сложность и т.д.) это быстро начало бы расходиться.
-function validateWordInput({ text, meaning, accentIndex }) {
+function validateWordInput({ text, meaning, example, categoryId, accentIndex }) {
   if (!text || typeof text !== 'string' || text.trim() === '') {
     throw new ValidationError('Поле "Слово" обязательно', 'text');
   }
@@ -12,14 +7,13 @@ function validateWordInput({ text, meaning, accentIndex }) {
   if (!meaning || typeof meaning !== 'string' || meaning.trim() === '') {
     throw new ValidationError('Поле "Значение" обязательно', 'meaning');
   }
+  if (text.length > 500 || meaning.length > 10000)
+    throw new ValidationError('Слово или значение слишком длинное');
+  if (example != null && (typeof example !== 'string' || example.length > 10000))
+    throw new ValidationError('Некорректный пример', 'example');
+  if (categoryId != null && (!Number.isSafeInteger(categoryId) || categoryId <= 0))
+    throw new ValidationError('Некорректная категория', 'categoryId');
 
-  // accentIndex — необязательное поле (см. models/word.js), поэтому
-  // отсутствие вообще не проверяем. Но если оно пришло — это индекс
-  // конкретного символа в text (считая от исходной, ещё не обрезанной
-  // строки — см. normalizeAccentIndex), а не производное значение, так
-  // что здесь достаточно проверить тип и границы; сам пересчёт после
-  // trim() и отбрасывание индекса, "уехавшего" за пределы слова после
-  // правок, — забота normalizeAccentIndex в models/word.js.
   if (accentIndex !== undefined && accentIndex !== null) {
     if (!Number.isInteger(accentIndex) || accentIndex < 0 || accentIndex >= text.length) {
       throw new ValidationError('Некорректная позиция ударения', 'accentIndex');

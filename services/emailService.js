@@ -1,8 +1,4 @@
 const { Resend } = require('resend');
-
-// Без указанного домена в Resend можно слать только с onboarding@resend.dev —
-// этого достаточно для старта; для продакшна стоит подтвердить свой домен
-// в Resend и указать его через RESEND_FROM_EMAIL.
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'WordFlow <onboarding@resend.dev>';
 
 let resendClient = null;
@@ -18,17 +14,15 @@ async function sendPasswordResetEmail(to, resetUrl) {
   const client = getClient();
 
   if (!client) {
-    // Без ключа письмо отправить нельзя — печатаем ссылку в лог, чтобы
-    // локальная разработка/тестирование не блокировались отсутствием
-    // настроенного Resend.
+    if (process.env.NODE_ENV === 'production') throw new Error('Email delivery is not configured');
     console.warn(
       '[email] RESEND_API_KEY не задан — письмо не отправлено. ' +
-      `Ссылка для сброса пароля (для локальной отладки): ${resetUrl}`
+        `Ссылка для сброса пароля (для локальной отладки): ${resetUrl}`
     );
     return;
   }
 
-  await client.emails.send({
+  const { error } = await client.emails.send({
     from: FROM_EMAIL,
     to,
     subject: 'Восстановление пароля WordFlow',
@@ -38,6 +32,7 @@ async function sendPasswordResetEmail(to, resetUrl) {
       <p>Ссылка действительна 1 час. Если вы не запрашивали восстановление — просто проигнорируйте это письмо.</p>
     `
   });
+  if (error) throw new Error('Password reset email delivery failed');
 }
 
 module.exports = { sendPasswordResetEmail };

@@ -30,13 +30,16 @@ test('validateWordInput: требует непустое "Значение" и �
 });
 
 test('validateWordInput: пропускает корректный accentIndex', () => {
-  // "Слово" — индекс 3 указывает на "в", валидная гласная в пределах строки
-  assert.doesNotThrow(() => validateWordInput({ text: 'Слово', meaning: 'Значение', accentIndex: 3 }));
+  assert.doesNotThrow(() =>
+    validateWordInput({ text: 'Слово', meaning: 'Значение', accentIndex: 3 })
+  );
 });
 
 test('validateWordInput: пропускает отсутствие accentIndex (undefined/null)', () => {
   assert.doesNotThrow(() => validateWordInput({ text: 'Слово', meaning: 'Значение' }));
-  assert.doesNotThrow(() => validateWordInput({ text: 'Слово', meaning: 'Значение', accentIndex: null }));
+  assert.doesNotThrow(() =>
+    validateWordInput({ text: 'Слово', meaning: 'Значение', accentIndex: null })
+  );
 });
 
 test('validateWordInput: отклоняет accentIndex вне границ текста и указывает field: "accentIndex"', () => {
@@ -48,20 +51,34 @@ test('validateWordInput: отклоняет accentIndex вне границ те
     assert.equal(err.field, 'accentIndex');
   }
 
-  assert.throws(() => validateWordInput({ text: 'Слово', meaning: 'Значение', accentIndex: -1 }), ValidationError);
+  assert.throws(
+    () => validateWordInput({ text: 'Слово', meaning: 'Значение', accentIndex: -1 }),
+    ValidationError
+  );
 });
 
 test('validateWordInput: отклоняет нецелый accentIndex', () => {
-  assert.throws(() => validateWordInput({ text: 'Слово', meaning: 'Значение', accentIndex: 1.5 }), ValidationError);
-  assert.throws(() => validateWordInput({ text: 'Слово', meaning: 'Значение', accentIndex: 'два' }), ValidationError);
+  assert.throws(
+    () => validateWordInput({ text: 'Слово', meaning: 'Значение', accentIndex: 1.5 }),
+    ValidationError
+  );
+  assert.throws(
+    () => validateWordInput({ text: 'Слово', meaning: 'Значение', accentIndex: 'два' }),
+    ValidationError
+  );
 });
 
 test('validateCredentials: пропускает корректный email и пароль от 8 символов', () => {
-  assert.doesNotThrow(() => validateCredentials({ email: 'user@example.com', password: 'password123' }));
+  assert.doesNotThrow(() =>
+    validateCredentials({ email: 'user@example.com', password: 'password123' })
+  );
 });
 
 test('validateCredentials: отклоняет некорректный email и указывает field: "email"', () => {
-  assert.throws(() => validateCredentials({ email: 'not-an-email', password: 'password123' }), ValidationError);
+  assert.throws(
+    () => validateCredentials({ email: 'not-an-email', password: 'password123' }),
+    ValidationError
+  );
 
   try {
     validateCredentials({ email: '', password: 'password123' });

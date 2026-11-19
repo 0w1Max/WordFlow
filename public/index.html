@@ -1,46 +1,44 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>WordFlow — коллекция слов</title>
-    <meta name="description" content="WordFlow — личный каталог слов и значений с расписанием повторений, которое подстраивается под то, что вы уже помните. Начните бесплатно, без регистрации.">
-    <meta name="theme-color" content="#fdf1e4">
-
-    <!-- Open Graph / соцсети.
-         ВАЖНО: og:image, twitter:image и og:url — относительные/неабсолютные
-         сейчас, потому что домен ещё не известен (проект не задеплоен на
-         постоянный адрес). Часть краулеров соцсетей (например, старый
-         Facebook Sharing Debugger) требует именно абсолютный URL для
-         превью-картинки и для og:url — после деплоя все три стоит заменить
-         на полный адрес вида https://your-domain.com/og-image.png. -->
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="WordFlow">
-    <meta property="og:title" content="WordFlow — коллекция слов">
-    <meta property="og:description" content="Личный каталог слов и значений с расписанием повторений, которое подстраивается под то, что вы уже помните.">
-    <meta property="og:image" content="/og-image.png">
-    <meta property="og:locale" content="ru_RU">
-    <!-- <meta property="og:url" content="https://your-domain.com/"> -->
-
-    <!-- Twitter/X Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="WordFlow — коллекция слов">
-    <meta name="twitter:description" content="Личный каталог слов и значений с расписанием повторений, которое подстраивается под то, что вы уже помните.">
-    <meta name="twitter:image" content="/og-image.png">
-    <!-- Тот же bookmark-штамп, что в лого (см. bookMarkIcon в public/app/core/dom.js),
-         и тот же акцентный цвет, что у .brand-icon (--color-brass) — фавикон
-         на вкладке браузера теперь совпадает с бренд-маркой в интерфейсе. -->
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 16'%3E%3Cpath d='M10 3.4C8.1 1.9 5.4 1.2 1.6 1.6v11.8c3.8-.4 6.5.3 8.4 1.8V3.4z' fill='%23ff7a45' fill-opacity='0.55'/%3E%3Cpath d='M10 3.4c1.9-1.5 4.6-2.2 8.4-1.8v11.8c-3.8-.4-6.5.3-8.4 1.8V3.4z' fill='%23ff7a45'/%3E%3C/svg%3E">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="/styles/styles.css?v=36">
+    <meta
+      name="description"
+      content="WordFlow — личный каталог слов и значений с расписанием повторений, которое подстраивается под то, что вы уже помните. Начните бесплатно, без регистрации."
+    />
+    <meta name="theme-color" content="#fdf1e4" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="WordFlow" />
+    <meta property="og:title" content="WordFlow — коллекция слов" />
+    <meta
+      property="og:description"
+      content="Личный каталог слов и значений с расписанием повторений, которое подстраивается под то, что вы уже помните."
+    />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="WordFlow — коллекция слов" />
+    <meta
+      name="twitter:description"
+      content="Личный каталог слов и значений с расписанием повторений, которое подстраивается под то, что вы уже помните."
+    />
+    <meta name="twitter:image" content="/og-image.png" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 16'%3E%3Cpath d='M10 3.4C8.1 1.9 5.4 1.2 1.6 1.6v11.8c3.8-.4 6.5.3 8.4 1.8V3.4z' fill='%23ff7a45' fill-opacity='0.55'/%3E%3Cpath d='M10 3.4c1.9-1.5 4.6-2.2 8.4-1.8v11.8c-3.8-.4-6.5.3-8.4 1.8V3.4z' fill='%23ff7a45'/%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles/styles.css?v=36" />
   </head>
   <body>
     <div id="app"></div>
-
     <script type="module" src="/app/app.js"></script>
   </body>
 </html>

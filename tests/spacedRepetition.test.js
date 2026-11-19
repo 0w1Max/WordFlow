@@ -1,6 +1,3 @@
-// Тесты для services/spacedRepetition.js — упрощённого SM-2.
-// Запуск: npm test (использует встроенный в Node test runner, без
-// дополнительных зависимостей — см. package.json).
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { computeNextReview } = require('../services/spacedRepetition');
@@ -28,12 +25,11 @@ test('"вспомнил" второй раз подряд (после интер
 
 test('"вспомнил" на зрелом интервале → интервал растёт на ease-фактор, ease чуть увеличивается', () => {
   const result = computeNextReview({ intervalDays: 6, easeFactor: 2.3 }, true);
-
-  // Math.round(6 * 2.3) = 14
   assert.equal(result.intervalDays, 14);
-  // 2.3 + 0.05 не равно 2.35 ровно из-за бинарного представления float
-  // (даёт 2.3499999999999996) — сравниваем с допуском, а не строгим equal.
-  assert.ok(Math.abs(result.easeFactor - 2.35) < 1e-9, `ожидали ~2.35, получили ${result.easeFactor}`);
+  assert.ok(
+    Math.abs(result.easeFactor - 2.35) < 1e-9,
+    `ожидали ~2.35, получили ${result.easeFactor}`
+  );
 });
 
 test('ease-фактор не растёт выше потолка 2.5', () => {
